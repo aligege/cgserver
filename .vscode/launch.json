@@ -1,0 +1,43 @@
+{
+    "version": "0.2.0",
+    "configurations": 
+    [
+        { 
+            // 启动配置的名称。每个程序可能有多个启动配置
+            // 此名称将显示在调试面板的下拉框中
+            "name": "Launch",
+            // 配置的类型，默认有三种类型(node,momo,extensionHost)
+            // 可以通过插件来自定义更多的类型
+            "type": "node",
+            "outputCapture": "std",
+            // 请求类型, launch表示启动程序调试，attach表示监听某一端口进行调试
+            "request": "launch",
+            "cwd": "${workspaceRoot}",
+            // node程序的入口脚本路径(相对于工作空间)
+            //"program": "${workspaceRoot}/out/main.js",
+            //"program": "${workspaceRoot}/out/Main/Offical.js",
+            //"program": "${workspaceRoot}/out/Main/XOffical.js",
+            //"program": "${workspaceRoot}/out/Main/Auto_Main.js",
+            //"program": "${workspaceRoot}/out/Main/XVideo.js",
+            "program": "${workspaceRoot}/out/Main/Eychat.js",
+            "stopOnEntry": false,
+            // 接在program指定js后面的参数
+            //"args": ["@offical"],
+            //"args": ["@xoffical"],
+            //"args": ["@xvideo"],
+            //"args": ["all","suffix_XPlay","@auto_main"],
+            //"args": ["suffix_XVideo","@XVideo"],
+            "args": ["eychat_business","@eychat_business"],
+            // 启动程序的路径, 如果为null则使用默认的node
+            "runtimeExecutable": null,
+            // 传递给node的参数
+            "runtimeArgs": ["--nolazy","--es_staging"],
+            // 程序启动时设置的环境变量
+            "env": {"NODE_ENV": "development"},
+            // 是否使用sourceMaps
+            "sourceMaps": true,
+            // 如果使用sourceMaps，js脚本所在的路径
+            "outFiles": ["${workspaceRoot}/out"]
+        }
+    ]
+}

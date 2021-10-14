@@ -1,0 +1,28 @@
+// 将设置放入此文件中以覆盖默认设置
+{
+    // 配置 usr 模式以排除文件和文件夹。
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/.DS_Store": true,
+        "**/*.o": true,
+        "**/*.o.cmd": true,
+        "**/*.bat": true,
+        "**/*.md": true,
+        "node_modules": false,
+        "internal/*.*": true,
+        "other_bat/*.*": true
+    },
+    "search.exclude": {
+        "**/node_modules": true,
+        "**/bower_components": true,
+        "**/out":true,
+        "**/dist":true,
+    },
+    "debug.internalConsoleOptions": "neverOpen",
+    "emmet.includeLanguages": {
+        "cshtml":"html"
+      },
+    "files.associations": {"*.cshtml":"html"}
+}
