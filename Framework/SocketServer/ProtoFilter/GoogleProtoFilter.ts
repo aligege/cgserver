@@ -30,6 +30,11 @@ export class GoogleProtoFilter implements IProtoFilter
         let msg={cmd:data.cmd}
         msg[msg.cmd]=data
         msg[msg.cmd].cmd=undefined
+        
+        msg["errcode"]=data.errcode
+        data.errcode=undefined
+
+        delete data.errcode
         delete msg[msg.cmd].cmd
 
         let body = this._root.lookupType(root)

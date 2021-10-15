@@ -1,0 +1,24 @@
+{
+    "compilerOptions": {
+        "target": "es2017",
+        "module": "commonjs",
+        "sourceMap": true,
+        "allowJs":false,
+        "outDir": "./lib",
+        "experimentalDecorators": true,
+        "declaration": true,
+        "typeRoots": [
+            "node_modules/@types"
+        ]
+    },
+    "exclude": [
+        "./node_modules",
+        "./out_test",
+        "./lib",
+        "./webpack.config.js",
+        "./dist",
+        "./Data",
+        "./edition",
+        "./.vscode"
+    ]
+}
