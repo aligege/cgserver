@@ -1,17 +1,26 @@
 {
   "name": "cgserver",
-  "version": "4.0.0",
+  "version": "4.0.1",
+  "author": "trojan",
   "description": "free for all.Websocket or Http",
   "main": "./lib/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aligege/cgserver"
+  },
+  "bugs":{
+    "url":"https://github.com/aligege/cgserver",
+    "email":"chengang01@live.com"
+  },
+  "contributors":[{"name":"trojan","email":"chengang01@live.com"}],
   "keywords": [
     "server",
     "http",
     "websocket"
   ],
-  "author": "mumagege",
   "license": "MIT",
   "dependencies": {
     "@alicloud/sms-sdk": "^1.1.6",
