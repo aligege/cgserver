@@ -1,6 +1,6 @@
 {
   "name": "cgserver",
-  "version": "3.3.1",
+  "version": "3.4.1",
   "description": "free for all.Websocket or Http",
   "main": "./lib/index.js",
   "scripts": {
@@ -67,8 +67,5 @@
     "websocket": "^1.0.28"
   },
   "devDependencies": {
-    "webpack": "^4.29.5",
-    "webpack-cli": "^3.2.3",
-    "webpack-node-externals": "^1.6.0"
   }
 }

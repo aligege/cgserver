@@ -19,15 +19,10 @@
             //"program": "${workspaceRoot}/out/Main/XOffical.js",
             //"program": "${workspaceRoot}/out/Main/Auto_Main.js",
             //"program": "${workspaceRoot}/out/Main/XVideo.js",
-            "program": "${workspaceRoot}/out/Main/Eychat.js",
+            "program": "${workspaceRoot}/lib/index.js",
             "stopOnEntry": false,
             // 接在program指定js后面的参数
-            //"args": ["@offical"],
-            //"args": ["@xoffical"],
-            //"args": ["@xvideo"],
-            //"args": ["all","suffix_XPlay","@auto_main"],
-            //"args": ["suffix_XVideo","@XVideo"],
-            "args": ["eychat_business","@eychat_business"],
+            "args": [],
             // 启动程序的路径, 如果为null则使用默认的node
             "runtimeExecutable": null,
             // 传递给node的参数
