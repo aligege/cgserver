@@ -3,8 +3,16 @@ let os = require('os');
 let request = require('request');
 
 import * as _ from "underscore";
+/**
+ * 常用的工具函数类
+ */
 export class core 
 {
+    /**
+     * 判断变量是不是对象
+     * @param param 需要检查的变量
+     * @returns true为对象
+     */
     static isObject(param):boolean
     {
         return typeof (param) === "object"

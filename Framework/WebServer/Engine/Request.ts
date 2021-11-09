@@ -106,12 +106,27 @@ export class Request
     }
     get headers()
     {
+        
         return this._req.headers
     }
     get remoteHost()
     {
-        var ip = this._req.ip??""
-        ip=ip.replace("::ffff:","")
+        let ips = this._req.headers['x-forwarded-for']
+        let ip = ""
+        if(core.isArray(ips))
+        {
+            ip = ips[0]
+        }
+        else 
+        {
+            ip = <string>ips
+        }
+        ip = ip ||
+            this._req.connection.remoteAddress ||
+            this._req.socket.remoteAddress ||
+            this._req.ip||""
+        
+        ip = ip.replace("::ffff:","")
         return ip
     }
     constructor(req:Express.Request,cfg:WebServerConfig)

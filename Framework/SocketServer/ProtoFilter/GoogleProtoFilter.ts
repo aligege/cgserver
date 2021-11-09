@@ -32,6 +32,7 @@ export class GoogleProtoFilter implements IProtoFilter
         msg[msg.cmd].cmd=undefined
         
         msg["errcode"]=data.errcode
+        msg["tip"]=data.tip
         data.errcode=undefined
 
         delete data.errcode
