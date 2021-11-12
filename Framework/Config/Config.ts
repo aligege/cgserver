@@ -1,4 +1,5 @@
 import * as fs from "fs";
+import { jsonc } from "jsonc";
 export class Config
 {
     protected _suffix:string=""
@@ -14,11 +15,13 @@ export class Config
         {
             return false
         }
-        let path = "Data/"+this._file_name+"_"+this._suffix+".json"
+        let path = "data/"+this._file_name+"_"+this._suffix+".json"
+        path=path.toLowerCase()
         if(!fs.existsSync(path))
         {
             console.error(path+" not exist!")
-            path = "Data/"+this._file_name+".json"
+            path = "data/"+this._file_name+".json"
+            path=path.toLowerCase()
             console.error("try path:"+path)
             if(!fs.existsSync(path))
             {
@@ -27,7 +30,7 @@ export class Config
             }
         }
         let content = fs.readFileSync(path).toString()
-        let jsonData = JSON.parse(content)
+        let jsonData = jsonc.parse(content)
         for(let key in jsonData)
         {
             this[key] = jsonData[key]
