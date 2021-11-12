@@ -1,7 +1,6 @@
 import { core } from "../Core/Core";
-import * as logUpdate from "log-update";
-import * as log4js from "log4js";
 import * as colors from "colors";
+import * as log4js from "log4js";
 /**
  * 输出颜色
  */
@@ -80,10 +79,6 @@ class Log
     clientLog(message?: any, ...optionalParams: any[])
     {
         this._client_logger.error(message)
-    }
-    get logUpdate()
-    {
-        return logUpdate
     }
 }
 GLog=new Log()
