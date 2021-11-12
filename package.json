@@ -1,6 +1,6 @@
 {
   "name": "cgserver",
-  "version": "4.1.2",
+  "version": "5.0.0",
   "author": "trojan",
   "description": "free for all.Websocket or Http",
   "main": "./lib/index.js",
@@ -48,7 +48,7 @@
     "@types/request": "^2.48.7",
     "@types/underscore": "^1.11.3",
     "@types/urlencode": "^1.1.2",
-    "@types/websocket": "1.0.4",
+    "@types/websocket": "^1.0.4",
     "alipay_sdk2": "^1.1.6",
     "alipay-sdk": "^3.1.7",
     "colors": "^1.4.0",

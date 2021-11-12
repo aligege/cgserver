@@ -1,5 +1,5 @@
 import { IWebSocket } from './IWebSocket';
-import * as WebSocket from 'websocket';
+import * as ws from 'websocket';
 import { GLog } from '../Logic/Log';
 import { EProtoType } from './ProtoFilter/IProtoFilter';
 
@@ -37,10 +37,10 @@ export class IClientWebSocket extends IWebSocket
     {
         let url = "ws://" + this._host + ":" + this._port + "/"
         GLog.info("Trying to connect to server : " + url)
-        let ws = new WebSocket.client()
-        ws.on("connect",super.onConnect.bind(this))
-        ws.on("connectFailed",this.onClose.bind(this))
-        ws.connect(url,null,null,{cookie:"client="+this._tipKey})
+        let _ws = new ws.client()
+        _ws.on("connect",super.onConnect.bind(this))
+        _ws.on("connectFailed",this.onClose.bind(this))
+        _ws.connect(url,null,null,{cookie:"client="+this._tipKey})
     }
     onOpen(e?)
     {
@@ -72,7 +72,7 @@ export class IClientWebSocket extends IWebSocket
         this._need_close = true
         super.close()
     }
-    protected _onDecode(message:WebSocket.IMessage,...params)
+    protected _onDecode(message:ws.Message,...params)
     {
         let msg = super._onDecode(message,"msgRes")
         return msg

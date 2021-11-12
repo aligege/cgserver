@@ -2,7 +2,7 @@ import { ISocketServer } from './ISocketServer';
 import { IWebSocket } from './IWebSocket';
 import { GLog } from '../Logic/Log';
 import { EProtoType } from './ProtoFilter/IProtoFilter';
-import * as WebSocket from 'websocket'
+import * as ws from 'websocket';
 
 export class IServerWebSocket extends IWebSocket
 {
@@ -35,7 +35,7 @@ export class IServerWebSocket extends IWebSocket
         let msg = this._protoFilter.encode(data)
         serverWS.broadcast(msg)
     }
-    protected _onDecode(message:WebSocket.IMessage,...params)
+    protected _onDecode(message:ws.Message,...params)
     {
         let msg = super._onDecode(message,"msgReq")
         return msg

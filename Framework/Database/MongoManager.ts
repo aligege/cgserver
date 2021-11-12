@@ -68,12 +68,10 @@ class MongoManager
         }
         this._inited = true
         GLog.info("mongo config="+JSON.stringify(GFCfg.db.mongo),true)
-        let client = new mongo.MongoClient("mongodb://"+GFCfg.db.mongo.host+":"+GFCfg.db.mongo.port,{ useNewUrlParser: true,useUnifiedTopology: true })
+        let client = new mongo.MongoClient("mongodb://"+GFCfg.db.mongo.host+":"+GFCfg.db.mongo.port)
         await client.connect()
         this.onConnect()
         this._mongo = client.db(GFCfg.db.mongo.database)
-        this._mongo.addListener("end", this.onEnd.bind(this))
-        this._mongo.addListener("error", this.onError.bind(this))
         for(let i=0;i<this._init_cbs.length;++i)
         {
             this._init_cbs[i]()
@@ -219,7 +217,7 @@ class MongoManager
             rs.errcode=EErrorCode.No_Mongo
             return rs
         }
-        let del_rs:mongo.DeleteWriteOpResultObject=null
+        let del_rs:mongo.DeleteResult=null
         try{
             let col = this._mongo.collection(collection)
             del_rs = await col.deleteOne(con||{})
@@ -243,7 +241,7 @@ class MongoManager
             rs.errcode=EErrorCode.No_Mongo
             return rs
         }
-        let del_rs:mongo.DeleteWriteOpResultObject=null
+        let del_rs:mongo.DeleteResult=null
         try{
             let col = this._mongo.collection(collection)
             del_rs = await col.deleteMany(con||{})
@@ -266,13 +264,13 @@ class MongoManager
      */
     async insertOne(collection:string,data)
     {
-        let rs = {errcode:<{id:number,des:string}>null,rs:<mongo.InsertOneWriteOpResult<any>>null}
+        let rs = {errcode:<{id:number,des:string}>null,rs:<mongo.InsertOneResult<any>>null}
         if(!this._mongo)
         {
             rs.errcode=EErrorCode.No_Mongo
             return rs
         }
-        let in_rs:mongo.InsertOneWriteOpResult<any>=null
+        let in_rs:mongo.InsertOneResult<any>=null
         try
         {
             let col = this._mongo.collection(collection)
@@ -288,13 +286,13 @@ class MongoManager
     }
     async insertManay(collection:string,data:[])
     {
-        let rs = {errcode:<{id:number,des:string}>null,rs:<mongo.InsertWriteOpResult<any>>null}
+        let rs = {errcode:<{id:number,des:string}>null,rs:<mongo.InsertManyResult<any>>null}
         if(!this._mongo)
         {
             rs.errcode=EErrorCode.No_Mongo
             return rs
         }
-        let in_rs:mongo.InsertWriteOpResult<any>=null
+        let in_rs:mongo.InsertManyResult<any>=null
         try{
             let col = this._mongo.collection(collection)
             in_rs = await col.insertMany(data)            
@@ -309,13 +307,13 @@ class MongoManager
     }
     async updateOne(collection:string,model?:{},condition?:{},upsert=false)
     {
-        let rs = {errcode:<{id:number,des:string}>null,rs:<mongo.UpdateWriteOpResult>null}
+        let rs = {errcode:<{id:number,des:string}>null,rs:<mongo.UpdateResult>null}
         if(!this._mongo)
         {
             rs.errcode=EErrorCode.No_Mongo
             return rs
         }
-        let up_rs:mongo.UpdateWriteOpResult=null
+        let up_rs:mongo.UpdateResult=null
         try{
             let updateModel=null
             let firstKey=Object.keys(model)[0]
@@ -340,13 +338,13 @@ class MongoManager
     }
     async updateMany(collection:string,model,condition?:{},upsert=false)
     {
-        let rs = {errcode:<{id:number,des:string}>null,rs:<mongo.UpdateWriteOpResult>null}
+        let rs = {errcode:<{id:number,des:string}>null,rs:<mongo.Document | mongo.UpdateResult>null}
         if(!this._mongo)
         {
             rs.errcode=EErrorCode.No_Mongo
             return rs
         }
-        let up_rs:mongo.UpdateWriteOpResult=null
+        let up_rs:mongo.Document | mongo.UpdateResult=null
         try{
             let updateModel=null
             let firstKey=Object.keys(model)[0]
@@ -369,7 +367,7 @@ class MongoManager
         rs.rs=up_rs
         return rs
     }
-    async createIndex(collection:string,index:any,options?:mongo.IndexOptions)
+    async createIndex(collection:string,index:any,callback?:mongo.CreateIndexesOptions)
     {
         let rs = {errcode:<{id:number,des:string}>null,rs:<string>null}
         if(!this._mongo)
@@ -380,7 +378,7 @@ class MongoManager
         let i_rs:string=null
         try{
             let col = this._mongo.collection(collection)
-            i_rs = await col.createIndex(index,options)
+            i_rs = await col.createIndex(index,callback)
         }
         catch(e)
         {

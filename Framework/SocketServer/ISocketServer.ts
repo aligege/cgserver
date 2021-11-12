@@ -1,7 +1,7 @@
 ﻿import { GMysqlMgr } from '../Database/MysqlManager';
 import { GRedisMgr } from '../Database/RedisManager';
 import { IServerWebSocket } from './IServerWebSocket';
-import * as WebSocket from 'websocket';
+import * as ws from 'websocket';
 import { GLog } from './../Logic/Log';
 import * as fs from "fs";
 import * as http from "http";
@@ -36,7 +36,7 @@ export class ISocketServer
         return this._name+"@"+this._code
     }
     //监听websocket
-    private _web_socket:WebSocket.server= null
+    private _web_socket:ws.server= null
     get serverWebSocket()
     {
         return this._web_socket
@@ -132,7 +132,7 @@ export class ISocketServer
 
         server.listen(this._listen_port, this.onListenning.bind(this))
         
-        this._web_socket = new WebSocket.server({
+        this._web_socket = new ws.server({
             httpServer: server,
             // You should not use autoAcceptConnections for production 
             // applications, as it defeats all standard cross-origin protection 
@@ -142,7 +142,7 @@ export class ISocketServer
             autoAcceptConnections: false
         })
         this._web_socket.on('request', this.onRequest.bind(this))
-        this._web_socket.on('error', this.onError.bind(this))
+        this._web_socket.on('close', this.onClose.bind(this))
     }
     onClose()
     {
@@ -154,7 +154,7 @@ export class ISocketServer
         GLog.info(info)
         console.log(info)
     }
-    onRequest(req:WebSocket.request)
+    onRequest(req:ws.request)
     {
         if(this._is_closed)
         {
@@ -178,7 +178,7 @@ export class ISocketServer
         let server_name = this._getServerNameByCookies(req.cookies)
         this.createWebSocketObjectByProtocol(server_name,ws)
     }
-    createWebSocketObjectByProtocol(server_name:string,ws:WebSocket.connection):IServerWebSocket
+    createWebSocketObjectByProtocol(server_name:string,ws:ws.connection):IServerWebSocket
     {
         server_name=server_name||"default"
         let cls = this._name_vs_class[server_name]
@@ -209,8 +209,5 @@ export class ISocketServer
             }
         }
         return server_name
-    }
-    onError(error)
-    {
     }
 }

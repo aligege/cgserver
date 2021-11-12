@@ -71,13 +71,14 @@ export class UserService<T extends UserModel> extends BaseService<T>
     }
     async add(account_id:number,nickname:string,sex:number,logo:string,group?:ERoleGroup)
     {
-        let um:any = await this._createNewUser(account_id,nickname,sex,logo,group)
+        let um = await this._createNewUser(account_id,nickname,sex,logo,group)
         let rs = await this.insert(um)
-        if(rs.errcode||rs.rs.insertedCount!=1)
+        if(rs.errcode||!rs.rs.insertedId)
         {
             return null
         }
-        return rs.rs.ops[0]
+        um._id=rs.rs.insertedId
+        return um
     }
     async getByAccountId(account_id:number)
     {

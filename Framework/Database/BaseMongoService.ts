@@ -78,7 +78,7 @@ export class BaseService<T>
         let rs = await GMongoMgr.deleteMany(this._table,where)
         return rs
     }
-    async createIndex(index:any,options?:mongo.IndexOptions)
+    async createIndex(index:any,options?:mongo.CreateIndexesOptions)
     {
         let rs = await GMongoMgr.createIndex(this._table,index,options)
         return rs

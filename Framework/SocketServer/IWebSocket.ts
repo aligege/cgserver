@@ -1,8 +1,7 @@
 import { GLog } from '../Logic/Log';
-import { ISocketServer } from './ISocketServer';
 import { GProtoFactory } from './ProtoFilter/ProtoFactory';
 import { IProtoFilter,EProtoType } from "./ProtoFilter/IProtoFilter";
-import * as WebSocket from 'websocket'
+import * as ws from 'websocket';
 import { core } from '../Core/Core';
 import { GFCfg } from '../Config/FrameworkConfig';
 import * as _ from "underscore";
@@ -42,7 +41,7 @@ export class IWebSocket
     {
         return this._tipKey
     }
-    protected _ws:WebSocket.connection =null
+    protected _ws:ws.connection =null
     protected _protoType:EProtoType=EProtoType.Json
     protected _protoFilter:IProtoFilter=null
     protected _protoPath=""
@@ -92,9 +91,9 @@ export class IWebSocket
         let msg = this.getNewMsg("heartbeat")
         this.send(msg)
     }
-    onConnect(ws:WebSocket.connection)
+    onConnect(_ws:ws.connection)
     {
-        this._ws = ws
+        this._ws = _ws
         if(!this._protoFilter)
         {
             this._protoFilter = GProtoFactory.createFilter(this._protoType)
@@ -106,7 +105,7 @@ export class IWebSocket
         this.onOpen()
     }
     protected _msgs:Array<any>=[]
-    onMessage(message:WebSocket.IMessage)
+    onMessage(message:ws.Message)
     {
         try
         {
@@ -129,7 +128,7 @@ export class IWebSocket
             GLog.error('Received Message Handle Error: ' + e)
         }
     }
-    protected _onDecode(message:WebSocket.IMessage,...params)
+    protected _onDecode(message:ws.Message,...params)
     {
         let msg=null
         if (message.type === 'utf8')

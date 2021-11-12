@@ -90,11 +90,12 @@ export class AccountService extends BaseService<AccountModel>
         account.state=1
         account.id=await this.getNextId()
         let sr = await this.insert(account)
-        if(sr.rs.insertedCount!=1)
+        if(!sr.rs.insertedId)
         {
             return null
         }
-        return sr.rs.ops[0]
+        account._id=sr.rs.insertedId
+        return account
     }
     /**
      * 通过第三方信息获取账号
@@ -426,7 +427,7 @@ export class AccountService extends BaseService<AccountModel>
         am.id = await this.getNextId()
 
         let rs_am = await this.insert(am)
-        if(rs_am.rs.insertedCount!=1)
+        if(!rs_am.rs.insertedId)
         {
             rs.errcode=EErrorCode.Mysql_Error
             return rs
