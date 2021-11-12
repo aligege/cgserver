@@ -2,6 +2,7 @@ import { GFCfg } from '../Config/FrameworkConfig';
 import { GLog } from '../Logic/Log';
 import * as mongo from 'mongodb';
 import { EErrorCode } from '../Config/_error_';
+import { core } from '../Core/Core';
 
 export class MongoBaseModel
 {
@@ -122,12 +123,25 @@ class MongoManager
         }
         return -1
     }
+    protected _convertWhere(where?:any)
+    {
+        if(!where||!where._id)
+        {
+            return
+        }
+        if(core.isString(where._id))
+        {
+            where._id=new mongo.ObjectId(where._id)
+        }
+        return where
+    }
     /**
      * 获取单条消息
      * @param collection 
      */
     async findOne(collection:string,property?:{},where?:{},sort?:{})
     {
+        this._convertWhere(where)
         let rs = {errcode:<{id:number,des:string}>null,one:null}
         if(!this._mongo)
         {
@@ -156,6 +170,7 @@ class MongoManager
     }
     async findMany(collection:string,property?:{},where?:{},sort?:{},skip=0,limit=0)
     {
+        this._convertWhere(where)
         let rs = {errcode:<{id:number,des:string}>null,list:<any[]>null}
         if(!this._mongo)
         {
@@ -190,6 +205,7 @@ class MongoManager
     }
     async findCount(collection:string,property?:{},where?:{})
     {
+        this._convertWhere(where)
         let rs = {errcode:<{id:number,des:string}>null,count:-1}
         if(!this._mongo)
         {
@@ -209,8 +225,9 @@ class MongoManager
         rs.count=count
         return rs
     }
-    async deleteOne(collection,con)
+    async deleteOne(collection,where)
     {
+        this._convertWhere(where)
         let rs = {errcode:<{id:number,des:string}>null,count:-1}
         if(!this._mongo)
         {
@@ -220,7 +237,7 @@ class MongoManager
         let del_rs:mongo.DeleteResult=null
         try{
             let col = this._mongo.collection(collection)
-            del_rs = await col.deleteOne(con||{})
+            del_rs = await col.deleteOne(where||{})
         }
         catch(e)
         {
@@ -233,8 +250,9 @@ class MongoManager
         }
         return rs
     }
-    async deleteMany(collection,con)
+    async deleteMany(collection,where)
     {
+        this._convertWhere(where)
         let rs = {errcode:<{id:number,des:string}>null,count:-1}
         if(!this._mongo)
         {
@@ -244,7 +262,7 @@ class MongoManager
         let del_rs:mongo.DeleteResult=null
         try{
             let col = this._mongo.collection(collection)
-            del_rs = await col.deleteMany(con||{})
+            del_rs = await col.deleteMany(where||{})
         }
         catch(e)
         {
@@ -305,7 +323,7 @@ class MongoManager
         rs.rs=in_rs
         return rs
     }
-    async updateOne(collection:string,model?:{},condition?:{},upsert=false)
+    async updateOne(collection:string,model?:{},where?:{},upsert=false)
     {
         let rs = {errcode:<{id:number,des:string}>null,rs:<mongo.UpdateResult>null}
         if(!this._mongo)
@@ -326,7 +344,7 @@ class MongoManager
                 updateModel=model
             }
             let col = this._mongo.collection(collection)
-            up_rs = await col.updateOne(condition, updateModel,{upsert:upsert})
+            up_rs = await col.updateOne(where, updateModel,{upsert:upsert})
         }
         catch(e)
         {
@@ -336,7 +354,7 @@ class MongoManager
         rs.rs=up_rs
         return rs
     }
-    async updateMany(collection:string,model,condition?:{},upsert=false)
+    async updateMany(collection:string,model,where?:{},upsert=false)
     {
         let rs = {errcode:<{id:number,des:string}>null,rs:<mongo.Document | mongo.UpdateResult>null}
         if(!this._mongo)
@@ -357,7 +375,7 @@ class MongoManager
                 updateModel=model
             }
             let col = this._mongo.collection(collection)
-            up_rs = await col.updateMany(condition, updateModel,{upsert:upsert})
+            up_rs = await col.updateMany(where, updateModel,{upsert:upsert})
         }
         catch(e)
         {
@@ -390,6 +408,7 @@ class MongoManager
     }
     async aggregate(collection:string,property={},where={},size?:number,random_size?:number)
     {
+        this._convertWhere(where)
         let rs = {errcode:<{id:number,des:string}>null,list:<any[]>null}
         if(!this._mongo)
         {
