@@ -130,7 +130,11 @@ export class Engine
     }
     getRenderHtml(req:Request,res:Response, datas)
     {
-        let tmpl = "modules/"+req.module.toLowerCase()+"/view/" + req.controller.toLowerCase() + "/" + req.action.toLowerCase()
+        let tmpl = "view/" + req.controller.toLowerCase() + "/" + req.action.toLowerCase()
+        if(!this._cfg.routs.onlyModule)
+        {
+            tmpl = "modules/"+req.module.toLowerCase()+"/"+tmpl
+        }
         let html = this._getRenderHtml(req, res, tmpl, datas)
         return html
     }
