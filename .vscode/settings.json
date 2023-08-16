@@ -9,8 +9,8 @@
         "**/*.o": true,
         "**/*.o.cmd": true,
         "**/*.bat": true,
-        "**/*.md": true,
-        "node_modules": false,
+        "**/*.md": false,
+        "node_modules": true,
         "internal/*.*": true,
         "other_bat/*.*": true
     },

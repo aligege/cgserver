@@ -1,0 +1,243 @@
+﻿import { GMysqlMgr } from '../Database/MysqlManager';
+import { GRedisMgr } from '../Database/RedisManager';
+import { IClientWebSocket } from './IClientWebSocket';
+import * as ws from 'websocket';
+import { GLog } from './../Logic/Log';
+import * as fs from "fs";
+import * as http from "http";
+import * as https from "https";
+import { GMongoMgr } from '../Database/MongoManager';
+import { GMSSqlMgr } from '../Database/MSSqlManager';
+import { GEventTool } from '../Logic/EventTool';
+import { GServerCfg, IServerConfig } from '../Config/IServerConfig';
+import { GCgServer } from '../cgserver';
+import { BaseMsg } from './IWebSocket';
+
+export class ISocketServer
+{
+    protected _cfg:IServerConfig=null
+    //方便提示
+    get cfg()
+    {
+        return this._cfg
+    }
+    //服务器已被关闭
+    protected _is_closed=false
+    get isClosed()
+    {
+        return this._is_closed
+    }
+    get name()
+    {
+        return this._cfg.serverName
+    }
+    //监听websocket
+    private _listening_websocket:ws.server= null
+    get listeningWebSocket()
+    {
+        return this._listening_websocket
+    }
+    //来自于用户的链接
+    protected _ws_clients:{[socketid:number]:IClientWebSocket}={}
+    get listenPort()
+    {
+        return this._cfg.port
+    }
+    /**
+     * websocket can accepted protocol
+     */
+    protected _accepted_protocol=null
+    //服务器管理相关
+    /*
+        item=servername:class
+    */
+    protected _name_vs_class={}
+    registerWebSocketHandleClass(name:string,cls)
+    {
+        if(!name||name=="")
+        {
+            throw "registerWebSocketHandleClass name must be not null or empty!"
+        }
+        this._name_vs_class[name] = cls
+    }
+    constructor(cfg:IServerConfig)
+    {
+        this._cfg=cfg
+    }
+    removeServerWebSocketBySocketId(socketId:number)
+    {
+        this._ws_clients[socketId] = null
+        delete this._ws_clients[socketId]
+    }
+    async run()
+    {
+        GCgServer.addSocketServer(this)
+        await GMSSqlMgr.init()
+        await GMysqlMgr.init()
+        await GRedisMgr.init(GServerCfg.db?.redis)
+        await GMongoMgr.init(GServerCfg.db?.mongo)
+        this.initWebSocket()
+    }
+    stop()
+    {
+        this._is_closed=true
+        this._listening_websocket.closeAllConnections()
+    }
+    /*
+        把所有的客户端链接保存起来
+        方便统计，广播等
+    */
+    addClient(ws_client:IClientWebSocket)
+    {
+        this._ws_clients[ws_client.socketId] = ws_client
+    }
+    isOriginAllowed(origin)
+    {
+        return true
+    }
+    initWebSocket(wss?)
+    {
+        let server = null
+        if(wss)
+        {
+            console.log("wss:---")
+            let options =
+            {
+                key:fs.readFileSync("ssl/ssl2.key"),
+                cert: fs.readFileSync("ssl/ssl2.crt"),
+                //passphrase:'1234'//如果秘钥文件有密码的话，用这个属性设置密码
+            }
+            server = https.createServer(options,(request, response)=>
+            {
+                GLog.info((new Date()) + 'wss Received request for ' + request.url)
+                response.writeHead(404)
+                response.end()
+            })
+        }
+        else
+        {
+            server = http.createServer((request, response)=>
+            {
+                GLog.info((new Date()) + 'ws Received request for ' + request.url)
+                response.writeHead(404)
+                response.end()
+            })
+        }
+
+        server.listen(this._cfg.port, this.onListenning.bind(this))
+        
+        this._listening_websocket = new ws.server({
+            httpServer: server,
+            // You should not use autoAcceptConnections for production 
+            // applications, as it defeats all standard cross-origin protection 
+            // facilities built into the protocol and the browser.  You should 
+            // *always* verify the connection's origin and decide whether or not 
+            // to accept it. 
+            autoAcceptConnections: false
+        })
+        this._listening_websocket.on('request', this.onRequest.bind(this))
+        this._listening_websocket.on('close', this.onClose.bind(this))
+    }
+    onClose(connection: ws.connection, reason: number, desc: string)
+    {
+        
+    }
+    onListenning()
+    {
+        GEventTool.emit("socket_server_init_done")
+        let info = (new Date()) + "  Server "+ this.name +" is listening on port "+this._cfg.port
+        GLog.info(info)
+        console.log(info)
+    }
+    onRequest(req:ws.request)
+    {
+        if(this._is_closed)
+        {
+            return
+        }
+        let protocol = null
+        if(req.requestedProtocols.length>0)
+        {
+            protocol = req.requestedProtocols[0]
+        }
+        let allowed = this.isOriginAllowed(req.origin)
+        if (!allowed)
+        {
+            req.reject()
+            GLog.info(' Connection from origin ' + req.origin + ' rejected.')
+            return
+        }
+        try
+        {
+            let conn = req.accept(this._accepted_protocol, req.origin)
+            if(!conn)
+            {
+                GLog.info(' protocol reject')
+                return
+            }
+            GLog.info((new Date()) + ' Connection accepted.')
+            let server_name = this._getServerNameByCookies(req.cookies)
+            this.createWebSocketObjectByProtocol(server_name,conn)
+        }
+        catch(e)
+        {
+            GLog.info(' protocol reject')
+        }
+    }
+    createWebSocketObjectByProtocol(server_name:string,_ws:ws.connection):IClientWebSocket
+    {
+        server_name=server_name||"default"
+        let cls = this._name_vs_class[server_name]
+        if(!cls)
+        {
+            GLog.error("(createWebSocketObjectByProtocol in server("+this.name+"))no this websocket handle class="+server_name)
+            return null
+        }
+        let ws_server = <IClientWebSocket>(new cls(this))
+        this.addClient(ws_server)
+        ws_server.onConnect(_ws)
+        return ws_server
+    }
+    protected _getServerNameByCookies(cookies)
+    {
+        let server_name = ""
+        if(!cookies)
+        {
+            return server_name
+        }
+        for(let index in cookies)
+        {
+            let cookie = cookies[index]
+            if(cookie.name=="server")
+            {
+                server_name = cookie.value
+                break
+            }
+        }
+        return server_name
+    }
+    /**
+     * 广播消息
+     * @param msg 
+     */
+    broadCast(msg:BaseMsg)
+    {
+        for(var key in this._ws_clients)
+        {
+            let ws = this._ws_clients[key] as IClientWebSocket
+            ws.send(msg)
+        }
+    }
+    /**
+     * 获取任意客户端连接
+     * @returns 
+     */
+    getAnyWebSocket()
+    {
+        for(var key in this._ws_clients)
+        {
+            return this._ws_clients[key] as IClientWebSocket
+        }
+        return null
+    }
+}

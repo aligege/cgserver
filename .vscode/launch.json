@@ -14,19 +14,14 @@
             "request": "launch",
             "cwd": "${workspaceRoot}",
             // node程序的入口脚本路径(相对于工作空间)
-            //"program": "${workspaceRoot}/out/main.js",
-            //"program": "${workspaceRoot}/out/Main/Offical.js",
-            //"program": "${workspaceRoot}/out/Main/XOffical.js",
-            //"program": "${workspaceRoot}/out/Main/Auto_Main.js",
-            //"program": "${workspaceRoot}/out/Main/XVideo.js",
-            "program": "${workspaceRoot}/lib/index.js",
+            "program": "${workspaceRoot}/src/test/test.ts",
             "stopOnEntry": false,
             // 接在program指定js后面的参数
             "args": [],
             // 启动程序的路径, 如果为null则使用默认的node
             "runtimeExecutable": null,
             // 传递给node的参数
-            "runtimeArgs": ["--nolazy","--es_staging"],
+            "runtimeArgs": ["--nolazy"],
             // 程序启动时设置的环境变量
             "env": {"NODE_ENV": "development"},
             // 是否使用sourceMaps

@@ -1,0 +1,23 @@
+7.0.568
+1、serverconfig的命名变化
+2、IServerConfig去掉webserver配置
+6.6.5
+1、mongomanager可单独初始化
+6.6.5
+1、mongoaccountservice增加登录时间和ip
+6.5.8
+1、修改编译bug
+6.5.7
+1、debug标志又cgserver处命令行处理，默认为false
+6.5.7
+1、增加配置debug，是否是debug调试模式，主要区别于读取数据档，debug默认读取file_d文件，release默认读取file_r文件，如果不存在都会读取file文件
+6.5.6
+1、增加一点服务器事件，目前cgserver只支持start
+6.5.5
+1、修改GLog的输出，控制台的输出由FrameworkConfig控制，console_level(默认0) -1都不输出，0仅输出error，1都输出
+6.5.3
+1、增加账号状态EAccountState
+6.5.3
+1、事件分发器GEventTool添加emit
+6.5.2
+1、添加事件分发器GEventTool

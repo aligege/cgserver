@@ -1,23 +1,23 @@
 {
     "compilerOptions": {
-        "target": "esnext",
+        "target": "ES2022",
         "module": "commonjs",
-        "sourceMap": true,
+        "sourceMap": false,
         "allowJs":false,
-        "outDir": "./lib",
+        "outDir": "./dist/lib",
         "experimentalDecorators": true,
         "declaration": true,
+        "declarationDir": "./dist/types",
+        "declarationMap": false,
         "typeRoots": [
             "node_modules/@types"
-        ]
+        ],
+        "rootDir": "./src",
     },
     "exclude": [
         "./node_modules",
-        "./out_test",
-        "./lib",
-        "./webpack.config.js",
         "./dist",
-        "./Data",
+        "./lib",
         "./edition",
         "./.vscode"
     ]
