@@ -98,14 +98,10 @@ export class MysqlUserService<T extends MysqlUserModel> extends MysqlBaseService
         super(type)
         GUserSer = this
     }
-    protected _newUserModel():T
-    {
-        return <T>(new MysqlUserModel())
-    }
     protected async _createNewUser(account_id:number,nickname:string,sex:number,logo:string,group?:ERoleGroup)
     {
         group = group || ERoleGroup.Common
-        let um = this._newUserModel()
+        let um = new this._t_type()
         um.account_id = account_id
         um.nickname = nickname
         if(!um.nickname||um.nickname.length==0)
