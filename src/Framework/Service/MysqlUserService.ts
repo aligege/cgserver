@@ -47,14 +47,6 @@ export class MysqlUserModel extends BaseModel
 
     @NotNull
     @Type(EPropertyType.Varchar,"")
-    wechat:string=""
-
-    @NotNull
-    @Type(EPropertyType.Varchar,"")
-    qq:string=""
-
-    @NotNull
-    @Type(EPropertyType.Varchar,"")
     email:string=""
 
     @NotNull
