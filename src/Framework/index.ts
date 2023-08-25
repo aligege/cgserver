@@ -87,5 +87,5 @@ export { CgMq,CgMqConfig } from './ThirdParty/CgMq';
 export { IRpcServerWebSocket} from './SocketServer/IRpcServerWebSocket';
 export { IRpcClientWebSocket} from './SocketServer/IRpcClientWebSocket';
 
-export { SyncCall } from './WebServer/Decorator/SyncCall';
-export { SyncCallServer } from './WebServer/Decorator/SyncCallServer';
+export { SyncCall,SyncCall2 } from './WebServer/Decorator/SyncCall';
+export { SyncCallServer,SyncCallServer2 } from './WebServer/Decorator/SyncCallServer';
