@@ -1,6 +1,6 @@
-import { core } from "../../Core/Core"
-import { GSyncQueueTool } from "../../Logic/SyncQueueTool"
-import { GMongoCacheSer } from "../../Service/MongoCacheService"
+import { core } from "../Core/Core"
+import { GSyncQueueTool } from "../Logic/SyncQueueTool"
+import { GMongoCacheSer } from "../Service/MongoCacheService"
 
 /**
  * 异步函数变为同步函数

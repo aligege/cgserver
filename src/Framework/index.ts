@@ -65,12 +65,12 @@ export { MysqlBaseUserController } from './WebServer/Controller/MysqlBaseUserCon
 export { MongoBaseUserController } from './WebServer/Controller/MongoBaseUserController';
 export { MysqlAccountModel } from './Service/MysqlAccountService';
 export { MongoAccountModel } from './Service/MongoAccountService';
-export { AdminValidate } from './WebServer/Decorator/AdminValidate';
-export { AuthorityValidate } from './WebServer/Decorator/AuthorityValidate';
-export { CreatorValidate } from './WebServer/Decorator/CreatorValidate';
-export { JsonAdminValidate } from './WebServer/Decorator/JsonAdminValidate';
-export { JsonAuthorityValidate } from './WebServer/Decorator/JsonAuthorityValidate';
-export { JsonCreatorValidate } from './WebServer/Decorator/JsonCreatorValidate';
+export { AdminValidate } from './Decorator/AdminValidate';
+export { AuthorityValidate } from './Decorator/AuthorityValidate';
+export { CreatorValidate } from './Decorator/CreatorValidate';
+export { JsonAdminValidate } from './Decorator/JsonAdminValidate';
+export { JsonAuthorityValidate } from './Decorator/JsonAuthorityValidate';
+export { JsonCreatorValidate } from './Decorator/JsonCreatorValidate';
 export { GCtrMgr } from './WebServer/Engine/ControllerManager';
 export { Engine } from './WebServer/Engine/Engine';
 export { RazorJs } from './WebServer/Engine/RazorJs';
@@ -87,5 +87,5 @@ export { CgMq,CgMqConfig } from './ThirdParty/CgMq';
 export { IRpcServerWebSocket} from './SocketServer/IRpcServerWebSocket';
 export { IRpcClientWebSocket} from './SocketServer/IRpcClientWebSocket';
 
-export { SyncCall,SyncCall2 } from './WebServer/Decorator/SyncCall';
-export { SyncCallServer,SyncCallServer2 } from './WebServer/Decorator/SyncCallServer';
+export { SyncCall,SyncCall2 } from './Decorator/SyncCall';
+export { SyncCallServer,SyncCallServer2 } from './Decorator/SyncCallServer';

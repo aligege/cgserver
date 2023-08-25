@@ -1,8 +1,7 @@
-import { ERoleGroup } from "../../Service/ini"
+import { ERoleGroup } from "../Service/ini"
 
-export let AuthorityValidate=function(rg?:ERoleGroup,ctr_name?:string)
+export let JsonAuthorityValidate=function(rg?:ERoleGroup)
 {
-    ctr_name=ctr_name||"Wechat"
     return function(target: any, propertyName: string, descriptor: TypedPropertyDescriptor<Function>) 
     {
         let method = descriptor.value
@@ -11,12 +10,11 @@ export let AuthorityValidate=function(rg?:ERoleGroup,ctr_name?:string)
             let self=this
             if(!self.isLogin)
             {
-                self.redirect(null,ctr_name)
-                return
+                self.showJson({errcode:{id:1,des:"未登陆"},err:"未登陆"})
             }
             if(rg&&self.selfUser.role_group!=rg)
             {
-                self.redirect(null,ctr_name)//权限不足
+                self.showJson({errcode:{id:2,des:"权限不足"},err:"权限不足"})
                 return
             }
             return method.apply(this, arguments)

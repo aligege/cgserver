@@ -1,4 +1,4 @@
-import { GSyncQueueTool } from "../../Logic/SyncQueueTool"
+import { GSyncQueueTool } from "../Logic/SyncQueueTool"
 /**
  * 异步函数变为同步函数，当前进程有效
  * @param target 

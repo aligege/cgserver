@@ -2,7 +2,7 @@
 import { MongoBaseService } from "../Database/MongoBaseService";
 import { MongoBaseModel } from "../Database/MongoManager";
 import { ERoleGroup } from "./ini";
-import { SyncCall } from "../WebServer/Decorator/SyncCall";
+import { SyncCall } from "../Decorator/SyncCall";
 
 export class MongoUserModel extends MongoBaseModel
 {
