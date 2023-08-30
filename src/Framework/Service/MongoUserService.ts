@@ -31,9 +31,9 @@ export class MongoUserModel extends MongoBaseModel
 export let GUserSer:UserService<MongoUserModel>=null
 export class UserService<T extends MongoUserModel> extends MongoBaseService<T>
 {
-    constructor(type: { new(): T})
+    constructor(table:string,type: { new(): T})
     {
-        super("user",type)
+        super(table,type)
         GUserSer = this
     }
     @SyncCall
