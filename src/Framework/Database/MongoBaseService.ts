@@ -13,9 +13,9 @@ export class MongoBaseService<T>
     {
         return this._inited
     }
-    get mongo()
+    get mongoDb()
     {
-        return GMongoMgr.mongo
+        return GMongoMgr.mongoDb
     }
     protected _t_type:{ new(): T}=null
     constructor(table:string,type: { new(): T})

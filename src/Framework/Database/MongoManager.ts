@@ -45,10 +45,15 @@ class MongoManager
 {
     protected _mongocfg:MongoConfig=null
     protected _init_cbs=[]
-    protected _mongo:mongo.Db = null
-    get mongo()
+    protected _mongoDb:mongo.Db = null
+    get mongoDb()
     {
-        return this._mongo
+        return this._mongoDb
+    }
+    protected _mongoClient:mongo.MongoClient = null
+    get mongoClient()
+    {
+        return this._mongoClient
     }
     protected _mongo_init_succ:boolean=false
     protected _inited:boolean=false
@@ -70,7 +75,7 @@ class MongoManager
         {
             return false
         }
-        if(this._mongo)
+        if(this._mongoDb)
         {
             return true
         }
@@ -80,7 +85,7 @@ class MongoManager
         let client = new mongo.MongoClient("mongodb://"+this._mongocfg.host+":"+this._mongocfg.port,this._mongocfg.options)
         await core.safeCall(client.connect,client)
         this.onConnect()
-        this._mongo = client.db(this._mongocfg.database)
+        this._mongoDb = client.db(this._mongocfg.database)
         for(let i=0;i<this._init_cbs.length;++i)
         {
             this._init_cbs[i]()
@@ -116,12 +121,12 @@ class MongoManager
      */
     async getAutoIds(key:string)
     {
-        if(!this._mongo)
+        if(!this._mongoDb)
         {
             return -1
         }
         let collection = "auto_ids"
-        let col = this._mongo.collection(collection);
+        let col = this._mongoDb.collection(collection);
         try{
             let where = this._convertWhere({_id: key })
             let rs = await core.safeCall(col.findOneAndUpdate,col,where, { $inc:{id:1} }, { upsert: true })
@@ -169,14 +174,14 @@ class MongoManager
     {
         this._convertWhere(where)
         let rs = {errcode:<{id:number,des:string}>null,one:null}
-        if(!this._mongo)
+        if(!this._mongoDb)
         {
             rs.errcode=EErrorCode.No_Mongo
             return rs
         }
         let one = null
         try{
-            let col = this._mongo.collection(collection)
+            let col = this._mongoDb.collection(collection)
             one = await col.findOne(where,{projection:property})
         }
         catch(e)
@@ -192,14 +197,14 @@ class MongoManager
     {
         this._convertWhere(where)
         let rs = {errcode:<{id:number,des:string}>null,list:<any[]>null}
-        if(!this._mongo)
+        if(!this._mongoDb)
         {
             rs.errcode=EErrorCode.No_Mongo
             return rs
         }
         let list=[]
         try{
-            let col = this._mongo.collection(collection)
+            let col = this._mongoDb.collection(collection)
             let cursor = col.find(where,property)
             if(sort)
             {
@@ -228,14 +233,14 @@ class MongoManager
     {
         this._convertWhere(where)
         let rs = {errcode:<{id:number,des:string}>null,count:-1}
-        if(!this._mongo)
+        if(!this._mongoDb)
         {
             rs.errcode=EErrorCode.No_Mongo
             return rs
         }
         let count=-1
         try{
-            let col = this._mongo.collection(collection)
+            let col = this._mongoDb.collection(collection)
             count = await col.countDocuments(where||{},options)
         }
         catch(e)
@@ -251,14 +256,14 @@ class MongoManager
     {
         this._convertWhere(where)
         let rs = {errcode:<{id:number,des:string}>null,count:-1}
-        if(!this._mongo)
+        if(!this._mongoDb)
         {
             rs.errcode=EErrorCode.No_Mongo
             return rs
         }
         let del_rs:mongo.DeleteResult=null
         try{
-            let col = this._mongo.collection(collection)
+            let col = this._mongoDb.collection(collection)
             del_rs = await col.deleteOne(where||{})
         }
         catch(e)
@@ -277,14 +282,14 @@ class MongoManager
     {
         this._convertWhere(where)
         let rs = {errcode:<{id:number,des:string}>null,count:-1}
-        if(!this._mongo)
+        if(!this._mongoDb)
         {
             rs.errcode=EErrorCode.No_Mongo
             return rs
         }
         let del_rs:mongo.DeleteResult=null
         try{
-            let col = this._mongo.collection(collection)
+            let col = this._mongoDb.collection(collection)
             del_rs = await col.deleteMany(where||{})
         }
         catch(e)
@@ -307,7 +312,7 @@ class MongoManager
     async insertOne(collection:string,data)
     {
         let rs = {errcode:<{id:number,des:string}>null,rs:<mongo.InsertOneResult<any>>null}
-        if(!this._mongo)
+        if(!this._mongoDb)
         {
             rs.errcode=EErrorCode.No_Mongo
             return rs
@@ -315,7 +320,7 @@ class MongoManager
         let in_rs:mongo.InsertOneResult<any>=null
         try
         {
-            let col = this._mongo.collection(collection)
+            let col = this._mongoDb.collection(collection)
             in_rs = await col.insertOne(data)            
         }
         catch(e)
@@ -330,14 +335,14 @@ class MongoManager
     async insertManay(collection:string,data:[])
     {
         let rs = {errcode:<{id:number,des:string}>null,rs:<mongo.InsertManyResult<any>>null}
-        if(!this._mongo)
+        if(!this._mongoDb)
         {
             rs.errcode=EErrorCode.No_Mongo
             return rs
         }
         let in_rs:mongo.InsertManyResult<any>=null
         try{
-            let col = this._mongo.collection(collection)
+            let col = this._mongoDb.collection(collection)
             in_rs = await col.insertMany(data)            
         }
         catch(e)
@@ -359,7 +364,7 @@ class MongoManager
         }
         this._convertWhere(where)
         let rs = {errcode:<{id:number,des:string}>null,rs:<mongo.UpdateResult>null}
-        if(!this._mongo)
+        if(!this._mongoDb)
         {
             if(_id)
             {
@@ -387,7 +392,7 @@ class MongoManager
             {
                 updatemodel=model
             }
-            let col = this._mongo.collection(collection)
+            let col = this._mongoDb.collection(collection)
             up_rs = await col.updateOne(where, updatemodel,{upsert:upsert})
         }
         catch(e)
@@ -408,7 +413,7 @@ class MongoManager
     {
         this._convertWhere(where)
         let rs = {errcode:<{id:number,des:string}>null,rs:<mongo.Document | mongo.UpdateResult>null}
-        if(!this._mongo)
+        if(!this._mongoDb)
         {
             rs.errcode=EErrorCode.No_Mongo
             return rs
@@ -425,7 +430,7 @@ class MongoManager
             {
                 updateModel=model
             }
-            let col = this._mongo.collection(collection)
+            let col = this._mongoDb.collection(collection)
             up_rs = await col.updateMany(where, updateModel,{upsert:upsert})
         }
         catch(e)
@@ -440,14 +445,14 @@ class MongoManager
     async createIndex(collection:string,index:any,options?:mongo.CreateIndexesOptions)
     {
         let rs = {errcode:<{id:number,des:string}>null,rs:<string>null}
-        if(!this._mongo)
+        if(!this._mongoDb)
         {
             rs.errcode=EErrorCode.No_Mongo
             return rs
         }
         let i_rs:string=null
         try{
-            let col = this._mongo.collection(collection)
+            let col = this._mongoDb.collection(collection)
             i_rs = await col.createIndex(index,options)
         }
         catch(e)
@@ -463,14 +468,14 @@ class MongoManager
     {
         this._convertWhere(where)
         let rs = {errcode:<{id:number,des:string}>null,list:<any[]>null}
-        if(!this._mongo)
+        if(!this._mongoDb)
         {
             rs.errcode=EErrorCode.No_Mongo
             return rs
         }
         let list=[]
         try{
-            let col = this._mongo.collection(collection)
+            let col = this._mongoDb.collection(collection)
             let params = []
             params.push({'$match': where||{}})
             params.push({'$project': property||{}})
@@ -498,13 +503,41 @@ class MongoManager
     }
     aggregate(collection:string,pipeline?: Document[], options?: mongo.AggregateOptions)
     {
-        if(!this._mongo)
+        if(!this._mongoDb)
         {
             return
         }
-        let col = this._mongo.collection(collection)
+        let col = this._mongoDb.collection(collection)
         let agg = col.aggregate(pipeline,options)
         return agg
+    }
+    /**
+     * 快速事务
+     * @param collection 
+     * @param cb 
+     */
+    async quickTransaction(cb:Function):Promise<false|any>
+    {
+        if(!this._mongoDb)
+        {
+            return false
+        }
+        let session = this._mongoClient.startSession()
+        session.startTransaction()
+        try
+        {
+            let rs = await cb(session)
+            await session.commitTransaction()
+            session.endSession()
+            return rs
+        }
+        catch(e)
+        {
+            await session.abortTransaction()
+            session.endSession()
+            GLog.error(e.stack)
+        }
+        return false
     }
 }
 GMongoMgr = new MongoManager()
