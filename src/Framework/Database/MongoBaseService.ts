@@ -39,12 +39,12 @@ export class MongoBaseService<T>
     async getById(id:any)
     {
         let rs=await GMongoMgr.findOne(this._table,null,{id:id})
-        return rs.one
+        return rs.one as T
     }
     async get(proterty?:{},where?:{})
     {
         let rs = await GMongoMgr.findOne(this._table,proterty,where)
-        return rs.one
+        return rs.one as T
     }
     async countDocuments(where?:{},options?: mongo.CountDocumentsOptions)
     {
@@ -54,12 +54,12 @@ export class MongoBaseService<T>
     async gets(property?:{},where?:{},sort?:{},skip=0,limit=0)
     {
         let rs = await GMongoMgr.findMany(this._table,property,where,sort,skip,limit)
-        return rs.list
+        return rs.list as T[]
     }
     async getRandoms(num:number,proterty?:{},where?:{})
     {
         let rs = await GMongoMgr.simpleAggregate(this._table,proterty,where,null,num)
-        return rs.list
+        return rs.list as T[]
     }
     async updateOne(model,where?:{},upsert=false)
     {

@@ -119,7 +119,7 @@ class MongoManager
      * @param key 
      * @returns 小于等于0为异常
      */
-    async getAutoIds(key:string)
+    async getAutoIds(key:string):Promise<number>
     {
         if(!this._mongoDb)
         {
@@ -516,14 +516,14 @@ class MongoManager
      * @param collection 
      * @param cb 
      */
-    async quickTransaction(cb:Function):Promise<false|any>
+    async quickTransaction(cb:Function,options?: mongo.TransactionOptions):Promise<false|any>
     {
         if(!this._mongoDb)
         {
             return false
         }
         let session = this._mongoClient.startSession()
-        session.startTransaction()
+        session.startTransaction(options)
         try
         {
             let rs = await cb(session)
@@ -534,8 +534,11 @@ class MongoManager
         catch(e)
         {
             await session.abortTransaction()
-            session.endSession()
             GLog.error(e.stack)
+        }
+        finally
+        {
+            await session.endSession()
         }
         return false
     }
