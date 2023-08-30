@@ -1,3 +1,2 @@
-8.4.1
-1、更新所有库到最新版
-2、暴力升级redis接口注意修改
+8.6.1
+1、quickTrasaction support options
