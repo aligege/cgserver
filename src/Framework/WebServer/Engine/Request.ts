@@ -67,23 +67,35 @@ export class Request
     get postData()
     {
         var body = this._req.body||{}
-        //服务器会有一层空key的json解析
-        for(let k in body)
+        if(this._req.headers["content-type"]=="application/x-www-form-urlencoded")
         {
-            var v = body[k]
-            if(!core.isString(v))
+            let keys = Object.keys(body)
+            if(keys.length==1
+                &&body[keys[0]]==""
+                &&core.isObject(keys[0]))
             {
-                continue
-            }
-            if(parseInt(v)==v)
-            {
-                body[k]=parseInt(v)
-            }
-            else if(parseFloat(v)==v)
-            {
-                body[k]==parseFloat(v)
+                body = keys[0]
             }
         }
+        // 暂时去掉强制数值转换
+        // //服务器会有一层空key的json解析
+        // for(let k in body)
+        // {
+        //     var v = body[k]
+        //     if(!core.isString(v))
+        //     {
+        //         continue
+        //     }
+        //     let intv = parseInt(v)
+        //     if(intv==v)
+        //     {
+        //         body[k]=intv
+        //     }
+        //     else if(parseFloat(v)==v)
+        //     {
+        //         body[k]==parseFloat(v)
+        //     }
+        // }
         return body
     }
     get url()
