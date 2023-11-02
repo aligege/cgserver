@@ -69,12 +69,22 @@ export class Request
         var body = this._req.body||{}
         if(this._req.headers["content-type"]=="application/x-www-form-urlencoded")
         {
-            let keys = Object.keys(body)
-            if(keys.length==1
-                &&body[keys[0]]==""
-                &&core.isObject(keys[0]))
+            for(let k in body)
             {
-                body = keys[0]
+                body=k
+                break
+            }
+        }
+        if(core.isString(body))
+        {
+            try
+            {
+                body = JSON.parse(body)
+            }
+            catch(e)
+            {
+                GLog.error("post data--"+body+"--parse error")
+                body = {}
             }
         }
         // 暂时去掉强制数值转换
