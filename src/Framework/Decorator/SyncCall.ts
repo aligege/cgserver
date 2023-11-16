@@ -30,6 +30,7 @@ export function SyncCall2(param_index?:number)
         let method = descriptor.value
         descriptor.value = function () 
         {
+            let self=this
             let key = propertyName
             if(param_index != undefined&&param_index<arguments.length)
             {
@@ -37,7 +38,7 @@ export function SyncCall2(param_index?:number)
             }
             let ret = GSyncQueueTool.add(key,async ()=>
             {
-                return await method.apply(target, arguments)
+                return await method.apply(self, arguments)
             })
             return ret
         }

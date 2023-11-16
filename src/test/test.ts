@@ -1,12 +1,12 @@
-import { SyncCall, core } from "../Framework"
+import { SyncCall2, core } from "../Framework"
 
 class Test{
-    @SyncCall
-    public test() {
-        console.log("test")
+    @SyncCall2(0)
+    public test(str) {
+        console.log(str+":test")
     }
 }
 let test = new Test()
-test.test()
+test.test("111")
 let str = core.format(Date.now(),"yyyy-MM-dd hh:mm:ss")
 console.log(str)
