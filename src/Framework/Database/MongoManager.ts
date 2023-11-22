@@ -130,15 +130,11 @@ class MongoManager
         try{
             let where = this._convertWhere({_id: key })
             let rs = await core.safeCall(col.findOneAndUpdate,col,where, { $inc:{id:1} }, { upsert: true })
-            if(rs.ok)
+            if(rs.id)
             {
-                if(rs.value)
-                {
-                    return rs.value.id+1
-                }
-                return 0+1
+                return rs.id+1
             }
-            return -1
+            return 1
         }
         catch(e)
         {
