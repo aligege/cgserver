@@ -52,8 +52,8 @@ export class Engine
         }
 
         this._app.use(cookieParser())
-        this._app.use(bodyParser.json({limit: '10mb'}))
-        this._app.use(bodyParser.urlencoded({limit: '10mb', extended: true}))
+        this._app.use(Express.json({limit: '10mb'}))
+        this._app.use(Express.urlencoded({limit: '10mb', extended: false}))
         //处理跨域
         if(this._cfg.cors)
         {
