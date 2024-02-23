@@ -45,6 +45,7 @@ export class WebServerConfig
         allowedHeaders:string|string[],
         credentials:boolean
     }=null
+    static:{route:string,path:string}[]=null
 }
 export class FrameworkConfig extends Config
 {

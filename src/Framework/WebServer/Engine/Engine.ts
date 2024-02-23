@@ -54,6 +54,19 @@ export class Engine
         this._app.use(cookieParser())
         this._app.use(Express.json({limit: '10mb'}))
         this._app.use(Express.urlencoded({limit: '10mb', extended: false}))
+        if(this._cfg.static)
+        {
+            for(let i=0;i<this._cfg.static.length;++i)
+            {
+                let item = this._cfg.static[i]
+                this._app.use(item.route,Express.static(item.path))
+            }
+        }
+        else
+        {
+            //默认
+            this._app.use("/public",Express.static("./public"))
+        }
         //处理跨域
         if(this._cfg.cors)
         {
@@ -93,18 +106,6 @@ export class Engine
     {
         let req=new Request(_req,this._cfg)
         let res=new Response(_res,this._cfg)
-        if(req.fileUrl)
-        {
-            let fileUrl:string = req.fileUrl
-            fileUrl=fileUrl.toLocaleLowerCase()
-            if(fileUrl.startsWith("data")||fileUrl.startsWith("/data"))
-            {
-                res.render404()
-                return
-            }
-            res.renderFile(this._root_path+req.fileUrl)
-            return
-        }
         let method=req.method.toLowerCase()
         if(method!="get"&&method!="post")
         {
