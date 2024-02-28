@@ -2,6 +2,7 @@
 import { GLog } from "../Logic/Log";
 import { RpcConfig } from "../ThirdParty/Rpc";
 import { Config } from "./Config";
+import { DbConfig } from "./DbConfig";
 export enum ESessionType
 {
     Cache,
@@ -148,47 +149,7 @@ export class FrameworkConfig extends Config
     debug_msg=false
     local_host="127.0.0.1"
     internet_host="127.0.0.1"
-    db=
-    {
-        redis:
-        {
-            open:false,
-            host:"127.0.0.1",
-            port:6379,
-            database:0,
-            password:null
-        },
-        mongo:
-        <MongoConfig>{
-            open:false,
-            host:"www.eryinet.com",
-            port:27017,
-            options:null,
-            database : 'achat'
-        },
-        mysql:
-        {
-            open     : false,
-            auto     : false,
-            host     : '127.0.0.1',
-            port     : 3306,
-            user     : 'root',
-            password : 'root',
-            database : 'gameall',
-            charset  : 'utf8mb4'
-        },
-        mssql:
-        {
-            open     : false,
-            auto     : false,
-            domain     : '127.0.0.1',
-            port     : 3306,
-            user     : 'root',
-            password : 'root',
-            database : 'gameall',
-            charset  : 'utf8mb4'
-        }
-    }
+    db=new DbConfig()
     third_cfg=
     {
         open_social:

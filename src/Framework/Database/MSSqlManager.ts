@@ -1,7 +1,16 @@
 import * as mssql from "mssql";
-import { GServerCfg } from "../Config/IServerConfig";
 import { GDBCache } from "./Decorator/DBCache";
-
+export class MSSqlConfig
+{
+    open    = false
+    auto    = false
+    domain  = '127.0.0.1'
+    port    = 3306
+    user    = 'root'
+    password= 'root'
+    database= 'gameall'
+    charset = 'utf8mb4'
+}
 export class MssqlReturn
 {
     error=null
@@ -26,17 +35,17 @@ class MSSqlManager
     {
         
     }
-    async init()
+    async init(cfg:MSSqlConfig)
     {
         if(this._pool
-            ||!GServerCfg.db.mssql
-            ||!GServerCfg.db.mssql.open)
+            ||!cfg
+            ||!cfg.open)
         {
             return
         }
 
-        this._pool  = await mssql.connect(<any>GServerCfg.db.mssql)
-        console.log("mssql config="+JSON.stringify(GServerCfg.db.mssql))
+        this._pool  = await mssql.connect(<any>cfg)
+        console.log("mssql config="+JSON.stringify(cfg))
         //这个的初始化位置不能变，必须位于cbs前，pool后
         await GDBCache.init()
         for(let i=0;i<this._init_cbs.length;++i)

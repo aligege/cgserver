@@ -41,6 +41,11 @@ export { UserService as MongoUserService } from './Service/MongoUserService';
 export { MysqlUserModel } from './Service/MysqlUserService';
 export { MongoUserModel } from './Service/MongoUserService';
 export { GMongoCacheSer,MongoCacheModel } from './Service/MongoCacheService';
+export { DbConfig } from './Config/DbConfig';
+export { MSSqlConfig } from './Database/MSSqlManager';
+export { MongoConfig } from './Database/MongoManager';
+export { MysqlConfig } from './Database/MysqlManager';
+export { RedisConfig } from './Database/RedisManager';
 
 export { EProtoType } from './SocketServer/ProtoFilter/IProtoFilter';
 export { GoogleProtoFilter } from './SocketServer/ProtoFilter/GoogleProtoFilter';

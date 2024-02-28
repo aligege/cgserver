@@ -9,6 +9,8 @@ import { GAlipayTool } from '../ThirdParty/AlipayTool';
 import { GServerCfg } from '../Config/IServerConfig';
 import { GEventTool } from '../Logic/EventTool';
 import { GCgServer } from '../cgserver';
+import { DbConfig } from '../Config/DbConfig';
+import { GMSSqlMgr } from '../Database/MSSqlManager';
 
 //实现对controller的手动注册
 export class IWebServer
@@ -26,9 +28,14 @@ export class IWebServer
             GLog.error("webserver 配置不存在，启动服务器失败")
             return false
         }
-        await GRedisMgr.init(GServerCfg.db?.redis)
-        await GMysqlMgr.init()
-        await GMongoMgr.init(GServerCfg.db?.mongo)
+        let dbcfg=GServerCfg.db
+        if(dbcfg)
+        {
+            await GRedisMgr.init(dbcfg.redis)
+            await GMysqlMgr.init(dbcfg.mysql)
+            await GMSSqlMgr.init(dbcfg.mssql)
+            await GMongoMgr.init(dbcfg.mongo)
+        }
         GAlipayTool.init()
         //初始化web引擎
         this._engine = new Engine(cfg,new RazorJs())

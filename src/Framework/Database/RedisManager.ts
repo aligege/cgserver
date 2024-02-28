@@ -1,6 +1,13 @@
 ﻿import { GLog } from '../Logic/Log';
 import * as redis from 'redis';
-
+export class RedisConfig
+{
+    open=false
+    host="127.0.0.1"
+    port=6379
+    database=0
+    password=null
+}
 type RedisClientType = redis.RedisClientType<redis.RedisDefaultModules&redis.RedisModules,redis.RedisFunctions,redis.RedisScripts>
 export let GRedisMgr:RedisManager&RedisClientType = null
 export class RedisManager

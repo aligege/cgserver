@@ -72,10 +72,14 @@ export class ISocketServer
     async run()
     {
         GCgServer.addSocketServer(this)
-        await GMSSqlMgr.init()
-        await GMysqlMgr.init()
-        await GRedisMgr.init(GServerCfg.db?.redis)
-        await GMongoMgr.init(GServerCfg.db?.mongo)
+        let dbcfg=GServerCfg.db
+        if(dbcfg)
+        {
+            await GRedisMgr.init(dbcfg.redis)
+            await GMysqlMgr.init(dbcfg.mysql)
+            await GMSSqlMgr.init(dbcfg.mssql)
+            await GMongoMgr.init(dbcfg.mongo)
+        }
         this.initWebSocket()
     }
     stop()

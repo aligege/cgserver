@@ -1,6 +1,19 @@
 ﻿import { EErrorCode } from './../Config/_error_';
 import { GLog } from '../Logic/Log';
 import * as mysql from 'mysql';
+export class MysqlConfig
+{
+    open=false
+    auto=false
+    host='127.0.0.1'
+    port=3306
+    user='root'
+    password='root'
+    database='gameall'
+    charset ='utf8mb4'
+    supportBigNumbers = true
+    connectionLimit = 100
+}
 export class SqlResult
 {
     /**
@@ -45,35 +58,22 @@ class MysqlManager
     {
         
     }
-    async init()
+    async init(cfg:MysqlConfig)
     {
-        return new Promise(async (resolve)=>{
-            if(this._pool
-                ||!GServerCfg.db.mysql
-                ||!GServerCfg.db.mysql.open)
-            {
-                resolve(null)
-                return
-            }
-            this._pool  = mysql.createPool({
-                connectionLimit : 100,
-                host     : GServerCfg.db.mysql.host,
-                port     : GServerCfg.db.mysql.port,
-                user     : GServerCfg.db.mysql.user,
-                password : GServerCfg.db.mysql.password,
-                database : GServerCfg.db.mysql.database,
-                supportBigNumbers : true,
-                charset:"utf8mb4"
-            })
-            console.log("mysql config="+JSON.stringify(GServerCfg.db.mysql))
-            //这个的初始化位置不能变，必须位于cbs前，pool后
-            await GDBCache.init()
-            resolve(null)
-            for(let i=0;i<this._init_cbs.length;++i)
-            {
-                this._init_cbs[i]()
-            }
-        })
+        if(this._pool
+            ||!cfg
+            ||!cfg.open)
+        {
+            return
+        }
+        this._pool  = mysql.createPool(cfg)
+        console.log("mysql config="+JSON.stringify(cfg))
+        //这个的初始化位置不能变，必须位于cbs前，pool后
+        await GDBCache.init()
+        for(let i=0;i<this._init_cbs.length;++i)
+        {
+            this._init_cbs[i]()
+        }
     }
     registerInitCb(cb:Function)
     {

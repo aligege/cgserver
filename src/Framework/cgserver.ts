@@ -6,6 +6,11 @@ import { core } from "./Core/Core";
 import { Config } from "./Config/Config";
 import { IWebServer } from "./WebServer/IWebServer";
 import { ISocketServer } from "./SocketServer/ISocketServer";
+import { GMSSqlMgr } from "./Database/MSSqlManager";
+import { GMysqlMgr } from "./Database/MysqlManager";
+import { GRedisMgr } from "./Database/RedisManager";
+import { GMongoMgr } from "./Database/MongoManager";
+import { DbConfig } from "./Config/DbConfig";
 
 class CgServer
 {
@@ -137,6 +142,13 @@ class CgServer
     addSocketServer(server:ISocketServer)
     {
         this._socketservers.push(server)
+    }
+    async initDb(dbcfg:DbConfig)
+    {
+        await GMSSqlMgr.init(dbcfg.mssql)
+        await GMysqlMgr.init(dbcfg.mysql)
+        await GRedisMgr.init(dbcfg.redis)
+        await GMongoMgr.init(dbcfg.mongo)
     }
 }
 export let GCgServer=new CgServer()
