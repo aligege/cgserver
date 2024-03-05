@@ -41,9 +41,13 @@ export class MongoBaseService<T>
         let rs=await GMongoMgr.findOne(this._table,null,{id:id})
         return rs.one as T
     }
-    async get(proterty?:{},where?:{})
+    async get(property?:{},where?:{})
     {
-        let rs = await GMongoMgr.findOne(this._table,proterty,where)
+        if(property)
+        {
+            property={projection:property}
+        }
+        let rs = await GMongoMgr.findOne(this._table,property,where)
         return rs.one as T
     }
     async countDocuments(where?:{},options?: mongo.CountDocumentsOptions)
@@ -53,12 +57,20 @@ export class MongoBaseService<T>
     }
     async gets(property?:{},where?:{},sort?:{},skip=0,limit=0)
     {
+        if(property)
+        {
+            property={projection:property}
+        }
         let rs = await GMongoMgr.findMany(this._table,property,where,sort,skip,limit)
         return rs.list as T[]
     }
-    async getRandoms(num:number,proterty?:{},where?:{})
+    async getRandoms(num:number,property?:{},where?:{})
     {
-        let rs = await GMongoMgr.simpleAggregate(this._table,proterty,where,null,num)
+        if(property)
+        {
+            property={projection:property}
+        }
+        let rs = await GMongoMgr.simpleAggregate(this._table,property,where,null,num)
         return rs.list as T[]
     }
     async updateOne(model,where?:{},upsert=false)
