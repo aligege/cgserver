@@ -1,6 +1,6 @@
 {
   "name": "cgserver",
-  "version": "8.8.0",
+  "version": "8.9.0",
   "author": "trojan",
   "type": "commonjs",
   "description": "free for all.Websocket or Http",
@@ -62,7 +62,7 @@
     "https": "^1.0.0",
     "jsonc": "^2.0.0",
     "log4js": "^6.9.1",
-    "mime": "^4.0.1",
+    "mime": "^3.0.0",
     "mongodb": "^6.3.0",
     "mssql": "^10.0.2",
     "mysql": "^2.18.1",
