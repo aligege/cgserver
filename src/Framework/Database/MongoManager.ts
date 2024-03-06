@@ -201,7 +201,7 @@ class MongoManager
         let list=[]
         try{
             let col = this._mongoDb.collection(collection)
-            let cursor = col.find(where,property)
+            let cursor = col.find(where,{projection:property})
             if(sort)
             {
                 cursor = cursor.sort(sort)
