@@ -460,7 +460,7 @@ class MongoManager
         rs.rs=i_rs
         return rs
     }
-    async simpleAggregate(collection:string,property={},where={},size?:number,random_size?:number)
+    async simpleAggregate(collection:string,property?:{},where?:{},size?:number,random_size?:number)
     {
         this._convertWhere(where)
         let rs = {errcode:<{id:number,des:string}>null,list:<any[]>null}
@@ -473,8 +473,14 @@ class MongoManager
         try{
             let col = this._mongoDb.collection(collection)
             let params = []
-            params.push({'$match': where||{}})
-            params.push({'$project': property||{}})
+            if(where)
+            {
+                params.push({'$match': where})
+            }
+            if(property)
+            {
+                params.push({'$project': property})
+            }
             if(random_size)
             {
                 params.push({'$sample': {'size': random_size}})
