@@ -24,7 +24,7 @@ export { Type } from './Database/Decorator/Type';
 export { EPropertyType } from './Database/Decorator/Property';
 export { MongoBaseService } from './Database/MongoBaseService';
 export { BaseModel as MysqlBaseModel } from './Database/MysqlBaseService';
-export { MongoBaseModel } from './Database/MongoManager';
+export { MongoBaseModel,MongoManager } from './Database/MongoManager';
 export { GMongoMgr } from './Database/MongoManager';
 export { GMSSqlMgr } from './Database/MSSqlManager';
 export { MysqlBaseService } from './Database/MysqlBaseService';

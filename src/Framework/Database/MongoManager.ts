@@ -41,7 +41,7 @@ export class MgReturn
     list=[]
 }
 export let GMongoMgr:MongoManager = null
-class MongoManager
+export class MongoManager
 {
     protected _mongocfg:MongoConfig=null
     protected _init_cbs=[]
