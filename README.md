@@ -1,3 +1,5 @@
+8.9.4
+1、扩展签名和验签功能
 8.6.9
 1、update all packages
 2、remove webpack about packages

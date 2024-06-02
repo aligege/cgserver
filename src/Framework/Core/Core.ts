@@ -4,6 +4,8 @@ import * as _ from "underscore";
 import * as crypto from "crypto";
 import { GLog } from "../Logic/Log";
 import * as CryptoJS from "crypto-js";
+import ECKey from "ec-key";
+import { v4 as uuidv4 } from 'uuid';
 
 /**
  * 常用的工具函数类
@@ -806,5 +808,32 @@ export class core
             padding:CryptoJS.pad.Pkcs7
         }).toString(CryptoJS.enc.Utf8)
         return dtext
+    }
+    static getUuid()
+    {
+        let id:string = new uuidv4()
+        return id
+    }
+    static signatureBase64(private_key:string,rsa_name:string,payload:string)
+    {
+        // Create an Elliptic Curve Digital Signature Algorithm (ECDSA) object using the private key.
+        const key = new ECKey(private_key, 'pem')
+        // Set up the cryptographic format used to sign the key with the SHA-256 hashing algorithm.
+        const cryptoSign = key.createSign(rsa_name)
+        // Add the payload string to sign.
+        cryptoSign.update(payload)
+        /*
+            The Node.js crypto library creates a DER-formatted binary value signature,
+            and then base-64 encodes it to create the string that you will use in StoreKit.
+        */
+        const signature = cryptoSign.sign('base64')
+        return signature
+    }
+    static signatureVerifyBase64(signature:string,private_key:string,rsa_name:string,payload:string)
+    {
+        // Create an Elliptic Curve Digital Signature Algorithm (ECDSA) object using the private key.
+        let key = new ECKey(private_key, 'pem')
+        let verificationResult = key.createVerify(rsa_name).update(payload).verify(signature, 'base64')
+        return verificationResult
     }
 }
