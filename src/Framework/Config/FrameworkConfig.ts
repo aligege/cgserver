@@ -47,6 +47,7 @@ export class WebServerConfig
         credentials:boolean
     }=null
     static:{route:string,path:string}[]=null
+    rootview=""
 }
 export class FrameworkConfig extends Config
 {

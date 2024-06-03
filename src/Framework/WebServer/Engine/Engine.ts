@@ -159,17 +159,18 @@ export class Engine
     {
 
     }
-    getRenderHtml(req:Request,res:Response, datas)
+    getRenderHtml(req:Request,res:Response, datas:any)
     {
-        let tmpl = "view/" + req.controller.toLowerCase() + "/" + req.action.toLowerCase()
-        //if(!this._cfg.routs.onlyModule)
+        let rootview = this._cfg.rootview||"view"
+        if(!rootview.endsWith("/"))
         {
-            tmpl = "modules/"+req.module.toLowerCase()+"/"+tmpl
+            rootview+="/"
         }
+        let tmpl = rootview + req.controller.toLowerCase() + "/" + req.action.toLowerCase()
         let html = this._getRenderHtml(req, res, tmpl, datas)
         return html
     }
-    protected _getRenderHtml(req:Request, res:Response, tmpl, params)
+    protected _getRenderHtml(req:Request, res:Response, tmpl:string, params:any)
     {
         let html = null
         try

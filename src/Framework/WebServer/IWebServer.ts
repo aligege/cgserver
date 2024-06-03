@@ -9,7 +9,6 @@ import { GAlipayTool } from '../ThirdParty/AlipayTool';
 import { GServerCfg } from '../Config/IServerConfig';
 import { GEventTool } from '../Logic/EventTool';
 import { GCgServer } from '../cgserver';
-import { DbConfig } from '../Config/DbConfig';
 import { GMSSqlMgr } from '../Database/MSSqlManager';
 
 //实现对controller的手动注册
