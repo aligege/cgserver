@@ -79,7 +79,7 @@ export class Engine
             }
             this._app.use(cors({
                 origin:origin,  //指定接收的地址，将localhost改成前端IP地址
-                methods:this._cfg.cors.methods||'GET,HEAD,PUT,PATCH,POST,DELETE',  //指定接收的请求类型
+                methods:this._cfg.cors.methods||'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',  //指定接收的请求类型
                 allowedHeaders:this._cfg.cors.allowedHeaders||['Content-Type'],  //指定header
                 credentials:this._cfg.cors.credentials||false
             }))
@@ -106,7 +106,18 @@ export class Engine
     {
         let req=new Request(_req,this._cfg)
         let res=new Response(_res,this._cfg)
+
         let method=req.method.toLowerCase()
+        if(method=="options")
+        {
+            _res.sendStatus(200)
+            return
+        }
+        if(method=="head")
+        {
+            _res.sendStatus(200)
+            return
+        }
         if(method!="get"&&method!="post")
         {
             return
