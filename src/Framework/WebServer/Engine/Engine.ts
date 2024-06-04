@@ -52,8 +52,12 @@ export class Engine
         }
 
         this._app.use(cookieParser())
-        this._app.use(Express.json({limit: '10mb'}))
-        this._app.use(Express.urlencoded({limit: '10mb', extended: false}))
+        this._app.use(Express.json({limit: '10mb',verify(req, res, buf, encoding) {
+            req["rawBody"]=buf
+        },}))
+        this._app.use(Express.urlencoded({limit: '10mb', extended: false,verify(req, res, buf, encoding) {
+            req["rawBody"]=buf
+        },}))
         if(this._cfg.static)
         {
             for(let i=0;i<this._cfg.static.length;++i)
