@@ -433,13 +433,33 @@ export class core
         newStr+=last
         return newStr
     }
-    static md5(str: string) {
-        let md5_str = crypto.createHash('md5').update(str).digest('hex')
+    static md5(str: string,inputEncoding:crypto.Encoding=null,encoding: crypto.BinaryToTextEncoding="hex") {
+        let _md5 = crypto.createHash('md5')
+        let hash:crypto.Hash=null
+        if(inputEncoding)
+        {
+            hash=_md5.update(str,inputEncoding)
+        }
+        else
+        {
+            hash=_md5.update(str)
+        }
+        let md5_str = hash.digest(encoding)
         return md5_str
     }
 
-    static sha1(str: string) {
-        let sha1_str = crypto.createHash('sha1').update(str).digest('hex')
+    static sha1(str: string,inputEncoding:crypto.Encoding=null,encoding: crypto.BinaryToTextEncoding="hex") {
+        let _sha1 = crypto.createHash('sha1')
+        let hash:crypto.Hash=null
+        if(inputEncoding)
+        {
+            hash=_sha1.update(str,inputEncoding)
+        }
+        else
+        {
+            hash=_sha1.update(str)
+        }
+        let sha1_str = hash.digest(encoding)
         return sha1_str
     }
 
