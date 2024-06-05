@@ -1,7 +1,8 @@
 export enum EProtoType
 {
     Json=1,
-    GoogleProtoBuffer=2
+    GoogleProtoBuffer=2,
+    Custom=3
 }
 export interface IProtoFilter
 {

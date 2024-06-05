@@ -1,6 +1,5 @@
 export { GCgServer } from './cgserver';
 
-export { GProtoFactory } from './SocketServer/ProtoFilter/ProtoFactory';
 export { GDBCache } from './Database/Decorator/DBCache';
 export { AiObject } from "./AI/AiObject";
 export { AStar } from "./AI/Astar";
@@ -47,6 +46,7 @@ export { MongoConfig } from './Database/MongoManager';
 export { MysqlConfig } from './Database/MysqlManager';
 export { RedisConfig } from './Database/RedisManager';
 
+export { GProtoFactory } from './SocketServer/ProtoFilter/ProtoFactory';
 export { EProtoType } from './SocketServer/ProtoFilter/IProtoFilter';
 export { GoogleProtoFilter } from './SocketServer/ProtoFilter/GoogleProtoFilter';
 export { IProtoFilter } from './SocketServer/ProtoFilter/IProtoFilter';

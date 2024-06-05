@@ -25,7 +25,7 @@ export class GoogleProtoFilter implements IProtoFilter
         }
         return true
     }
-    encode(data,root:string)
+    encode(data:any,root:string)
     { 
         let msg={cmd:data.cmd}
         msg[msg.cmd]=data
@@ -46,7 +46,7 @@ export class GoogleProtoFilter implements IProtoFilter
         var bufferBody = body.encode(msgBody).finish();
         return bufferBody
     }
-    decode(data,root:string)
+    decode(data:any,root:string)
     {
         let body = this._root.lookupType(root)
         if(!body)
