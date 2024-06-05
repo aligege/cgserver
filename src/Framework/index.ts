@@ -94,3 +94,5 @@ export { IRpcClientWebSocket} from './SocketServer/IRpcClientWebSocket';
 
 export { SyncCall,SyncCall2 } from './Decorator/SyncCall';
 export { SyncCallServer,SyncCallServer2 } from './Decorator/SyncCallServer';
+
+export { GByteTool } from './Core/ByteTool';
