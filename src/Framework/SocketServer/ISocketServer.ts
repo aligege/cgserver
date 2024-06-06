@@ -181,14 +181,14 @@ export class ISocketServer
             }
             GLog.info((new Date()) + ' Connection accepted.')
             let server_name = this._getServerNameByCookies(req.cookies)
-            this.createWebSocketObjectByProtocol(server_name,conn)
+            this.createWebSocketObjectByProtocol(server_name,conn,req)
         }
         catch(e)
         {
             GLog.info(' protocol reject')
         }
     }
-    createWebSocketObjectByProtocol(server_name:string,_ws:ws.connection):IClientWebSocket
+    createWebSocketObjectByProtocol(server_name:string,_ws:ws.connection,req:ws.request):IClientWebSocket
     {
         server_name=server_name||"default"
         let cls = this._name_vs_class[server_name]
@@ -199,7 +199,7 @@ export class ISocketServer
         }
         let ws_server = <IClientWebSocket>(new cls(this))
         this.addClient(ws_server)
-        ws_server.onConnect(_ws)
+        ws_server.onConnect(_ws,req)
         return ws_server
     }
     protected _getServerNameByCookies(cookies)

@@ -48,10 +48,11 @@ export class IWebSocket
     {
         return this._tipKey
     }
-    protected _ws:ws.connection =null
-    protected _protoType:EProtoType=EProtoType.Json
-    protected _protoFilter:IProtoFilter=null
-    protected _protoPath=""
+    protected _ws:ws.connection = null
+    protected _req:ws.request = null
+    protected _protoType:EProtoType = EProtoType.Json
+    protected _protoFilter:IProtoFilter = null
+    protected _protoPath = ""
     
     protected _ip:string = null
     get remoteHost()
@@ -93,9 +94,10 @@ export class IWebSocket
         let msg = this.getNewMsg("heartbeat")
         this.send(msg)
     }
-    onConnect(_ws:ws.connection)
+    onConnect(_ws:ws.connection,_req:ws.request)
     {
         this._ws = _ws
+        this._req = _req
         if(!this._protoFilter)
         {
             this._protoFilter = GProtoFactory.createFilter(this._protoType)
