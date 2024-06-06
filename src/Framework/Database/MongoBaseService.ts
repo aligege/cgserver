@@ -32,6 +32,10 @@ export class MongoBaseService<T>
         let id = await GMongoMgr.getAutoIds(this._table)
         return id
     }
+    toObjectId(id:string)
+    {
+        return GMongoMgr.toObjectId(id)
+    }
     /**
      * 没有id(非_id)的表不能使用该函数
      * @param id 

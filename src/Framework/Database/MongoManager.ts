@@ -12,7 +12,7 @@ export class MongoConfig
 }
 export class MongoBaseModel
 {
-    _id: any
+    _id: mongo.ObjectId
 }
 export class MrResult
 {
@@ -150,10 +150,10 @@ export class MongoManager
         }
         if(core.isString(where._id)&&where._id.length==24)
         {
-            let _id=where._id
+            let _id:string=where._id
             try
             {
-                where._id=new mongo.ObjectId(_id)
+                where._id=this.toObjectId(_id)
             }
             catch(e)
             {
@@ -161,6 +161,10 @@ export class MongoManager
             }
         }
         return where
+    }
+    toObjectId(id:string)
+    {
+        return new mongo.ObjectId(id)
     }
     /**
      * 获取单条消息
