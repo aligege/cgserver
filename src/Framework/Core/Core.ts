@@ -856,4 +856,9 @@ export class core
         let verificationResult = key.createVerify(rsa_name).update(payload).verify(signature, 'base64')
         return verificationResult
     }
+    static async delay(milliseconds:number)
+    {
+        let pm=new Promise(resolve => setTimeout(resolve, milliseconds))
+        return pm
+    }
 }
