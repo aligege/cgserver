@@ -1,79 +1,65 @@
 import { core } from "../Core/Core";
 import { GLog } from "../Logic/Log";
 import { IRpcServerWebSocket } from "../SocketServer/IRpcServerWebSocket";
-import { BaseMsg } from "../SocketServer/IWebSocket";
 import * as _ from "underscore";
-import { StringDecoder } from "string_decoder";
-import { RpcBaseMsg } from "../SocketServer/IRpc";
+import { RpcMsg } from "../SocketServer/IRpc";
 
-//接受到的消息无需basemsg部分
-class CgMqMsg extends RpcBaseMsg
-{
-    /**
-     * 必填，目的身份
-     */
-    to_identity=""
-    /**
-     * 消息携带的数据
-     */
-    data:any=null
-}
-export class CgMqRetMsg extends CgMqMsg
-{
-     /**
-      * 发送者身份
-      */
-     from_identity=""
-     /**
-      * audience 数量
-      */
-     count=0
-}
 class CgMqServerWebsocket extends IRpcServerWebSocket
 {
     protected _cgmq:CgMq=null
-    /**
-     * 自己的身份
-     */
-    protected _identity=""
     constructor(cgmq:CgMq)
     {
-        super()
+        super(cgmq.cfg.group,cgmq.cfg.id,cgmq.cfg.timeout)
         this._cgmq=cgmq
-        this._identity=this._cgmq.cfg.identity
         this._debug_msg=true
     }
     onOpen(e?: any): void {
-        this.init(this._cgmq.cfg.identity)
+        this.init()
     }
-    async init(identity:string)
+    async init()
     {
         let msg = this.getNewMsg("init")
-        msg.identity=identity
         let jsonData = await this.callRemote(msg)
         return jsonData
     }
-    async push(to_identity:string,data:any)
+    //把消息发送给rpc服务器，目的是调用远程函数
+    async push(to_group:string,data:any,to_id="")
     {
-        let msg = this.getNewMsg("msg") as CgMqMsg
-        msg.to_identity = to_identity
+        let msg = this.getNewMsg("msg")
+        msg.to_group = to_group
+        msg.to_id = to_id
         msg.data = data
         let jsonData = await this.callRemote(msg)
         return jsonData
     }
-    async receive_msg(msg:CgMqRetMsg)
+    //收到来自远程的调用消息
+    async receive_msg(msg:RpcMsg)
     {
         let data = await this._cgmq.onMsg(msg)
-        msg.data = data
-        msg.__return = true
-        msg.to_identity=msg.from_identity
-        msg.from_identity=this._identity
+        let ret_msg = this.getNewMsg("msg")
+        ret_msg.data=data
+        ret_msg.__return=true
+        //这个唯一标识必须和请求一致
+        ret_msg.__rpcid=msg.__rpcid
+        ret_msg.to_group=msg.from_group
+        ret_msg.to_id=msg.to_id
         this.send(msg)
     }
 }
-export class CgMqConfig
+export class RpcConfig
 {
-    identity=""
+    /**
+     * 当前rpc分组，一旦确认不可更改
+     */
+    group=""
+    /**
+     * 当前rpc唯一id，一旦确认不可更改
+     */
+    id=""
+    /**
+     * rpc超时时间，默认3000ms
+     */
+    timeout=0
     host=""
     port=-1
 }
@@ -81,19 +67,29 @@ export class CgMq
 {
     protected _ws:CgMqServerWebsocket=null
     protected _inited=false
-    protected _cfg:CgMqConfig=null
-    protected _onmsg:(msg:CgMqRetMsg)=>any=null
+    protected _cfg:RpcConfig=null
+    protected _onmsg:(msg:RpcMsg)=>any=null
+    get id()
+    {
+        return this._cfg.id
+    }
     get cfg()
     {
         return this._cfg
     }
-    get identity()
+    get group()
     {
-        return this._cfg?.identity
+        return this._cfg?.group||""
     }
-    async init(cfg:CgMqConfig,onmsg?:(msg:CgMqRetMsg)=>any)
+    /**
+     * 
+     * @param cfg rpc服务器的配置
+     * @param onmsg 
+     * @returns 
+     */
+    async init(cfg:RpcConfig,onmsg?:(msg:RpcMsg)=>any)
     {
-        if(!cfg)
+        if(!cfg||!cfg.group||!cfg.id)
         {
             return false
         }
@@ -131,17 +127,17 @@ export class CgMq
             }
         })
     }
-    async callRemote(to_identity:string,func_name:string,...args)
+    async callRemote(group:string,to_id:string,func_name:string,...args)
     {
         let data = 
         {
             cmd:func_name,
             args:args
         }
-        let jsonData:CgMqRetMsg = (await this._ws.push(to_identity,data)) as CgMqRetMsg
-        return jsonData
+        let ret = (await this._ws.push(group,data,to_id)) as RpcMsg
+        return ret
     }
-    async onMsg(msg:CgMqRetMsg)
+    async onMsg(msg:RpcMsg)
     {
         if(this._onmsg)
         {

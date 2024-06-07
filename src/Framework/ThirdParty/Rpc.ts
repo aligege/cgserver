@@ -1,10 +1,11 @@
 import { core } from "../Core/Core"
 import { GLog } from "../Logic/Log"
-import { CgMq, CgMqConfig, CgMqRetMsg } from "./CgMq"
+import { RpcMsg } from "../SocketServer/IRpc"
+import { CgMq, RpcConfig } from "./CgMq"
 
 class Remote
 {
-    protected _retmsg:CgMqRetMsg=null
+    protected _retmsg:RpcMsg=null
     get retMsg()
     {
         return this._retmsg
@@ -14,31 +15,27 @@ class Remote
     {
         return this._cgmq
     }
-    protected _to_identity=""
-    constructor(identity:string,cgmq:CgMq)
+    protected _to_group=""
+    protected _to_id=""
+    constructor(group:string,id:string,cgmq:CgMq)
     {
-        this._to_identity=identity
+        this._to_group=group
+        this._to_id=id
         this._cgmq=cgmq
     }
     async call(func_name:string,...args):Promise<any|any[]>
     {
-        this._retmsg = await this._cgmq.callRemote(this._to_identity,func_name,...args)
-        if(!this._retmsg.data)
+        this._retmsg = await this._cgmq.callRemote(this._to_group,this._to_id,func_name,...args)
+        let datas:any[]=this._retmsg.data
+        let ret={rets:datas,ret:null}
+        if(datas&&datas.length>0)
         {
-            return
+            ret.ret=datas[0]
         }
-        let datas:any[]=this._retmsg.data 
-        if(datas.length==1)
-        {
-            return datas[0]
-        }
-        return datas
+        return ret
     }
 }
-export class RpcConfig extends CgMqConfig
-{
 
-}
 export class Rpc
 {
     protected _cgmq:CgMq=null
@@ -52,11 +49,11 @@ export class Rpc
         let ret = await this._cgmq.init(cfg,this.onMsg.bind(this))
         return ret
     }
-    getRemote(identity:string)
+    getRemote(group:string,id:string="")
     {
-        return new Remote(identity,this._cgmq)
+        return new Remote(group,id,this._cgmq)
     }
-    async onMsg(msg:CgMqRetMsg)
+    async onMsg(msg:RpcMsg)
     {
         if(!msg||!msg.data||!msg.data.cmd)
         {

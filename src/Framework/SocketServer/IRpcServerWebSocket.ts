@@ -2,42 +2,58 @@ import _ = require("underscore");
 import { GEventTool } from "../Logic/EventTool";
 import { GLog } from "../Logic/Log";
 import { IServerWebSocket } from "./IServerWebSocket";
-import { IRpc, RpcBaseMsg } from "./IRpc";
-import { BaseMsg } from "./IWebSocket";
+import { IRpc, RpcMsg } from "./IRpc";
 
 export class IRpcServerWebSocket extends IServerWebSocket implements IRpc
 {
+    /**
+     * 自己的身份
+     */
+    protected _group=""
+    protected _id=""
+    //超时时间
+    protected _timeout=3000
+    constructor(group:string,id:string,timeout:number=3000)
+    {
+        super()
+        this._group=group
+        this._id=id
+        this._timeout=timeout||3000
+    }
     protected _genId(pre="")
     {
         return pre+"_"+Date.now()%10000000000+"_"+_.uniqueId()+_.random(9999999)
     }
     getNewMsg(cmd: string, errcode?: { id: number; des: string; }) {
-        let msg = super.getNewMsg(cmd,errcode) as RpcBaseMsg|any
+        let msg = super.getNewMsg(cmd,errcode) as RpcMsg
         msg.__rpcid=this._genId(cmd)
+        msg.from_group=this._group
+        msg.from_id=this._id
         return msg
     }
-    extendRetMsg(msg:RpcBaseMsg,errcode?: { id: number; des: string; })
+    toRetMsg(req_msg:RpcMsg,data:any,errcode?: { id: number; des: string; })
     {
-        let basemsg = super.getNewMsg(msg.cmd,errcode)
-        basemsg.__rpcid=msg.__rpcid
-        _.extend(msg,basemsg)
-        return msg
+        let ret_msg = this.getNewMsg(req_msg.cmd,errcode)
+        //唯一标识必须保持一致
+        ret_msg.__rpcid=req_msg.__rpcid
+        ret_msg.data=data
+        ret_msg.from_group=this._group
+        ret_msg.from_id=this._id
+        ret_msg.to_group=req_msg.from_group
+        ret_msg.to_id=req_msg.to_id
+        return ret_msg
     }
-    async callRemote(msg: RpcBaseMsg)
+    async callRemote(msg: RpcMsg)
     {
         if(!msg)
         {
             GLog.error("send null msg!")
             return
         }
-        if(!msg.__rpcid)
-        {
-            msg.__rpcid=this._genId(msg.cmd)
-        }
-        return new Promise((resolve,reject)=>
+        return new Promise<RpcMsg>((resolve,reject)=>
         {
             let handler = null
-            let func=(jsonData)=>
+            let func=(jsonData:RpcMsg)=>
             {
                 if(handler)
                 {
@@ -49,22 +65,18 @@ export class IRpcServerWebSocket extends IServerWebSocket implements IRpc
             handler = setTimeout(()=>
             {
                 GEventTool.off(msg.__rpcid,func)
-                resolve({errcode:{id:10086,des:"timeout"}})
-            },3000)
+                let error_msg=this.getNewMsg(msg.cmd,{id:10086,des:"timeout"})
+                resolve(error_msg)
+            },this._timeout)
             GEventTool.once(msg.__rpcid,func)
             super.send(msg)
         })
     }
-    receive_other_all(msg:RpcBaseMsg)
+    receive_other_all(msg:RpcMsg)
     {
-        if(msg.__rpcid)
-        {
-            GEventTool.emit(msg.__rpcid,msg)
-            return
-        }
         GLog.error({des:"no handle",msg})
     }
-    protected async _onMessage(msg:RpcBaseMsg)
+    protected async _onMessage(msg:RpcMsg)
     {
         if(msg.__return)
         {

@@ -1,6 +1,5 @@
-﻿import { MongoConfig } from "../Database/MongoManager";
-import { GLog } from "../Logic/Log";
-import { RpcConfig } from "../ThirdParty/Rpc";
+﻿import { GLog } from "../Logic/Log";
+import { RpcConfig } from "../ThirdParty/CgMq";
 import { Config } from "./Config";
 import { DbConfig } from "./DbConfig";
 export enum ESessionType
@@ -231,7 +230,7 @@ export class FrameworkConfig extends Config
         {
             keyIds:{}
         },
-        cgmq:<RpcConfig>null
+        cgrpc:<RpcConfig>null
     }
     //key是ip，value是domain
     ip_to_domain={}

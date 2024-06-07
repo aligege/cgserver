@@ -86,9 +86,9 @@ export { GSyncQueueTool } from './Logic/SyncQueueTool';
 export { GEventTool } from './Logic/EventTool';
 export { EAccountState } from './Service/ini';
 
-export { RpcBaseMsg } from './SocketServer/IRpc';
-export { Rpc,RpcConfig } from './ThirdParty/Rpc';
-export { CgMq,CgMqConfig } from './ThirdParty/CgMq';
+export { RpcMsg as RpcBaseMsg } from './SocketServer/IRpc';
+export { Rpc } from './ThirdParty/Rpc';
+export { CgMq,RpcConfig } from './ThirdParty/CgMq';
 export { IRpcServerWebSocket} from './SocketServer/IRpcServerWebSocket';
 export { IRpcClientWebSocket} from './SocketServer/IRpcClientWebSocket';
 
