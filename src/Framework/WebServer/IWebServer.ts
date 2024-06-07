@@ -45,9 +45,13 @@ export class IWebServer
         GEventTool.emit("web_server_init_done")
         return true
     }
-    stop()
+    pause()
     {
-        this._engine.stop()
+        this._engine.pause()
+    }
+    resume()
+    {
+        this._engine.resume()
     }
     /**
      * 注册控制器

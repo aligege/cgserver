@@ -20,6 +20,12 @@ export class Engine
     protected _server:http.Server=null
     protected _razorJs:RazorJs=null
     protected _root_path=process.cwd()
+    //停止服务器，暂时不接受任何请求
+    protected _is_running=false
+    get isrunning()
+    {
+        return this._is_running
+    }
     constructor(cfg:WebServerConfig,razorJs:RazorJs)
     {
         this._cfg=cfg
@@ -38,6 +44,7 @@ export class Engine
         }
         http.createServer(this._app).listen(port,()=>
         {
+            this._is_running=true
             GLog.info("Server("+this._cfg.web_name+") running at http://127.0.0.1:" + port + "/")
         });
         
@@ -112,6 +119,12 @@ export class Engine
         let res=new Response(_res,this._cfg)
 
         let method=req.method.toLowerCase()
+        //禁止访问
+        if(!this._is_running)
+        {
+            res.baseRes.sendStatus(403)
+            return
+        }
         if(method=="options")
         {
             _res.sendStatus(200)
@@ -170,9 +183,25 @@ export class Engine
         }
         ctr[action_name].call(ctr)
     }
-    stop()
+    pause()
     {
-
+        if(!this._is_running)
+        {
+            GLog.error("webserver has paused:"+this._cfg.web_name)
+            return
+        }
+        this._is_running=false
+        GLog.info("webserver paused:"+this._cfg.web_name)
+    }
+    resume()
+    {
+        if(this._is_running)
+        {
+            GLog.error("webserver is running:"+this._cfg.web_name)
+            return
+        }
+        this._is_running=true
+        GLog.info("webserver resumed:"+this._cfg.web_name)
     }
     getRenderHtml(req:Request,res:Response, datas:any)
     {

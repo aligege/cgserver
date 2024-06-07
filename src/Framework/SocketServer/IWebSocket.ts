@@ -140,7 +140,7 @@ export class IWebSocket
         }
         return msg
     }
-    protected _onEncode(data,...params)
+    protected _onEncode(data:any,...params)
     {
         let msg = this._protoFilter.encode(data,...params)
         return msg

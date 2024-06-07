@@ -10,6 +10,10 @@ export class Response
     protected _cookie_prefix=""
     protected _cfg:WebServerConfig=null
     protected _create_time=-1
+    get baseRes()
+    {
+        return this._res
+    }
     constructor(res:Express.Response,cfg:WebServerConfig)
     {
         this._cfg = cfg

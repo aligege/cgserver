@@ -22,10 +22,10 @@ export class ISocketServer
         return this._cfg
     }
     //服务器已被关闭
-    protected _is_closed=false
-    get isClosed()
+    protected _is_runging=false
+    get isrunging()
     {
-        return this._is_closed
+        return this._is_runging
     }
     get name()
     {
@@ -82,10 +82,26 @@ export class ISocketServer
         }
         this.initWebSocket()
     }
-    stop()
+    pause()
     {
-        this._is_closed=true
+        if(!this._is_runging)
+        {
+            GLog.error("websocketserver has paused:"+this._cfg.port)
+            return
+        }
+        this._is_runging=false
         this._listening_websocket.closeAllConnections()
+        GLog.info("websocketserver paused:"+this._cfg.port)
+    }
+    resume()
+    {
+        if(this._is_runging)
+        {
+            GLog.error("websocketserver is running:"+this._cfg.port)
+            return
+        }
+        this._is_runging=true
+        GLog.error("websocketserver resumed:"+this._cfg.port)
     }
     /*
         把所有的客户端链接保存起来
@@ -97,6 +113,10 @@ export class ISocketServer
     }
     isOriginAllowed(origin)
     {
+        if(!this._is_runging)
+        {
+            return false
+        }
         return true
     }
     initWebSocket(wss?)
@@ -104,7 +124,6 @@ export class ISocketServer
         let server = null
         if(wss)
         {
-            console.log("wss:---")
             let options =
             {
                 key:fs.readFileSync("ssl/ssl2.key"),
@@ -114,7 +133,7 @@ export class ISocketServer
             server = https.createServer(options,(request, response)=>
             {
                 GLog.info((new Date()) + 'wss Received request for ' + request.url)
-                response.writeHead(404)
+                response.writeHead(200)
                 response.end()
             })
         }
@@ -123,7 +142,7 @@ export class ISocketServer
             server = http.createServer((request, response)=>
             {
                 GLog.info((new Date()) + 'ws Received request for ' + request.url)
-                response.writeHead(404)
+                response.writeHead(200)
                 response.end()
             })
         }
@@ -148,15 +167,17 @@ export class ISocketServer
     }
     onListenning()
     {
+        this._is_runging=true
         GEventTool.emit("socket_server_init_done")
         let info = (new Date()) + "  Server "+ this.name +" is listening on port "+this._cfg.port
         GLog.info(info)
-        console.log(info)
     }
     onRequest(req:ws.request)
     {
-        if(this._is_closed)
+        if(!this._is_runging)
         {
+            req.reject()
+            GLog.error(' Connection from origin ' + req.origin + ' rejected.')
             return
         }
         let protocol = null
@@ -168,7 +189,7 @@ export class ISocketServer
         if (!allowed)
         {
             req.reject()
-            GLog.info(' Connection from origin ' + req.origin + ' rejected.')
+            GLog.error(' Connection from origin ' + req.origin + ' rejected.')
             return
         }
         try
@@ -176,7 +197,7 @@ export class ISocketServer
             let conn = req.accept(this._accepted_protocol, req.origin)
             if(!conn)
             {
-                GLog.info(' protocol reject')
+                GLog.error(' protocol reject')
                 return
             }
             GLog.info((new Date()) + ' Connection accepted.')
@@ -185,7 +206,7 @@ export class ISocketServer
         }
         catch(e)
         {
-            GLog.info(' protocol reject')
+            GLog.error(' protocol reject')
         }
     }
     createWebSocketObjectByProtocol(server_name:string,_ws:ws.connection,req:ws.request):IClientWebSocket

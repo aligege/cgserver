@@ -1,3 +1,6 @@
+8.9.17
+1、支持websocketserver 暂停和恢复
+2、支持webserver 暂停和恢复
 8.9.16
 1、ws暴露当时请求的req
 8.9.15
