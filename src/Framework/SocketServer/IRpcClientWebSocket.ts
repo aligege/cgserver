@@ -28,6 +28,7 @@ export class IRpcClientWebSocket extends IClientWebSocket implements IRpc
     {
         let ret_msg = this.getNewMsg(req_msg.cmd,errcode)
         //唯一标识必须保持一致
+        ret_msg.__return=true
         ret_msg.__rpcid=req_msg.__rpcid
         ret_msg.data=data
         ret_msg.from_group=this._group

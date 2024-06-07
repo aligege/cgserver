@@ -33,17 +33,11 @@ class CgMqServerWebsocket extends IRpcServerWebSocket
         return jsonData
     }
     //收到来自远程的调用消息
-    async receive_msg(msg:RpcMsg)
+    async receive_msg(req_msg:RpcMsg)
     {
-        let data = await this._cgmq.onMsg(msg)
-        let ret_msg = this.getNewMsg("msg")
-        ret_msg.data=data
-        ret_msg.__return=true
-        //这个唯一标识必须和请求一致
-        ret_msg.__rpcid=msg.__rpcid
-        ret_msg.to_group=msg.from_group
-        ret_msg.to_id=msg.to_id
-        this.send(msg)
+        let data = await this._cgmq.onMsg(req_msg)
+        let ret_msg = this.toRetMsg(req_msg,data)
+        this.send(ret_msg)
     }
 }
 export class RpcConfig
