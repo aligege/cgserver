@@ -30,6 +30,23 @@ class CgServer
     {
         return this._debug
     }
+    protected _custom_process_id=core.getUuid()
+    /**
+     * 当前进程的一个用户自定义的一个进程id
+     * 非操作系统的进程id
+     */
+    get customprocessid()
+    {
+        return this._custom_process_id
+    }
+    /**
+     * 当前进程的一个用户自定义的一个进程id
+     * 非操作系统的进程id
+     */
+    set customprocessid(value:string)
+    {
+        this._custom_process_id=value
+    }
     constructor()
     {
         this.init()
@@ -149,6 +166,28 @@ class CgServer
         await GMysqlMgr.init(dbcfg.mysql)
         await GRedisMgr.init(dbcfg.redis)
         await GMongoMgr.init(dbcfg.mongo)
+    }
+    pause()
+    {
+        for(let i=0;i<this._webservers.length;++i)
+        {
+            this._webservers[i].pause()
+        }
+        for(let i=0;i<this._socketservers.length;++i)
+        {
+            this._socketservers[i].pause()
+        }
+    }
+    resume()
+    {
+        for(let i=0;i<this._webservers.length;++i)
+        {
+            this._webservers[i].resume()
+        }
+        for(let i=0;i<this._socketservers.length;++i)
+        {
+            this._socketservers[i].resume()
+        }
     }
 }
 export let GCgServer=new CgServer()

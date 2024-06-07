@@ -1,6 +1,6 @@
 {
   "name": "cgserver",
-  "version": "8.9.17",
+  "version": "8.9.18",
   "author": "trojan",
   "type": "commonjs",
   "description": "free for all.Websocket or Http",
@@ -49,7 +49,6 @@
     "@types/websocket": "^1.0.10",
     "alipay_sdk2": "^1.1.6",
     "alipay-sdk": "^3.6.1",
-    "cgserver": "^8.9.12",
     "colors": "^1.4.0",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",

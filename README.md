@@ -1,3 +1,5 @@
+8.9.18
+1、支持自定义进程id
 8.9.17
 1、支持websocketserver 暂停和恢复
 2、支持webserver 暂停和恢复
