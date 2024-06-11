@@ -168,7 +168,7 @@ export class IWebSocket
         }
         return true
     }
-    protected async _onMessage(data)
+    protected async _onMessage(data:any)
     {
         let jsonData = data
         let func:Function = this["receive_"+jsonData.cmd]

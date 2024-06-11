@@ -5,7 +5,7 @@ import * as crypto from "crypto";
 import { GLog } from "../Logic/Log";
 import * as CryptoJS from "crypto-js";
 import ECKey from "ec-key";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 } from "uuid";
 
 /**
  * 常用的工具函数类
@@ -734,6 +734,11 @@ export class core
         }
         return str
     }
+    /**
+     * 暂停多少毫秒
+     * @param milliseconds 毫秒
+     * @returns 
+     */
     static sleep(milliseconds:number)
     {
         return new Promise((resolve)=>
@@ -831,7 +836,7 @@ export class core
     }
     static getUuid()
     {
-        let id:string = new uuidv4()
+        let id:string = v4()
         return id
     }
     static signatureBase64(private_key:string,rsa_name:string,payload:string)
@@ -855,10 +860,5 @@ export class core
         let key = new ECKey(private_key, 'pem')
         let verificationResult = key.createVerify(rsa_name).update(payload).verify(signature, 'base64')
         return verificationResult
-    }
-    static async delay(milliseconds:number)
-    {
-        let pm=new Promise(resolve => setTimeout(resolve, milliseconds))
-        return pm
     }
 }

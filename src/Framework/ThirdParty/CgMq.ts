@@ -29,8 +29,8 @@ class CgMqServerWebsocket extends IRpcServerWebSocket
         msg.to_group = to_group
         msg.to_id = to_id
         msg.data = data
-        let jsonData = await this.callRemote(msg)
-        return jsonData
+        let ret_rpcmsg = await this.callRemote(msg)
+        return ret_rpcmsg
     }
     //收到来自远程的调用消息
     async receive_msg(req_msg:RpcMsg)
@@ -128,8 +128,8 @@ export class CgMq
             cmd:func_name,
             args:args
         }
-        let ret = (await this._ws.push(group,data,to_id)) as RpcMsg
-        return ret
+        let ret_rpcmsg = await this._ws.push(group,data,to_id)
+        return ret_rpcmsg
     }
     async onMsg(msg:RpcMsg)
     {

@@ -64,6 +64,17 @@ export class Request
         }
         return body
     }
+    /**
+     * 原始body字符串
+     */
+    get rawBody()
+    {
+        if(!this._req)
+        {
+            return ""
+        }
+        return this._req["rawBody"]||""
+    }
     get postData()
     {
         var body = this._req.body||{}

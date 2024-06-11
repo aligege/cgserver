@@ -54,14 +54,14 @@ export class IRpcServerWebSocket extends IServerWebSocket implements IRpc
         return new Promise<RpcMsg>((resolve,reject)=>
         {
             let handler = null
-            let func=(jsonData:RpcMsg)=>
+            let func=(retRpcMsg:RpcMsg)=>
             {
                 if(handler)
                 {
                     clearTimeout(handler)
                     handler=null
                 }
-                resolve(jsonData)
+                resolve(retRpcMsg)
             }
             handler = setTimeout(()=>
             {
@@ -81,6 +81,11 @@ export class IRpcServerWebSocket extends IServerWebSocket implements IRpc
     {
         if(msg.__return)
         {
+            let ret = this.filterMsg(msg)
+            if(!ret)
+            {
+                return
+            }
             GEventTool.emit(msg.__rpcid,msg)
             return
         }
