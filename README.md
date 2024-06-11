@@ -1,3 +1,5 @@
+9.0.6(修复bug)
+1、IRpcClientWebSocket toRetMsg的bug修正
 9.0.5(不重要)
 1、添加一个rpc提示
 9.0.4
