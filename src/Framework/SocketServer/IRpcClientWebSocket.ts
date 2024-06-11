@@ -77,6 +77,11 @@ export class IRpcClientWebSocket extends IClientWebSocket implements IRpc
     {
         if(msg.__return)
         {
+            let ret = this.filterMsg(msg)
+            if(!ret)
+            {
+                return
+            }
             GEventTool.emit(msg.__rpcid,msg)
             return
         }
