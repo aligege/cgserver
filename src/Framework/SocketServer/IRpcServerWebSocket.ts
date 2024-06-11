@@ -41,7 +41,7 @@ export class IRpcServerWebSocket extends IServerWebSocket implements IRpc
         ret_msg.from_group=this._group
         ret_msg.from_id=this._id
         ret_msg.to_group=req_msg.from_group
-        ret_msg.to_id=req_msg.to_id
+        ret_msg.to_id=req_msg.from_id
         return ret_msg
     }
     async callRemote(msg: RpcMsg)
