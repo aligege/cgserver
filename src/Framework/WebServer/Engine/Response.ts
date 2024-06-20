@@ -52,31 +52,35 @@ export class Response
         this._res.writeHead(302, { 'Location': path });
         this._res.end()
     }
-    renderJson(data,origin?:string | string[] | undefined)
+    render(data:any)
     {
-        this._res.json(data)
+        return this._res.send(data)
+    }
+    renderJson(data)
+    {
         this.debugInfo(data)
+        return this._res.json(data)
     }
-    renderJson404(origin?:string | string[] | undefined)
+    renderJson404()
     {
-        this._res.status(404).json();
+        return this._res.status(404).json();
     }
-    renderJson500(origin?:string | string[] | undefined)
+    renderJson500()
     {
-        this._res.status(500).json()
         this.debugInfo("500")
+        return this._res.status(500).json()
     }
     renderHtml(html:string)
     {
-        this._res.send(html||"")
+        return this._res.send(html||"")
     }
     render404(html?:string)
     {
-        this._res.status(404).send(html||"没找到该页面")
+        return this._res.status(404).send(html||"没找到该页面")
     }
     render500(html?:string)
     {
-        this._res.status(500).send(html||"服务器内部错误500")
+        return this._res.status(500).send(html||"服务器内部错误500")
     }
     renderOptions(method,origin)
     {

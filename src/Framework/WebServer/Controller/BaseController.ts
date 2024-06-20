@@ -73,11 +73,11 @@ export class BaseController
         model.webName = this._engine.cfg.web_name
         return {model}
     }
-    showJson(model?)
+    showJson(model?:any)
     {
-        this._response.renderJson(model,this._request.headers.origin)
+        this._response.renderJson(model)
     }
-    show(model?)
+    show(model?:any)
     {
         let html = this._engine.getRenderHtml(this._request, this._response, this._init_data(model))
         this._response.renderHtml(html)

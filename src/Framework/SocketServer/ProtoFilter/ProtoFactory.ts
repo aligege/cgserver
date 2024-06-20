@@ -26,7 +26,7 @@ class ProtoFactory
             return filter
         }
         let proto_class = this._type_filter_classes[type]
-        if(!proto_class)
+        if(proto_class)
         {
             filter=new proto_class()
         }
