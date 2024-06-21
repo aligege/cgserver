@@ -40,8 +40,48 @@ export class MgReturn
     result=new MrResult()
     list=[]
 }
-export let GMongoMgr:MongoManager = null
 export class MongoManager
+{
+    protected _dbs:{[key:string]:MongoExt}={}
+    protected _defdbname=""
+    get defdbname()
+    {
+        return this._defdbname
+    }
+    //初始化多个数据库，第一个open数据库为默认数据库
+    async init(cfgs:MongoConfig[])
+    {
+        for(let i=0;i<cfgs.length;++i)
+        {
+            let cfg=cfgs[i]
+            if(this._dbs[cfg.database])
+            {
+                GLog.error("数据库配置得database不能相同!database="+cfg.database)
+                return false
+            }
+            let mongoext = new MongoExt()
+            let ret = await mongoext.init(cfg)
+            if(!ret)
+            {
+                GLog.error("数据库初始化失败!cfg="+JSON.stringify(cfg))
+                return false
+            }
+            this._dbs[cfg.database]=mongoext
+            this._defdbname=cfg.database
+        }
+        return true
+    }
+    getMongo(dbname="")
+    {
+        if(!dbname)
+        {
+            dbname=this._defdbname
+        }
+        return this._dbs[dbname]
+    }
+}
+export let GMongoMgr = new MongoManager()
+export class MongoExt
 {
     protected _mongocfg:MongoConfig=null
     protected _init_cbs=[]
@@ -549,4 +589,3 @@ export class MongoManager
         return false
     }
 }
-GMongoMgr = new MongoManager()

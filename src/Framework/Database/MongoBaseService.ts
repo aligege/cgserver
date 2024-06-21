@@ -1,7 +1,8 @@
-import { GMongoMgr } from "./MongoManager";
+import { GMongoMgr, MongoBaseModel } from "./MongoManager";
 import * as mongo from 'mongodb';
+import { GMongoSerMgr } from "./MongoServiceManager";
 
-export class MongoBaseService<T>
+export class MongoBaseService<T extends MongoBaseModel>
 {
     protected _table:string=""
     get table()
@@ -15,26 +16,37 @@ export class MongoBaseService<T>
     }
     get mongoDb()
     {
-        return GMongoMgr.mongoDb
+        return GMongoMgr.getMongo(this._dbname)
+    }
+    protected _dbname=""
+    get dbname()
+    {
+        if(!this._dbname)
+        {
+            this._dbname=GMongoMgr.defdbname
+        }
+        return this._dbname
     }
     protected _t_type:{ new(): T}=null
-    constructor(table:string,type: { new(): T})
+    constructor(table:string,type: { new(): T},dbname="")
     {
         this._t_type=type
         this._table=table
+        this._dbname=dbname
+        GMongoSerMgr.add(this)
     }
-    async getNextId(key?:string)
+    async getNextId(key:string="")
     {
         if(!key)
         {
             key = this._table
         }
-        let id = await GMongoMgr.getAutoIds(this._table)
+        let id = await this.mongoDb.getAutoIds(this._table)
         return id
     }
     toObjectId(id:string)
     {
-        return GMongoMgr.toObjectId(id)
+        return this.mongoDb.toObjectId(id)
     }
     /**
      * 没有id(非_id)的表不能使用该函数
@@ -42,62 +54,62 @@ export class MongoBaseService<T>
      */
     async getById(id:any)
     {
-        let rs=await GMongoMgr.findOne(this._table,null,{id:id})
+        let rs=await this.mongoDb.findOne(this._table,null,{id:id})
         return rs.one as T
     }
-    async get(property?:{},where?:{})
+    async get(property=null,where=null)
     {
-        let rs = await GMongoMgr.findOne(this._table,property,where)
+        let rs = await this.mongoDb.findOne(this._table,property,where)
         return rs.one as T
     }
-    async countDocuments(where?:{},options?: mongo.CountDocumentsOptions)
+    async countDocuments(where=null,options?: mongo.CountDocumentsOptions)
     {
-        let rs = await GMongoMgr.countDocuments(this._table,where)
+        let rs = await this.mongoDb.countDocuments(this._table,where)
         return rs.count
     }
-    async gets(property?:{},where?:{},sort?:{},skip=0,limit=0)
+    async gets(property=null,where=null,sort=null,skip=0,limit=0)
     {
-        let rs = await GMongoMgr.findMany(this._table,property,where,sort,skip,limit)
+        let rs = await this.mongoDb.findMany(this._table,property,where,sort,skip,limit)
         return rs.list as T[]
     }
-    async getRandoms(num:number,property?:{},where?:{})
+    async getRandoms(num:number,property:any,where=null)
     {
-        let rs = await GMongoMgr.simpleAggregate(this._table,property,where,null,num)
+        let rs = await this.mongoDb.simpleAggregate(this._table,property,where,null,num)
         return rs.list as T[]
     }
-    async updateOne(model,where?:{},upsert=false)
+    async updateOne(model:any,where?:any,upsert=false)
     {
-        let rs = await GMongoMgr.updateOne(this._table,model,where,upsert)
+        let rs = await this.mongoDb.updateOne(this._table,model,where,upsert)
         return rs
     }
-    async updateMany(model,where?:{})
+    async updateMany(model:any,where=null)
     {
-        let rs = await GMongoMgr.updateMany(this._table,model,where)
+        let rs = await this.mongoDb.updateMany(this._table,model,where)
         return rs
     }
     async insert(model:T)
     {
-        let rs = await GMongoMgr.insertOne(this._table,model)
+        let rs = await this.mongoDb.insertOne(this._table,model)
         return rs
     }
-    async deleteOne(where)
+    async deleteOne(where:any)
     {
-        let rs = await GMongoMgr.deleteOne(this._table,where)
+        let rs = await this.mongoDb.deleteOne(this._table,where)
         return rs
     }
-    async deleteMany(where)
+    async deleteMany(where:any)
     {
-        let rs = await GMongoMgr.deleteMany(this._table,where)
+        let rs = await this.mongoDb.deleteMany(this._table,where)
         return rs
     }
     async createIndex(index:any,options?:mongo.CreateIndexesOptions)
     {
-        let rs = await GMongoMgr.createIndex(this._table,index,options)
+        let rs = await this.mongoDb.createIndex(this._table,index,options)
         return rs
     }
     aggregate(pipeline?: Document[], options?: mongo.AggregateOptions)
     {
-        let ret = GMongoMgr.aggregate(this._table,pipeline,options)
+        let ret = this.mongoDb.aggregate(this._table,pipeline,options)
         return ret
     }
     /**

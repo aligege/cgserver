@@ -1,3 +1,7 @@
+9.1.0
+1、支持多mongo示例
+2、支持多service实例
+ps:新的service必须是无参数得constructor
 9.0.7(重要修复)
 1、修复createFilter的bug
 9.0.6(修复bug)

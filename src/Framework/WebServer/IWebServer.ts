@@ -1,15 +1,10 @@
 import { Engine } from './Engine/Engine';
 import { GLog } from '../Logic/Log';
-import { GRedisMgr } from '../Database/RedisManager';
-import { GMysqlMgr } from '../Database/MysqlManager';
 import { WebServerConfig } from '../Config/FrameworkConfig';
 import { RazorJs } from './Engine/RazorJs';
-import { GMongoMgr } from '../Database/MongoManager';
-import { GAlipayTool } from '../ThirdParty/AlipayTool';
 import { GServerCfg } from '../Config/IServerConfig';
 import { GEventTool } from '../Logic/EventTool';
 import { GCgServer } from '../cgserver';
-import { GMSSqlMgr } from '../Database/MSSqlManager';
 
 //实现对controller的手动注册
 export class IWebServer
@@ -27,15 +22,9 @@ export class IWebServer
             GLog.error("webserver 配置不存在，启动服务器失败")
             return false
         }
+        
         let dbcfg=GServerCfg.db
-        if(dbcfg)
-        {
-            await GRedisMgr.init(dbcfg.redis)
-            await GMysqlMgr.init(dbcfg.mysql)
-            await GMSSqlMgr.init(dbcfg.mssql)
-            await GMongoMgr.init(dbcfg.mongo)
-        }
-        GAlipayTool.init()
+        await GCgServer.initDb(dbcfg)
         //初始化web引擎
         this._engine = new Engine(cfg,new RazorJs())
         this._engine.start()

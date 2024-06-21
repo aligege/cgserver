@@ -21,14 +21,17 @@ export { Property } from './Database/Decorator/Property';
 export { Table } from './Database/Decorator/Table';
 export { Type } from './Database/Decorator/Type';
 export { EPropertyType } from './Database/Decorator/Property';
+///数据库相关
 export { MongoBaseService } from './Database/MongoBaseService';
 export { BaseModel as MysqlBaseModel } from './Database/MysqlBaseService';
-export { MongoBaseModel,MongoManager } from './Database/MongoManager';
+export { MongoBaseModel,MongoManager,MongoExt } from './Database/MongoManager';
 export { GMongoMgr } from './Database/MongoManager';
 export { GMSSqlMgr } from './Database/MSSqlManager';
 export { MysqlBaseService } from './Database/MysqlBaseService';
 export { GMysqlMgr,SqlResult,SqlReturn,SqlReturns } from './Database/MysqlManager';
 export { GRedisMgr,RedisManager } from './Database/RedisManager';
+export { GMongoSerMgr } from './Database/MongoServiceManager';
+
 export { GCacheTool } from './Logic/CacheTool';
 export { GHttpTool } from './Logic/HttpTool';
 export { GLog } from './Logic/Log';

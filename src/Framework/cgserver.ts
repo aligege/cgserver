@@ -165,7 +165,12 @@ class CgServer
         await GMSSqlMgr.init(dbcfg.mssql)
         await GMysqlMgr.init(dbcfg.mysql)
         await GRedisMgr.init(dbcfg.redis)
-        await GMongoMgr.init(dbcfg.mongo)
+        let mongos=dbcfg.mongos||[]
+        if(dbcfg.mongo)
+        {
+            mongos.push(dbcfg.mongo)
+        }
+        await GMongoMgr.init(mongos)
     }
     pause()
     {

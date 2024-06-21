@@ -1,13 +1,9 @@
-﻿import { GMysqlMgr } from '../Database/MysqlManager';
-import { GRedisMgr } from '../Database/RedisManager';
-import { IClientWebSocket } from './IClientWebSocket';
+﻿import { IClientWebSocket } from './IClientWebSocket';
 import * as ws from 'websocket';
 import { GLog } from './../Logic/Log';
 import * as fs from "fs";
 import * as http from "http";
 import * as https from "https";
-import { GMongoMgr } from '../Database/MongoManager';
-import { GMSSqlMgr } from '../Database/MSSqlManager';
 import { GEventTool } from '../Logic/EventTool';
 import { GServerCfg, IServerConfig } from '../Config/IServerConfig';
 import { GCgServer } from '../cgserver';
@@ -73,13 +69,7 @@ export class ISocketServer
     {
         GCgServer.addSocketServer(this)
         let dbcfg=GServerCfg.db
-        if(dbcfg)
-        {
-            await GRedisMgr.init(dbcfg.redis)
-            await GMysqlMgr.init(dbcfg.mysql)
-            await GMSSqlMgr.init(dbcfg.mssql)
-            await GMongoMgr.init(dbcfg.mongo)
-        }
+        await GCgServer.initDb(dbcfg)
         this.initWebSocket()
     }
     pause()
