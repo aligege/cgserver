@@ -1,3 +1,7 @@
+9.1.1
+1、扩展mongomgr的一个接口addMongo，removeMongo方便自由增减
+2、清除部分无用代码
+3、mongoext的mongoclient未被初始化修正
 9.1.0
 1、支持多mongo示例
 2、支持多service实例

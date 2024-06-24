@@ -54,22 +54,40 @@ export class MongoManager
         for(let i=0;i<cfgs.length;++i)
         {
             let cfg=cfgs[i]
-            if(this._dbs[cfg.database])
-            {
-                GLog.error("数据库配置得database不能相同!database="+cfg.database)
-                return false
-            }
-            let mongoext = new MongoExt()
-            let ret = await mongoext.init(cfg)
+            let ret = await this.addMongo(cfg)
             if(!ret)
             {
-                GLog.error("数据库初始化失败!cfg="+JSON.stringify(cfg))
                 return false
             }
-            this._dbs[cfg.database]=mongoext
-            this._defdbname=cfg.database
         }
         return true
+    }
+    async addMongo(cfg:MongoConfig)
+    {
+        if(this._dbs[cfg.database])
+        {
+            GLog.error("数据库配置得database不能相同!database="+cfg.database)
+            return false
+        }
+        let mongoext = new MongoExt()
+        let ret = await mongoext.init(cfg)
+        if(!ret)
+        {
+            GLog.error("数据库初始化失败!cfg="+JSON.stringify(cfg))
+            return false
+        }
+        this._dbs[cfg.database]=mongoext
+        this._defdbname=cfg.database
+        return true
+    }
+    async removeMongo(dbname:string,force=false)
+    {
+        let mongo = this.getMongo(dbname)
+        if(!mongo)
+        {
+            return false
+        }
+        mongo.close(force)
     }
     getMongo(dbname="")
     {
@@ -122,15 +140,19 @@ export class MongoExt
         this._mongocfg=cfg
         this._inited = true
         GLog.info("mongo config="+JSON.stringify(this._mongocfg))
-        let client = new mongo.MongoClient("mongodb://"+this._mongocfg.host+":"+this._mongocfg.port,this._mongocfg.options)
-        await core.safeCall(client.connect,client)
+        this._mongoClient = new mongo.MongoClient("mongodb://"+this._mongocfg.host+":"+this._mongocfg.port,this._mongocfg.options)
+        await core.safeCall(this._mongoClient.connect,this._mongoClient)
         this.onConnect()
-        this._mongoDb = client.db(this._mongocfg.database)
+        this._mongoDb = this._mongoClient.db(this._mongocfg.database)
         for(let i=0;i<this._init_cbs.length;++i)
         {
             this._init_cbs[i]()
         }
         return true
+    }
+    close(force=false)
+    {
+        this._mongoClient.close(force)
     }
     registerInitCb(cb:Function)
     {
@@ -140,19 +162,6 @@ export class MongoExt
     {
         this._mongo_init_succ = true
         GLog.info("mongo has connected!")
-    }
-    onEnd()
-    {
-        this._mongo_init_succ = false
-        GLog.error("mongo has ended!")
-        GLog.info("mongo try reconnect")
-        this.init(this._mongocfg)
-    }
-    onError(err)
-    {
-        GLog.error("Error " + err)
-        GLog.info("mongo try reconnect")
-        this.init(this._mongocfg)
     }
     /**
      * 获取自增长id
