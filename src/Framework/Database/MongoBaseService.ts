@@ -1,6 +1,5 @@
 import { GMongoMgr, MongoBaseModel } from "./MongoManager";
 import * as mongo from 'mongodb';
-import { GMongoSerMgr } from "./MongoServiceManager";
 
 export class MongoBaseService<T extends MongoBaseModel>
 {
@@ -33,7 +32,6 @@ export class MongoBaseService<T extends MongoBaseModel>
         this._t_type=type
         this._table=table
         this._dbname=dbname
-        GMongoSerMgr.add(this)
     }
     async getNextId(key:string="")
     {

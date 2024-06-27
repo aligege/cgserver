@@ -30,7 +30,6 @@ export { GMSSqlMgr } from './Database/MSSqlManager';
 export { MysqlBaseService } from './Database/MysqlBaseService';
 export { GMysqlMgr,SqlResult,SqlReturn,SqlReturns } from './Database/MysqlManager';
 export { GRedisMgr,RedisManager } from './Database/RedisManager';
-export { GMongoSerMgr } from './Database/MongoServiceManager';
 
 export { GCacheTool } from './Logic/CacheTool';
 export { GHttpTool } from './Logic/HttpTool';
