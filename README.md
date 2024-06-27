@@ -1,3 +1,5 @@
+9.1.2
+1、losslessjson
 9.1.1
 1、扩展mongomgr的一个接口addMongo，removeMongo方便自由增减
 2、清除部分无用代码

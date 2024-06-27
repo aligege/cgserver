@@ -206,21 +206,30 @@ export class IWebSocket
     {
         GLog.info(this.tipKey+" onClose resonCode="+reasonCode+"  des="+description)
     }
-    send(msg:BaseMsg)
+    filterSendMsg(msg:BaseMsg)
     {
         if (!this.connected)
         {
-            return
+            return false
         }
         if (!msg)
         {
             GLog.error(this.tipKey+" Send Message warning:null data!")
-            return
+            return false
         }
         if(this._debug_msg
             &&msg.cmd!="heartbeat")
         {
             GLog.info({tipKey:this.tipKey,action:"send",msg})
+        }
+        return true
+    }
+    send(msg:BaseMsg)
+    {
+        let ret = this.filterSendMsg(msg)
+        if(!ret)
+        {
+            return
         }
         let data = this._onEncode(msg)
         this._ws.send(data)

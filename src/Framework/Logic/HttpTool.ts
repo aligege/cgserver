@@ -2,6 +2,7 @@ import * as request from "request";
 import * as qs from "querystring";
 import { GLog } from "./Log";
 import { core } from "../Core/Core";
+import { parse, stringify } from 'lossless-json'
 
 export let GHttpTool:HttpTool=null
 class HttpTool
@@ -31,7 +32,7 @@ class HttpTool
                 {
                     if(core.isString(body))
                     {
-                        body = JSON.parse(body)
+                        body = parse(body)
                     }
                 }
                 catch(e)
@@ -67,7 +68,7 @@ class HttpTool
                 {
                     if(core.isString(body))
                     {
-                        body = JSON.parse(body)
+                        body = parse(body)
                     }
                 }
                 catch(e)
