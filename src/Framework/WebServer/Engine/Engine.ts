@@ -59,6 +59,7 @@ export class Engine
         }
 
         this._app.use(cookieParser())
+        this._app.use(Express.raw())
         this._app.use(Express.json({limit: '10mb',verify(req, res, buf, encoding) {
             req["rawBody"]=buf
         },}))

@@ -7,7 +7,7 @@ import { parse, stringify } from 'lossless-json'
 export let GHttpTool:HttpTool=null
 class HttpTool
 {
-    get(options_url:request.OptionsWithUrl|string)
+    get(options_url:request.OptionsWithUrl|string):Promise<{error,response,body,originbody}>
     {
         let options:request.OptionsWithUrl=null
         if(core.isString(options_url))
@@ -18,11 +18,11 @@ class HttpTool
         {
             options=options_url as request.OptionsWithUrl
         }
-        return new Promise<{error,response,body}>((resolve,reject)=>
+        return new Promise((resolve,reject)=>
         {
             request.get(options, (error, response, body)=> 
             {
-                let bd=body
+                let originbody=body
                 if(error)
                 {
                     GLog.error("get:"+options.url)
@@ -37,13 +37,13 @@ class HttpTool
                 }
                 catch(e)
                 {
-                    try{body=qs.parse(body)}catch(e){body=bd}
+                    try{body=qs.parse(body)}catch(e){body=originbody}
                 }
-                resolve({error, response, body})
+                resolve({error, response, body, originbody})
             })
         })
     }
-    post(options_url:request.OptionsWithUrl|string)
+    post(options_url:request.OptionsWithUrl|string):Promise<{error,response,body,originbody}>
     {
         let options:request.OptionsWithUrl=null
         if(core.isString(options_url))
@@ -54,11 +54,11 @@ class HttpTool
         {
             options=options_url as request.OptionsWithUrl
         }
-        return new Promise<{error,response,body}>((resolve,reject)=>
+        return new Promise((resolve,reject)=>
         {
             request.post(options, (error, response, body)=>
             {
-                let bd=body
+                let originbody=body
                 if(error)
                 {
                     GLog.error("post:"+options.url)
@@ -73,9 +73,9 @@ class HttpTool
                 }
                 catch(e)
                 {
-                    try{body=qs.parse(body)}catch(e){body=bd}
+                    try{body=qs.parse(body)}catch(e){body=originbody}
                 }
-                resolve({error, response, body})
+                resolve({error, response, body, originbody})
             })
         })
     }

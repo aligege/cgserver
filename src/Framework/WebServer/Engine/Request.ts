@@ -3,6 +3,7 @@ import { URL } from 'url';
 import { WebServerConfig } from "../../Config/FrameworkConfig";
 import { core } from "../../Core/Core";
 import { GLog } from "../../Logic/Log";
+import { parse, stringify } from 'lossless-json'
 
 export class Request
 {
@@ -90,7 +91,7 @@ export class Request
         {
             try
             {
-                body = JSON.parse(body)
+                body = parse(body)
             }
             catch(e)
             {
@@ -98,25 +99,6 @@ export class Request
                 body = {}
             }
         }
-        // 暂时去掉强制数值转换
-        // //服务器会有一层空key的json解析
-        // for(let k in body)
-        // {
-        //     var v = body[k]
-        //     if(!core.isString(v))
-        //     {
-        //         continue
-        //     }
-        //     let intv = parseInt(v)
-        //     if(intv==v)
-        //     {
-        //         body[k]=intv
-        //     }
-        //     else if(parseFloat(v)==v)
-        //     {
-        //         body[k]==parseFloat(v)
-        //     }
-        // }
         return body
     }
     get url()
@@ -153,7 +135,6 @@ export class Request
             ip = <string>ips
         }
         ip = ip ||
-            this._req.connection.remoteAddress ||
             this._req.socket.remoteAddress ||
             this._req.ip||""
         

@@ -3,6 +3,7 @@ import * as URLEncode from "urlencode";
 import { GServerCfg } from "../Config/IServerConfig";
 import { GHttpTool } from "../Logic/HttpTool";
 import { GLog } from "../Logic/Log";
+import { parse, stringify } from 'lossless-json'
 
 export class QQUserInfo
 {
@@ -101,7 +102,7 @@ export class QQTool
         {
             body=body.replace("callback( ","")
             body=body.replace(" );\n","")
-            try{body=JSON.parse(body)}catch(e){}
+            try{body=parse(body)}catch(e){}
             if(!body.openid)
             {
                 GLog.error(rs.response.body)
