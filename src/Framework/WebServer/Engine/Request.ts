@@ -3,7 +3,6 @@ import { URL } from 'url';
 import { WebServerConfig } from "../../Config/FrameworkConfig";
 import { core } from "../../Core/Core";
 import { GLog } from "../../Logic/Log";
-import { parse, stringify } from 'lossless-json'
 
 export class Request
 {
@@ -91,7 +90,7 @@ export class Request
         {
             try
             {
-                body = parse(body)
+                body = JSON.parse(body)
             }
             catch(e)
             {

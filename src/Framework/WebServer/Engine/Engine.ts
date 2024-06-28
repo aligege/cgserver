@@ -3,6 +3,7 @@ import { Request } from './Request';
 import { GCtrMgr } from './ControllerManager';
 import { RazorJs } from './RazorJs';
 import * as http from "http";
+import * as https from "https";
 import { GLog } from '../../Logic/Log';
 import { WebServerConfig } from '../../Config/FrameworkConfig';
 import * as cors from "cors";
@@ -34,7 +35,7 @@ export class Engine
     start()
     {
         let port = this._cfg.port
-        let https = require("https");
+        //let https = require("https");
         let fs = require("fs");
 
         if(!port)
@@ -42,20 +43,24 @@ export class Engine
             GLog.error(this._cfg)
             return
         }
-        http.createServer(this._app).listen(port,()=>
-        {
-            this._is_running=true
-            GLog.info("Server("+this._cfg.web_name+") running at http://127.0.0.1:" + port + "/")
-        });
-        
         if(this._cfg.ssl)
         {
             const httpsOption = {
                 key : fs.readFileSync(this._cfg.ssl.key),
                 cert: fs.readFileSync(this._cfg.ssl.crt)
             }
-            https.createServer(httpsOption, this._app).listen(port+1);
-            GLog.info("Server("+this._cfg.web_name+") running at https://127.0.0.1:" + (port+1) + "/")
+            https.createServer(httpsOption, this._app).listen(port,()=>{
+                this._is_running=true
+                GLog.info("Server("+this._cfg.web_name+") running at https://127.0.0.1:" + port + "/")
+            });
+        }
+        else
+        {
+            http.createServer(this._app).listen(port,()=>
+            {
+                this._is_running=true
+                GLog.info("Server("+this._cfg.web_name+") running at http://127.0.0.1:" + port + "/")
+            });
         }
 
         this._app.use(cookieParser())

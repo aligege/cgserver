@@ -1,6 +1,5 @@
 import { GLog } from './../../Logic/Log';
 import * as fs from "fs";
-import { parse, stringify } from 'lossless-json'
 
 export class VersionModel
 {
@@ -28,7 +27,7 @@ class DBCache
         {
             try{
                 let table=fs.readFileSync(this._path)
-                this._versions=parse(table.toString()) as any
+                this._versions=JSON.parse(table.toString()) as any
             }
             catch(e)
             {

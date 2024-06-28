@@ -1,7 +1,6 @@
 import { IProtoFilter } from './IProtoFilter';
 import { core } from '../../Core/Core';
 import { GLog } from '../../Logic/Log';
-import { parse, stringify } from 'lossless-json'
 
 export class JsonProtoFilter implements IProtoFilter
 {
@@ -23,7 +22,7 @@ export class JsonProtoFilter implements IProtoFilter
         {
             if(core.isString(data))
             {
-                data = parse(data)
+                data = JSON.parse(data)
             }
         }
         catch(e)

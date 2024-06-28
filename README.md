@@ -1,3 +1,9 @@
+9.1.7
+1、httptool 默认可以支持全局输出日志了
+9.1.6
+1、默认不适用losslessjson，会把数字变成对象
+9.1.5
+1、https只单独监听
 9.1.3
 1、几乎同意替换成losslessjson
 2、express使用了raw
