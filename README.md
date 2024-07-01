@@ -1,3 +1,5 @@
+9.1.8
+1、强制mongocache访问mongo的bug修改
 9.1.7
 1、httptool 默认可以支持全局输出日志了
 9.1.6

@@ -18,6 +18,11 @@ class MongoCacheService extends MongoBaseService<MongoCacheModel>
         super("cache",MongoCacheModel)
         GCgServer.addListener("start",()=>
         {
+            if(!this.mongoDb)
+            {
+                //客户端未开启mongo
+                return
+            }
             this.createIndex({key:1})
             this.createIndex( { "expireAt": 1 }, { expireAfterSeconds: 0 } )
         })
