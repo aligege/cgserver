@@ -61,7 +61,6 @@ export { GAlipayTool,AlipayResult,AlipayCallBack } from './ThirdParty/AlipayTool
 export { GSmsTool } from './ThirdParty/Alisms';
 export { GAppleTool } from './ThirdParty/AppleTool';
 export { GEmailTool } from './ThirdParty/EmailTool';
-export { GOpenSocial } from './ThirdParty/OpenSocial';
 export { GQiniuTool } from './ThirdParty/QiniuTool';
 export { GQQTool } from './ThirdParty/QQTool';
 export { GWechatOATool } from './ThirdParty/WechatOATool';

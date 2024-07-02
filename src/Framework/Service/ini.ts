@@ -21,7 +21,7 @@ export enum EAccountState
 export enum EAccountFrom
 {
     Guest=0,
-    OpenSocial,
+    _OpenSocial,//去掉不要了
     WeChat,
     QQ,
     Phone,

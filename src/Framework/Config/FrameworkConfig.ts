@@ -48,6 +48,72 @@ export class WebServerConfig
     static:{route:string,path:string}[]=null
     rootview=""
 }
+class AliSmsConfig
+{
+    signName=""
+    accessKeyId=""
+    secretAccessKey=""
+    templateCode=""
+}
+class QiNiuConfig
+{
+    host      =""
+    bucket    =""
+    accessKey =""
+    secretKey =""
+}
+class EmailConfig
+{
+    host=""
+    port=587
+    secure=false
+    auth: 
+    {
+        user:string,
+        pass:string
+    }=null
+    from=""
+}
+class QQConfig
+{
+    app_id=""
+    app_key=""
+    redirect_uri=""
+}
+class WechatConfig
+{
+    app_id=""
+    app_key=""
+    redirect_uri=""
+}
+class AlipayConfig
+{
+    open=false
+    dev=false
+    app_id=""
+    app_key=""
+    gateway=""
+    //RSA1 RSA2
+    signType=""
+    /** 指定private key类型, 默认： PKCS1, PKCS8: PRIVATE KEY, PKCS1: RSA PRIVATE KEY */
+    keyType=""
+    alipay_root_cert_sn=""
+    alipay_cert_sn=""
+    app_cert_sn=""
+    notify_url=""
+
+    app_id_dev=""
+    app_key_dev=""
+    gateway_dev=""
+    //RSA1 RSA2
+    signType_dev=""
+    /** 指定private key类型, 默认： PKCS1, PKCS8: PRIVATE KEY, PKCS1: RSA PRIVATE KEY */
+    keyType_dev=""
+    alipay_root_cert_sn_dev=""
+    alipay_cert_sn_dev=""
+    app_cert_sn_dev=""
+    notify_url_dev:""
+}
 export class FrameworkConfig extends Config
 {
     /*
@@ -148,90 +214,16 @@ export class FrameworkConfig extends Config
      */
     debug_msg=false
     db=new DbConfig()
-    third_cfg=
+    aliSms:AliSmsConfig=null
+    qiniu:QiNiuConfig=null
+    email:EmailConfig=null
+    qq:QQConfig=null
+    wechat:WechatConfig=null
+    alipay:AlipayConfig=null
+    apple:
     {
-        open_social:
-        {
-            app_id:"appid_42313131",
-            app_secret:"apps_FDS4342J34JL432",
-            auth_url:"http://47.99.195.103:6666/auth/account/",
-            user_url:"http://47.99.195.103:6666/auth/userinfo/",
-            update_pwd_url:"http://47.99.195.103:6666/auth/updatepwd/"
-        },
-        aliSms:
-        {
-            signName:"而已网络",
-            accessKeyId:"LTAIeqjiZ5OCev0B",
-            secretAccessKey:"0w1fmDEORshI94QqtampBaAPQDqUAj",
-            templateCode:"SMS_154589473"
-        },
-        qiniu:
-        {
-            host      : "p0bj0dycx.bkt.clouddn.com",
-            bucket    : "eryiniuniu",
-            accessKey : "OETxflxP9V5ZzPcjE30asCv-YxWBvDpmMPJegtI4",
-            secretKey : "kZWsom120P0-cfQt_9_1-wR_X8RwuLeMXKbU_uc4"
-        },
-        email:
-        {
-            host: "smtp.live.com",
-            port: 587,
-            secure: false, // true for 465, false for other ports
-            auth: 
-            {
-                user: "chengang01@live.com", // generated ethereal user
-                pass: "cg123!@#" // generated ethereal password
-            },
-            from:"OpenSocial <chengang01@live.com>"
-        },
-        qq:
-        {
-            app_id:"101775753",
-            app_key:"753d0f02f3c4093062e7b2f56c7fcb0c",
-            redirect_uri:"http://www.eryinet.com/qq/callback"
-        },
-        wechat:
-        {
-            app_id:"wx80f0f10fe1304e9d",
-            app_key:"a76fc337c49b309886a6538d31c344e2",
-            redirect_uri:"http://www.eryinet.com/wechat/callback"
-        },
-        alipay:
-        {
-            open:false,
-            dev:false,
-            app_id: "",
-            app_key:"",
-            gateway:"",
-            //RSA1 RSA2
-            signType: <'RSA2'|'RSA'>'RSA2',
-            /** 指定private key类型, 默认： PKCS1, PKCS8: PRIVATE KEY, PKCS1: RSA PRIVATE KEY */
-            keyType: <'PKCS1'|'PKCS8'>'PKCS1',
-            alipay_root_cert_sn:"",
-            alipay_cert_sn:"",
-            app_cert_sn:"",
-            notify_url:"",
-
-            app_id_dev: "",
-            app_key_dev:"",
-            gateway_dev:"",
-            //RSA1 RSA2
-            signType_dev: <'RSA2'|'RSA'>'RSA2',
-            /** 指定private key类型, 默认： PKCS1, PKCS8: PRIVATE KEY, PKCS1: RSA PRIVATE KEY */
-            keyType_dev: <'PKCS1'|'PKCS8'>'PKCS1',
-            alipay_root_cert_sn_dev:"",
-            alipay_cert_sn_dev:"",
-            app_cert_sn_dev:"",
-            notify_url_dev:""
-        },
-        apple:
-        {
-            keyIds:{}
-        },
-        cgrpc:<RpcConfig>null
+        keyIds:{}
     }
-    //key是ip，value是domain
-    ip_to_domain={}
     root_path=process.cwd()
     constructor()
     {

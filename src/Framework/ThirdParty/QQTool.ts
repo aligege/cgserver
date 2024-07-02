@@ -45,10 +45,15 @@ export class QQTool
      */
     getAuthCodeUrl(scope?:string,display?:string)
     {
+        if(!GServerCfg.qq)
+        {
+            GLog.error("qq config not found!")
+            return null
+        }
         //必须	成功授权后的回调地址，必须是注册appid时填写的主域名下的地址，建议设置为网站首页或网站的用户中心
-        let redirect_uri = URLEncode.encode(GServerCfg.third_cfg.qq.redirect_uri)
+        let redirect_uri = URLEncode.encode(GServerCfg.qq.redirect_uri)
         //必须	申请QQ登录成功后，分配给应用的appid。
-        let client_id = GServerCfg.third_cfg.qq.app_id
+        let client_id = GServerCfg.qq.app_id
         //必须	授权类型，此值固定为“code”。
         let response_type="code"
         //必须	client端的状态值。用于第三方应用防止CSRF攻击，成功授权后回调时会原样带回。请务必严格按照流程检查用户与state参数状态的绑定。
@@ -71,14 +76,19 @@ export class QQTool
         {
             return null
         }
+        if(!GServerCfg.qq)
+        {
+            GLog.error("qq config not found!")
+            return null
+        }
         //必须	授权类型，在本步骤中，此值为“authorization_code”。
         let grant_type = "authorization_code"
         //必须	申请QQ登录成功后，分配给应用的appid。
-        let client_id = GServerCfg.third_cfg.qq.app_id
+        let client_id = GServerCfg.qq.app_id
         //必须	申请QQ登录成功后，分配给网站的appkey。
-        let client_secret = GServerCfg.third_cfg.qq.app_key
+        let client_secret = GServerCfg.qq.app_key
         //必须	成功授权后的回调地址，必须是注册appid时填写的主域名下的地址，建议设置为网站首页或网站的用户中心
-        let redirect_uri = URLEncode.encode(GServerCfg.third_cfg.qq.redirect_uri)
+        let redirect_uri = URLEncode.encode(GServerCfg.qq.redirect_uri)
 
         let url="https://graph.qq.com/oauth2.0/token?code="+auth_code+"&grant_type="+grant_type+"&client_id="+client_id+"&client_secret="+client_secret+"&redirect_uri="+redirect_uri
         let rs = await GHttpTool.get(url)
@@ -116,7 +126,12 @@ export class QQTool
         {
             return null
         }
-        let url = "https://graph.qq.com/user/get_user_info?access_token="+access_token+"&oauth_consumer_key="+GServerCfg.third_cfg.qq.app_id+"&openid="+openid
+        if(!GServerCfg.qq)
+        {
+            GLog.error("qq config not found!")
+            return null
+        }
+        let url = "https://graph.qq.com/user/get_user_info?access_token="+access_token+"&oauth_consumer_key="+GServerCfg.qq.app_id+"&openid="+openid
         let rs = await GHttpTool.get(url)
         if(rs.body)
         {

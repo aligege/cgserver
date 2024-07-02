@@ -73,28 +73,28 @@ class AlipayTool
     }
     init()
     {
-        if(!GServerCfg.third_cfg.alipay
-            ||!GServerCfg.third_cfg.alipay.open)
+        if(!GServerCfg.alipay
+            ||!GServerCfg.alipay.open)
         {
             return false
         }
         let suffix=""
-        if(GServerCfg.third_cfg.alipay.dev)
+        if(GServerCfg.alipay.dev)
         {
             suffix="_dev"
         }
         this._cfg={
-            app_id: GServerCfg.third_cfg.alipay["app_id"+suffix],
-            app_key: GServerCfg.third_cfg.alipay["app_key"+suffix],
-            gateway: GServerCfg.third_cfg.alipay["gateway"+suffix],
+            app_id: GServerCfg.alipay["app_id"+suffix],
+            app_key: GServerCfg.alipay["app_key"+suffix],
+            gateway: GServerCfg.alipay["gateway"+suffix],
             //RSA1 RSA2
-            signType: GServerCfg.third_cfg.alipay["signType"+suffix],
+            signType: GServerCfg.alipay["signType"+suffix],
             /** 指定private key类型, 默认： PKCS1, PKCS8: PRIVATE KEY, PKCS1: RSA PRIVATE KEY */
-            keyType: GServerCfg.third_cfg.alipay["signType"+suffix],
-            alipay_root_cert_sn: GServerCfg.third_cfg.alipay["alipay_root_cert_sn"+suffix],
-            alipay_cert_sn: GServerCfg.third_cfg.alipay["alipay_cert_sn"+suffix],
-            app_cert_sn: GServerCfg.third_cfg.alipay["app_cert_sn"+suffix],
-            notify_url: GServerCfg.third_cfg.alipay["notify_url"+suffix]
+            keyType: GServerCfg.alipay["signType"+suffix],
+            alipay_root_cert_sn: GServerCfg.alipay["alipay_root_cert_sn"+suffix],
+            alipay_cert_sn: GServerCfg.alipay["alipay_cert_sn"+suffix],
+            app_cert_sn: GServerCfg.alipay["app_cert_sn"+suffix],
+            notify_url: GServerCfg.alipay["notify_url"+suffix]
         }
         if(this._cfg.alipay_cert_sn)
         {
@@ -119,6 +119,7 @@ class AlipayTool
                 keyType:this._cfg.keyType
             })
         }
+        GLog.info("alipay init success!")
     }
     /**
      *  charset:"utf-8",method:"alipay.trade.app.pay",sign_type:"RSA2,version:"1.0"

@@ -9,12 +9,17 @@ class SMSTool
     protected _sms_client=null
     init()
     {
+        if(!GServerCfg.aliSms)
+        {
+            return false
+        }
         if(this._is_init)
         {
             return true
         }
         this._is_init = true
-        this._sms_client = new SMSClient({accessKeyId:GServerCfg.third_cfg.aliSms.accessKeyId,secretAccessKey:GServerCfg.third_cfg.aliSms.secretAccessKey})
+        this._sms_client = new SMSClient({accessKeyId:GServerCfg.aliSms.accessKeyId,secretAccessKey:GServerCfg.aliSms.secretAccessKey})
+        GLog.info("SMSClient init success!")
     }
     /**
      * 发送短信验证码
@@ -28,8 +33,8 @@ class SMSTool
         {
             this._sms_client.sendSMS({
                 PhoneNumbers:phone,
-                SignName:GServerCfg.third_cfg.aliSms.signName,
-                TemplateCode:GServerCfg.third_cfg.aliSms.templateCode,
+                SignName:GServerCfg.aliSms.signName,
+                TemplateCode:GServerCfg.aliSms.templateCode,
                 TemplateParam:JSON.stringify({code:code})
             }).then((res)=>
             {

@@ -8,27 +8,33 @@ class EmailTool
     send(to:string,subject:string,html:string)
     {
         return new Promise((resolve,reject)=>
-        {        
+        {   
+            if(!GServerCfg.email)
+            {
+                GLog.error("email config not found!")
+                resolve("email config not found!")
+                return
+            }
             let transport = nodeMailer.createTransport({
-                    host: GServerCfg.third_cfg.email.host,
-                    port: GServerCfg.third_cfg.email.port,
-                    secure: GServerCfg.third_cfg.email.secure,
+                    host: GServerCfg.email.host,
+                    port: GServerCfg.email.port,
+                    secure: GServerCfg.email.secure,
                     auth: 
                     {
-                        user: GServerCfg.third_cfg.email.auth.user,
-                        pass: GServerCfg.third_cfg.email.auth.pass
+                        user: GServerCfg.email.auth.user,
+                        pass: GServerCfg.email.auth.pass
                     }
             })
             let mail =
             {
-                from: GServerCfg.third_cfg.email.from,
+                from: GServerCfg.email.from,
                 to: to,
                 subject: subject,
                 html: html
             }
             transport.sendMail(mail,(_err,msg)=>
             {
-                GLog.error(JSON.stringify(_err))
+                GLog.error(_err)
                 resolve(_err)
             })
         })

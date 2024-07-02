@@ -2,8 +2,6 @@
 import { MongoBaseService } from '../Database/MongoBaseService';
 import { MongoBaseModel } from '../Database/MongoManager';
 import { GCacheTool } from '../Logic/CacheTool';
-import { GLog } from '../Logic/Log';
-import { GOpenSocial } from '../ThirdParty/OpenSocial';
 import { GQQTool } from '../ThirdParty/QQTool';
 import { GWechatTool } from '../ThirdParty/WechatTool';
 import { EAccountFrom, EAccountState } from './ini';
@@ -39,7 +37,6 @@ export class MongoAccountService<T extends MongoAccountModel> extends MongoBaseS
         let account = new this._t_type()
         switch(from)
         {
-            case EAccountFrom.OpenSocial:
             case EAccountFrom.WeChat:
             case EAccountFrom.QQ:
             case EAccountFrom.Apple:
@@ -140,7 +137,6 @@ export class MongoAccountService<T extends MongoAccountModel> extends MongoBaseS
         {
             switch(from)
             {
-                case EAccountFrom.OpenSocial:
                 case EAccountFrom.QQ:
                 case EAccountFrom.WeChat:
                 case EAccountFrom.Guest:
@@ -170,7 +166,6 @@ export class MongoAccountService<T extends MongoAccountModel> extends MongoBaseS
             {
                 switch(from)
                 {
-                    case EAccountFrom.OpenSocial:
                     case EAccountFrom.QQ:
                     case EAccountFrom.WeChat:
                     case EAccountFrom.Apple:
@@ -178,25 +173,7 @@ export class MongoAccountService<T extends MongoAccountModel> extends MongoBaseS
                     {
                         if(!extra_info)
                         {
-                            if(from==EAccountFrom.OpenSocial)
-                            {
-                                let body = await GOpenSocial.getUser(unionid,openid)
-                                if(body&&body.errcode)
-                                {
-                                    rs.errcode = body.errcode
-                                    return rs
-                                }
-                                else if(body&&body.user)
-                                {
-                                    extra_info=
-                                    {
-                                        logo:body.user.logo,
-                                        sex:body.user.sex,
-                                        nickname:body.user.nickname
-                                    }
-                                }
-                            }
-                            else if(from==EAccountFrom.QQ)
+                            if(from==EAccountFrom.QQ)
                             {
                                 let userInfo = await GQQTool.getUserInfo(access_token,openid)
                                 if(!userInfo)
@@ -287,7 +264,6 @@ export class MongoAccountService<T extends MongoAccountModel> extends MongoBaseS
         let rs = {errcode:null,account:<T>null}
         if(from==EAccountFrom.QQ
             ||from==EAccountFrom.WeChat
-            ||from==EAccountFrom.OpenSocial
             ||from==EAccountFrom.Apple
             ||from==EAccountFrom.Google)
         {
@@ -328,17 +304,6 @@ export class MongoAccountService<T extends MongoAccountModel> extends MongoBaseS
                 rs.errcode=EErrorCode.Login_Failed
             }
         }
-        return rs
-    }
-    /**
-     * 修改密码
-     * @param unionid 
-     * @param openid
-     * @param new_pwd 
-     */
-    async updatePwd(unionid:string,openid:string,new_pwd:string)
-    {
-        let rs = await GOpenSocial.updatePwd(unionid,openid,new_pwd)
         return rs
     }
     async register(type:EAccountFrom,key:string,password:string,ip:string,extra?)

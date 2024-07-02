@@ -197,7 +197,7 @@ class AppleTool
     signature(nickname:string,create_time:number,appBundleID:string,productIdentifier:string,offerIdentifier:string)
     {
         let keyIdentifier="";
-        for(var k in GServerCfg.third_cfg.apple.keyIds)
+        for(var k in GServerCfg.apple.keyIds)
         {
             keyIdentifier=k
             break
@@ -212,7 +212,7 @@ class AppleTool
                   create_time;
 
         // Get the PEM-formatted private key string associated with the Key ID.
-        const path = GServerCfg.third_cfg.apple.keyIds[keyIdentifier]
+        const path = GServerCfg.apple.keyIds[keyIdentifier]
         const keyString = fs.readFileSync(path).toString()
 
         // Create an Elliptic Curve Digital Signature Algorithm (ECDSA) object using the private key.

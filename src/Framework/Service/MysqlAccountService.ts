@@ -2,7 +2,6 @@
 import { BaseModel, MysqlBaseService } from '../Database/MysqlBaseService';
 import { GCacheTool } from '../Logic/CacheTool';
 import { EErrorCode } from '../Config/_error_';
-import { GOpenSocial } from '../ThirdParty/OpenSocial';
 import { GUserSer, MysqlUserModel } from './MysqlUserService';
 import { GQQTool } from '../ThirdParty/QQTool';
 import { GWechatTool } from '../ThirdParty/WechatTool';
@@ -12,7 +11,6 @@ import { NotNull } from '../Database/Decorator/NotNull';
 import { Type } from '../Database/Decorator/Type';
 import { AutoIncrement } from '../Database/Decorator/AutoIncrement';
 import { EAccountFrom, EAccountState } from './ini';
-import { GLog } from '../Logic/Log';
 
 @Table("account",1,"账号")
 export class MysqlAccountModel extends BaseModel
@@ -92,7 +90,6 @@ export class MysqlAccountService<T extends MysqlAccountModel> extends MysqlBaseS
         let account = new this._t_type()
         switch(from)
         {
-            case EAccountFrom.OpenSocial:
             case EAccountFrom.WeChat:
             case EAccountFrom.QQ:
             case EAccountFrom.Apple:
@@ -192,7 +189,6 @@ export class MysqlAccountService<T extends MysqlAccountModel> extends MysqlBaseS
         {
             switch(from)
             {
-                case EAccountFrom.OpenSocial:
                 case EAccountFrom.QQ:
                 case EAccountFrom.WeChat:
                 case EAccountFrom.Guest:
@@ -222,7 +218,6 @@ export class MysqlAccountService<T extends MysqlAccountModel> extends MysqlBaseS
             {
                 switch(from)
                 {
-                    case EAccountFrom.OpenSocial:
                     case EAccountFrom.QQ:
                     case EAccountFrom.WeChat:
                     case EAccountFrom.Apple:
@@ -230,25 +225,7 @@ export class MysqlAccountService<T extends MysqlAccountModel> extends MysqlBaseS
                     {
                         if(!extra_info)
                         {
-                            if(from==EAccountFrom.OpenSocial)
-                            {
-                                let body = await GOpenSocial.getUser(unionid,openid)
-                                if(body&&body.errcode)
-                                {
-                                    rs.errcode = body.errcode
-                                    return rs
-                                }
-                                else if(body&&body.user)
-                                {
-                                    extra_info=
-                                    {
-                                        logo:body.user.logo,
-                                        sex:body.user.sex,
-                                        nickname:body.user.nickname
-                                    }
-                                }
-                            }
-                            else if(from==EAccountFrom.QQ)
+                            if(from==EAccountFrom.QQ)
                             {
                                 let userInfo = await GQQTool.getUserInfo(access_token,openid)
                                 if(userInfo.ret)
@@ -334,7 +311,6 @@ export class MysqlAccountService<T extends MysqlAccountModel> extends MysqlBaseS
         let rs = {errcode:null,account:<T>null}
         if(from==EAccountFrom.QQ
             ||from==EAccountFrom.WeChat
-            ||from==EAccountFrom.OpenSocial
             ||from==EAccountFrom.Apple
             ||from==EAccountFrom.Google)
         {
@@ -375,17 +351,6 @@ export class MysqlAccountService<T extends MysqlAccountModel> extends MysqlBaseS
                 rs.errcode=EErrorCode.Login_Failed
             }
         }
-        return rs
-    }
-    /**
-     * 修改密码
-     * @param unionid 
-     * @param openid
-     * @param new_pwd 
-     */
-    async updatePwd(unionid:string,openid:string,new_pwd:string)
-    {
-        let rs = await GOpenSocial.updatePwd(unionid,openid,new_pwd)
         return rs
     }
     async register(type:EAccountFrom,key:string,password:string,ip:string,extra?)

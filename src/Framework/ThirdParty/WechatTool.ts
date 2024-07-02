@@ -28,9 +28,13 @@ export class WechatTool
      */
     getAuthCodeUrl()
     {
-        let appid="wx80f0f10fe1304e9d"
-        let url = "https://open.weixin.qq.com/connect/qrconnect?appid="+ GServerCfg.third_cfg.wechat.app_id
-        url+="&redirect_uri="+URLEncode.encode(GServerCfg.third_cfg.wechat.redirect_uri)
+        if(!GServerCfg.wechat)
+        {
+            GLog.error("wechat config not found!")
+            return null
+        }
+        let url = "https://open.weixin.qq.com/connect/qrconnect?appid="+ GServerCfg.wechat.app_id
+        url+="&redirect_uri="+URLEncode.encode(GServerCfg.wechat.redirect_uri)
         url+="&response_type=code&scope=snsapi_login"
         //必须	client端的状态值。用于第三方应用防止CSRF攻击，成功授权后回调时会原样带回。请务必严格按照流程检查用户与state参数状态的绑定。
         let state=_.random(1000000,9999999)
@@ -43,7 +47,12 @@ export class WechatTool
         {
             return null
         }
-        let url="https://api.weixin.qq.com/sns/oauth2/access_token?appid="+GServerCfg.third_cfg.wechat.app_id+"&secret="+GServerCfg.third_cfg.wechat.app_key+"&code="+auth_code+"&grant_type=authorization_code"
+        if(!GServerCfg.wechat)
+        {
+            GLog.error("wechat config not found!")
+            return null
+        }
+        let url="https://api.weixin.qq.com/sns/oauth2/access_token?appid="+GServerCfg.wechat.app_id+"&secret="+GServerCfg.wechat.app_key+"&code="+auth_code+"&grant_type=authorization_code"
         let rs = await GHttpTool.get(url)
         /*
         { 
