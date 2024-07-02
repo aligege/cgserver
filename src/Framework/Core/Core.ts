@@ -640,19 +640,19 @@ export class core
         let time:Date = new Date(now.getFullYear(),now.getMonth())
         return time.getTime()
     }
-    static getLastWeekStartTime()
+    static getNextWeekStartTime()
     {
         let one_day = 24*60*60*1000
         let time = this.getTodayStartTime()
         let day = new Date().getDay()
-        return time-(day+7)*one_day
+        return time+(7-(day-1))*one_day
     }
     static getCurWeekStartTime()
     {
         let one_day = 24*60*60*1000
         let time = this.getTodayStartTime()
         let day = new Date().getDay()
-        return time-day*one_day
+        return time-(day-1)*one_day
     }
     static isSameMonth(src_time:number,target_time:number)
     {

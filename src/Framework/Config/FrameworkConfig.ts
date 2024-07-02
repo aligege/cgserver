@@ -147,8 +147,6 @@ export class FrameworkConfig extends Config
      * 控制网络消息的
      */
     debug_msg=false
-    local_host="127.0.0.1"
-    internet_host="127.0.0.1"
     db=new DbConfig()
     third_cfg=
     {
