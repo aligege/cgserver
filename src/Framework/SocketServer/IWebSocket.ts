@@ -170,6 +170,7 @@ export class IWebSocket
     }
     protected async _onMessage(data:any)
     {
+        let time=Date.now()
         let jsonData = data
         let func:Function = this["receive_"+jsonData.cmd]
         let ret = this.filterMsg(jsonData)
@@ -192,6 +193,10 @@ export class IWebSocket
         else
         {
             await core.safeCall(func,this,jsonData)
+        }
+        if(this._debug_msg)
+        {
+            GLog.info("["+(Date.now()-time)+"ms] "+jsonData.cmd)
         }
     }
     onOpen(e?)

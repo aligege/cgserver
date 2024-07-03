@@ -123,12 +123,17 @@ export class CgMq
     }
     async callRemote(group:string,to_id:string,func_name:string,...args)
     {
+        let time=Date.now()
         let data = 
         {
             cmd:func_name,
             args:args
         }
         let ret_rpcmsg = await this._ws.push(group,data,to_id)
+        if(this._ws.debug_msg)
+        {
+            GLog.info("["+(Date.now()-time)+"ms] callRemote:"+group+"-"+func_name)
+        }
         return ret_rpcmsg
     }
     async onMsg(msg:RpcMsg)

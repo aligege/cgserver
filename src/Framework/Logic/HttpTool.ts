@@ -19,6 +19,7 @@ class HttpTool
 
     get(options_url:request.OptionsWithUrl|string):Promise<{error,response,body,originbody}>
     {
+        let time=Date.now()
         let options:request.OptionsWithUrl=null
         if(core.isString(options_url))
         {
@@ -56,6 +57,7 @@ class HttpTool
                 if(this._debug)
                 {
                     GLog.info({
+                        dttime:(Date.now()-time)+"ms",
                         url:options.url,
                         originbody:originbody
                     })
@@ -66,6 +68,7 @@ class HttpTool
     }
     post(options_url:request.OptionsWithUrl|string):Promise<{error,response,body,originbody}>
     {
+        let time=Date.now()
         let options:request.OptionsWithUrl=null
         if(core.isString(options_url))
         {
@@ -103,6 +106,7 @@ class HttpTool
                 if(this._debug)
                 {
                     GLog.info({
+                        dttime:(Date.now()-time)+"ms",
                         url:options.url,
                         originbody:originbody
                     })

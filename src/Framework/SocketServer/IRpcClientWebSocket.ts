@@ -3,6 +3,7 @@ import { GEventTool } from "../Logic/EventTool";
 import { GLog } from "../Logic/Log";
 import { IRpc, RpcMsg } from "./IRpc";
 import { IClientWebSocket } from "./IClientWebSocket";
+import { core } from "../Core/Core";
 
 export class IRpcClientWebSocket extends IClientWebSocket implements IRpc
 {
@@ -15,7 +16,7 @@ export class IRpcClientWebSocket extends IClientWebSocket implements IRpc
     protected _timeout=3000
     protected _genId(pre="")
     {
-        return pre+"_"+Date.now()%10000000000+"_"+_.uniqueId()+_.random(9999999)
+        return pre+"_"+core.getUuid()
     }
     getNewMsg(cmd: string, errcode?: { id: number; des: string; }) {
         let msg = super.getNewMsg(cmd,errcode) as RpcMsg
