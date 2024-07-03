@@ -9,14 +9,12 @@ export class Response
     protected _res:Express.Response=null
     protected _cookie_prefix=""
     protected _cfg:WebServerConfig=null
-    protected _create_time=-1
     get baseRes()
     {
         return this._res
     }
     constructor(res:Express.Response,cfg:WebServerConfig)
     {
-        this._create_time=Date.now()
         this._cfg = cfg
         this._res = res
         this._cookie_prefix = this._cfg.cookie.prefix
