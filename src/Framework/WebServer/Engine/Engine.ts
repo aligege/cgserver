@@ -131,10 +131,10 @@ export class Engine
         await this._callCtrAction(httpinfo.action_name,httpinfo.req,httpinfo.res)
     }
     protected _method_preactions={
-        "on":"on",
-        "show":"show",
-        "onoptions":"onoptions",
-        "onhead":"onhead"
+        "post":"on",
+        "get":"show",
+        "options":"onoptions",
+        "head":"onhead"
     }
     /**
      * 预处理http请求信息
