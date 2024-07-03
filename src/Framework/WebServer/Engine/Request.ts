@@ -258,12 +258,8 @@ export class Request
         this._params = this._params||{}
         return
     }
-    debugInfo()
+    getDebugInfo()
     {
-        if(!this._cfg.debug)
-        {
-            return
-        }
         let debuginfo =
         {
             module:this._module,
@@ -275,6 +271,15 @@ export class Request
             post:this.postData,
             method:this._req.method.toLowerCase()
         }
+        return debuginfo
+    }
+    debugInfo(force=false)
+    {
+        if(!this._cfg.debug&&!force)
+        {
+            return
+        }
+        let debuginfo = this.getDebugInfo()
         GLog.info(debuginfo)
     }
 }

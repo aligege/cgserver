@@ -101,76 +101,85 @@ export class Engine
                 credentials:this._cfg.cors.credentials||false
             }))
         }
-        this._app.all("/*",(_req:Express.Request,_res:Express.Response)=>
+        this._app.all("/*",(req,res)=>
         {
-            this._all(_req,_res).catch((reason)=>
+            let time = Date.now()
+            this._onall(req,res).then(()=>
             {
-                GLog.error(reason)
-                let res=new Response(_res,this._cfg)
-                let method=_req.method.toLowerCase()
-                if(method=="post")
+                if(this._cfg.debug)
                 {
-                    res.renderJson500()
+                    let time_str = (Date.now()-time)+"ms"
+                    GLog.info("["+time_str+"] "+req.method+" "+req.url)
                 }
-                else if(method=="get")
-                {
-                    res.render500()
-                }
+            }).catch(()=>
+            {
+                res.sendStatus(500)
+                let exreq=new Request(req,this._cfg)
+                let info = exreq.getDebugInfo()
+                info["tip"]="server error"
+                GLog.error(info)
             })
         })
     }
-    protected async _all(_req:Express.Request,_res:Express.Response)
+    protected async _onall(_req:Express.Request,_res:Express.Response)
+    {
+        let httpinfo = this._preDoHttpInfo(_req,_res)
+        if(!httpinfo)
+        {
+            return
+        }
+        await this._callCtrAction(httpinfo.action_name,httpinfo.req,httpinfo.res)
+    }
+    protected _method_preactions={
+        "on":"on",
+        "show":"show",
+        "onoptions":"onoptions",
+        "onhead":"onhead"
+    }
+    /**
+     * 预处理http请求信息
+     * @param _req 
+     * @param _res 
+     * @returns 
+     */
+    protected _preDoHttpInfo(_req:Express.Request,_res:Express.Response)
     {
         let req=new Request(_req,this._cfg)
         let res=new Response(_res,this._cfg)
 
-        let method=req.method.toLowerCase()
         //禁止访问
         if(!this._is_running)
         {
             res.baseRes.sendStatus(403)
             return
         }
-        if(method=="options")
+        let method=req.method.toLocaleLowerCase()
+        let pre_action=this._method_preactions[method]
+        if(!pre_action)
         {
-            _res.sendStatus(200)
-            return
+            res.baseRes.sendStatus(500)
+            let info = req.getDebugInfo()
+            info["tip"]="not support method:"+method
+            GLog.error(info)
+            return null
         }
-        if(method=="head")
-        {
-            _res.sendStatus(200)
-            return
-        }
-        if(method!="get"&&method!="post")
-        {
-            return
-        }
-        let pre_action = "show"
-        let action_name=""
-        if(method=="post")
-        {
-            pre_action="on"
-        }
-        //大小写还原
-        action_name = GCtrMgr.getActionName(req.module,req.controller,pre_action+req.action)
-        //尝试一次on，变态支持
-        if(!action_name&&method=="get")
-        {
-            pre_action="on"
-            action_name = GCtrMgr.getActionName(req.module,req.controller,pre_action+req.action)
-        }
+        let action_name = GCtrMgr.getActionName(req.module,req.controller,pre_action+req.action)
         if(!action_name)
         {
-            if(method=="get")
-            {
-                res.render404()
-            }
-            else if(method=="post")
-            {
-                res.renderJson404()
-            }
-            return
+            res.baseRes.sendStatus(500)
+            let info = req.getDebugInfo()
+            info["tip"]="request has no action"
+            GLog.error(info)
+            return null
         }
+        return {
+            action_name:action_name,
+            req:req,
+            res:res
+        }
+    }
+    protected async _callCtrAction(action_name:string,req:Request,res:Response)
+    {
         let ctr = GCtrMgr.getStaticCtr(req.module,req.controller)
         let cls_ctr = null
         if(!ctr)
