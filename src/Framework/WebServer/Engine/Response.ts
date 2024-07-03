@@ -16,14 +16,10 @@ export class Response
     }
     constructor(res:Express.Response,cfg:WebServerConfig)
     {
+        this._create_time=Date.now()
         this._cfg = cfg
         this._res = res
         this._cookie_prefix = this._cfg.cookie.prefix
-        this._init()
-    }
-    protected _init()
-    {
-        this._create_time=Date.now()
     }
     /**
      * 
@@ -56,35 +52,19 @@ export class Response
     {
         return this._res.send(data)
     }
-    renderJson(data)
+    renderJson(data:any)
     {
         this.debugInfo(data)
         return this._res.json(data)
     }
-    renderJson404()
+    sendStatus(status:number)
     {
-        return this._res.status(404).json();
-    }
-    renderJson500()
-    {
-        this.debugInfo("500")
-        return this._res.status(500).json()
+        this.debugInfo(status)
+        this._res.sendStatus(status)
     }
     renderHtml(html:string)
     {
         return this._res.send(html||"")
-    }
-    render404(html?:string)
-    {
-        return this._res.status(404).send(html||"没找到该页面")
-    }
-    render500(html?:string)
-    {
-        return this._res.status(500).send(html||"服务器内部错误500")
-    }
-    renderOptions(method,origin)
-    {
-        this._res.sendStatus(204)
     }
     renderFile(fullPath:string)
     {
@@ -103,7 +83,7 @@ export class Response
         {
             if(!stats||stats.isDirectory())
             {
-                return this.render404("")
+                return this.sendStatus(404)
             }
             let size = stats.size
             var f = fs.createReadStream(fullPath)
@@ -115,17 +95,12 @@ export class Response
             f.pipe(this._res)
         })
     }
-    render304()
-    {
-        this._res.sendStatus(304)
-    }
-    debugInfo(data)
+    debugInfo(data:any)
     {
         if(!this._cfg.debug)
         {
             return
         }
-        GLog.info("dttime:"+(Date.now()-this._create_time).toLocaleString()+"ms")
         GLog.info(data)
     }
 }

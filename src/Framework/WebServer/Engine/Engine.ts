@@ -150,14 +150,14 @@ export class Engine
         //禁止访问
         if(!this._is_running)
         {
-            res.baseRes.sendStatus(403)
+            res.sendStatus(403)
             return
         }
         let method=req.method.toLocaleLowerCase()
         let pre_action=this._method_preactions[method]
         if(!pre_action)
         {
-            res.baseRes.sendStatus(500)
+            res.sendStatus(500)
             let info = req.getDebugInfo()
             info["tip"]="not support method:"+method
             GLog.error(info)
@@ -166,7 +166,7 @@ export class Engine
         let action_name = GCtrMgr.getActionName(req.module,req.controller,pre_action+req.action)
         if(!action_name)
         {
-            res.baseRes.sendStatus(500)
+            res.sendStatus(500)
             let info = req.getDebugInfo()
             info["tip"]="request has no action"
             GLog.error(info)
@@ -196,7 +196,7 @@ export class Engine
         {
             ctr.initStatic(req,res,this)
         }
-        ctr[action_name].call(ctr)
+        await ctr[action_name].call(ctr)
     }
     pause()
     {
