@@ -2,7 +2,7 @@ import { IWebSocket } from './IWebSocket';
 import * as ws from 'websocket';
 import { GLog } from '../Logic/Log';
 import { EProtoType } from './ProtoFilter/IProtoFilter';
-
+import * as http from "http";
 /**
  * 连接到服务器的websocket
  * 默认自动重连
@@ -31,20 +31,28 @@ export class IServerWebSocket extends IWebSocket
     {
         super(protoType,protoPath)
     }
-    connect(domain:string,port:number)
+    connect(domain:string,
+        port:number,
+        requestedProtocols: string | string[]=null,
+        origin: string=null,
+        headers: http.OutgoingHttpHeaders=null,
+        extraRequestOptions: http.RequestOptions=null)
     {
         this._host = domain || this._host
         this._port = port || this._port
-        this._connect()
+        this._connect(requestedProtocols,origin,headers,extraRequestOptions)
     }
-    protected _connect()
+    protected _connect(requestedProtocols: string | string[]=null,
+        origin: string=null,
+        headers: http.OutgoingHttpHeaders=null,
+        extraRequestOptions: http.RequestOptions=null)
     {
         let url = "ws://" + this._host + ":" + this._port + "/"
         GLog.info("Trying to connect to server : " + url)
         let _ws = new ws.client()
         _ws.on("connect",super.onConnect.bind(this))
         _ws.on("connectFailed",this.onClose.bind(this))
-        _ws.connect(url,null,null,{cookie:"client="+this._tipKey})
+        _ws.connect(url,requestedProtocols,origin,headers,extraRequestOptions)
     }
     onOpen(e?)
     {
