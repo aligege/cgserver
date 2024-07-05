@@ -209,10 +209,6 @@ export class FrameworkConfig extends Config
             },
         }
     }
-    /**
-     * 控制网络消息的
-     */
-    debug_msg=false
     db=new DbConfig()
     aliSms:AliSmsConfig=null
     qiniu:QiNiuConfig=null

@@ -4,7 +4,6 @@ import { IProtoFilter,EProtoType } from "./ProtoFilter/IProtoFilter";
 import * as ws from 'websocket';
 import { core } from '../Core/Core';
 import * as _ from "underscore";
-import { GServerCfg } from '../Config/IServerConfig';
 import { GSyncQueueTool } from '../Logic/SyncQueueTool';
 
 export class BaseMsg
@@ -75,7 +74,6 @@ export class IWebSocket
     }
     constructor(protoType=EProtoType.Json,protoPath="")
     {
-        this._debug_msg = GServerCfg.debug_msg
         this._socket_id = parseInt(_.uniqueId())
         this._protoType=protoType
         this._protoPath=protoPath
