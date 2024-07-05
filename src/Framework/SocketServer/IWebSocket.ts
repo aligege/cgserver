@@ -241,17 +241,4 @@ export class IWebSocket
     {
         this._ws.close()
     }
-    getServerNameFromCmd(cmd)
-    {
-        if(!cmd||!core.isString(cmd))
-        {
-            return null
-        }
-        let index = cmd.indexOf("_")
-        if(index<=0)
-        {
-            return null
-        }
-        return cmd.substring(0,index)
-    }
 }
