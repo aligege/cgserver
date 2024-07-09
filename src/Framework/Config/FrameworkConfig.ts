@@ -144,7 +144,7 @@ export class FrameworkConfig extends Config
                 filename: "./logs/log_date/date",  
                 alwaysIncludePattern: true,  
                 pattern: "yyyy-MM-dd-hh.log",
-                backups: 100,
+                numBackups: 100,
             },
             client_log_file:
             {  
@@ -161,7 +161,7 @@ export class FrameworkConfig extends Config
                 filename: "./logs/client_log_date/date",  
                 alwaysIncludePattern: true,  
                 pattern: "yyyy-MM-dd.log",
-                backups: 100,
+                numBackups: 100,
             },
             error_log_file:
             {  
