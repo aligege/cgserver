@@ -1,3 +1,5 @@
+9.1.17
+1、IServerWebSocket的重连可能的bug
 9.1.16
 1、websocket客户端无需强制配置服务器配置文件，debug_msg
 9.1.15
