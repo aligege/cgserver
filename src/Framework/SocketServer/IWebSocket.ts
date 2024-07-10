@@ -72,6 +72,10 @@ export class IWebSocket
         }
         return false
     }
+    protected _nodebugmsgs:{[cmd:string]:boolean}={
+        "heartbeat":true,
+        "ping":true
+    }
     constructor(protoType=EProtoType.Json,protoPath="")
     {
         this._socket_id = parseInt(_.uniqueId())
@@ -155,7 +159,7 @@ export class IWebSocket
             GLog.error({tipKey:this.tipKey,action:"receive",error:"no cmd",msg})
             return false
         }
-        if(this._debug_msg && msg.cmd!="heartbeat")
+        if(this._debug_msg && !this._nodebugmsgs[msg.cmd])
         {
             GLog.info({tipKey:this.tipKey,action:"receive",msg})
         }
@@ -192,7 +196,7 @@ export class IWebSocket
         {
             await core.safeCall(func,this,jsonData)
         }
-        if(this._debug_msg)
+        if(this._debug_msg&&!this._nodebugmsgs[jsonData.cmd])
         {
             GLog.info("["+(Date.now()-time)+"ms] "+jsonData.cmd)
         }
