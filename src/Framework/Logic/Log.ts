@@ -42,12 +42,12 @@ class Log
         log4js.configure(cfg)
 
         this._logger = log4js.getLogger(cfg.categories.default.appenders[0]||"log_date")
-        this._client_logger = log4js.getLogger(cfg.categories.default.appenders[1]||"client_log_date")
-        this._errorLogger = log4js.getLogger(cfg.categories.default.appenders[2]||"error_log_file")
+        this._client_logger = log4js.getLogger(cfg.categories.client_log_file.appenders[0]||"client_log_file")
+        this._errorLogger = log4js.getLogger(cfg.categories.error_log_file.appenders[0]||"error_log_file")
 
         this._console_level=console_level
     }
-    error(message?: any)
+    protected _convertMsg(message?:any)
     {
         if(this._isObject(message))
         {
@@ -60,6 +60,11 @@ class Log
                 message = JSON.stringify(message)
             }
         }
+        return message
+    }
+    error(message?: any)
+    {
+        message=this._convertMsg(message)
         this._errorLogger?.error(message)
         if(this._console_level>=0)
         {
@@ -69,10 +74,7 @@ class Log
     }
     info(message:any)
     {
-        if(this._isObject(message))
-        {
-            message = JSON.stringify(message)
-        }
+        message=this._convertMsg(message)
         this._logger?.info(message)
         if(this._console_level>=0)
         {
@@ -82,10 +84,7 @@ class Log
     }
     warn(message?: any)
     {
-        if(this._isObject(message))
-        {
-            message = JSON.stringify(message)
-        }
+        message=this._convertMsg(message)
         this._errorLogger?.warn(message)
         if(this._console_level>=0)
         {
@@ -99,6 +98,7 @@ class Log
     }
     clientLog(message?: any)
     {
+        message=this._convertMsg(message)
         this._client_logger?.error(message)
     }
     protected _getTimeStr()

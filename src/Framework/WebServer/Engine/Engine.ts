@@ -71,6 +71,15 @@ export class Engine
         this._app.use(Express.urlencoded({limit: '10mb', extended: false,verify(req, res, buf, encoding) {
             req["rawBody"]=buf
         },}))
+        this._app.use((err, req, res, next)=>{
+            if(err)
+            {
+                GLog.error(err)
+            }
+            next(err);
+        })
+
+        
         if(this._cfg.static)
         {
             for(let i=0;i<this._cfg.static.length;++i)
