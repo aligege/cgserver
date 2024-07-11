@@ -54,6 +54,11 @@ class MysqlManager
     {
         return !!this._pool
     }
+    protected _cfg:MysqlConfig=null
+    get cfg()
+    {
+        return this._cfg
+    }
     constructor()
     {
         
@@ -66,6 +71,7 @@ class MysqlManager
         {
             return
         }
+        this._cfg = cfg
         this._pool  = mysql.createPool(cfg)
         console.log("mysql config="+JSON.stringify(cfg))
         //这个的初始化位置不能变，必须位于cbs前，pool后

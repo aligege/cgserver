@@ -2,7 +2,6 @@ import { EPropertyType, TableProperty, Property } from "./Decorator/Property"
 import { GMysqlMgr } from "./MysqlManager"
 import { GLog } from "../Logic/Log"
 import { GDBCache } from "./Decorator/DBCache"
-import { GServerCfg } from "../Config/IServerConfig"
 
 export class BaseModel
 {
@@ -51,7 +50,7 @@ export class MysqlBaseService<T extends BaseModel>
             throw new Error("数据表的类必须要具有Table装饰器")
         }
         this._table="`"+table.table+"`"
-        if(!GServerCfg.db.mysql.auto)
+        if(!GMysqlMgr.cfg.auto)
         {
             //未开启自动创建数据表
             return
