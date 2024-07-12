@@ -1,6 +1,6 @@
 ﻿import { EErrorCode } from './../Config/_error_';
 import { GLog } from '../Logic/Log';
-import * as mysql from 'mysql';
+import * as mysql2 from 'mysql2/promise';
 export class MysqlConfig
 {
     open=false
@@ -10,20 +10,27 @@ export class MysqlConfig
 export class SqlReturn
 {
     error=null
-    results:SqlResult=null
+    result:mysql2.QueryResult=null
     fields=null
-    list:Array<any>=null
+    get queryResult()
+    {
+        return this.result as mysql2.RowDataPacket[]
+    }
+    get execResult()
+    {
+        return this.result as mysql2.ResultSetHeader
+    }
 }
 export class SqlReturns
 {
     error=null
-    srs:Array<SqlResult>=[]
+    srs:Array<mysql2.QueryResult>=[]
 }
 export let GMysqlMgr:MysqlManager = null
 class MysqlManager
 {
     protected _init_cbs=[]
-    protected _pool:mysql.Pool = null
+    protected _pool:mysql2.Pool = null
     get isValid()
     {
         return !!this._pool
