@@ -89,7 +89,7 @@ class Log
         if(this._console_level>=0)
         {
             let time_str = this._getTimeStr()
-            console.error(time_str+" "+message)
+            console.warn(time_str+" "+message)
         }
     }
     record(message?: any)

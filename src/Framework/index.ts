@@ -28,7 +28,7 @@ export { MongoBaseModel,MongoManager,MongoExt } from './Database/MongoManager';
 export { GMongoMgr } from './Database/MongoManager';
 export { GMSSqlMgr } from './Database/MSSqlManager';
 export { MysqlBaseService } from './Database/MysqlBaseService';
-export { GMysqlMgr,SqlResult,SqlReturn,SqlReturns } from './Database/MysqlManager';
+export { GMysqlMgr,SqlReturn,SqlReturns } from './Database/MysqlManager';
 export { GRedisMgr,RedisManager } from './Database/RedisManager';
 
 export { GCacheTool } from './Logic/CacheTool';

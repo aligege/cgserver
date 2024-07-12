@@ -129,11 +129,11 @@ export class MysqlAccountService<T extends MysqlAccountModel> extends MysqlBaseS
         delete account.id
         let sr = await this.insert(account)
         if(sr.error
-            ||!sr.results.insertId)
+            ||!sr.execResult.insertId)
         {
             return null
         }
-        account.id = sr.results.insertId
+        account.id = sr.execResult.insertId
         return account
     }
     /**
@@ -406,9 +406,9 @@ export class MysqlAccountService<T extends MysqlAccountModel> extends MysqlBaseS
         am.login_ip=ip
 
         let sr = await this.insert(am)
-        if(sr.results.insertId)
+        if(sr.execResult.insertId)
         {
-            am.id=sr.results.insertId
+            am.id=sr.execResult.insertId
         }
         else
         {

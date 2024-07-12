@@ -23,6 +23,7 @@ class DBCache
     protected _path=__dirname+"/tmp_table_version.json"
     async init()
     {
+        GLog.warn("mysql auto 功能建议只使用在开发环境中，因为会导致数据丢失，数据表重建")
         if(fs.existsSync(this._path))
         {
             try{

@@ -123,7 +123,7 @@ export class MysqlUserService<T extends MysqlUserModel> extends MysqlBaseService
     async updateBaseInfoByAccount(account_id:number,nickname:string,sex:number,logo:string)
     {
         let sr = await this.updateProperty("nickname=?,sex=?,logo=?","account_id=?",[nickname,sex,logo,account_id])
-        if(sr.error&&sr.results.affectedRows<=0)
+        if(sr.error&&sr.execResult.affectedRows<=0)
         {
             return "更新失败"
         }
@@ -133,7 +133,7 @@ export class MysqlUserService<T extends MysqlUserModel> extends MysqlBaseService
     {
         let um:any = await this._createNewUser(account_id,nickname,sex,logo,group)
         let sr = await this.insert(um)
-        if(sr.error||sr.results.length<=0)
+        if(sr.error||sr.queryResult.length<=0)
         {
             return null
         }
@@ -142,7 +142,7 @@ export class MysqlUserService<T extends MysqlUserModel> extends MysqlBaseService
     async updateRoleGroup(user_id:number,role_group:ERoleGroup)
     {
         let sr = await this.updateProperty("role_group=?","id=?",[role_group,user_id])
-        if(sr.error&&sr.results.affectedRows<=0)
+        if(sr.error&&sr.execResult.affectedRows<=0)
         {
             return "更新失败"
         }

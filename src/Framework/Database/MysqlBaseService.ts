@@ -164,11 +164,11 @@ export class MysqlBaseService<T extends BaseModel>
     {
         let tm:T=null
         let sr=await GMysqlMgr.query("select * from "+this._table+" where id=? limit 1",[id])
-        if(sr.error||sr.results.length<=0)
+        if(sr.error||sr.queryResult.length<=0)
         {
             return tm
         }
-        tm=sr.results[0]
+        tm=sr.result[0]
         return tm
     }
     async get(proterty?:string,where?:string,args?:Array<any>)
@@ -183,9 +183,9 @@ export class MysqlBaseService<T extends BaseModel>
         sql+=" limit 1"
         let tm=null
         let sr=await GMysqlMgr.query(sql,args)
-        if(sr.list&&sr.list.length>0)
+        if(sr.queryResult&&sr.queryResult.length>0)
         {
-            tm = sr.list[0]
+            tm = sr.queryResult[0]
         }
         return tm
     }
@@ -200,9 +200,9 @@ export class MysqlBaseService<T extends BaseModel>
         }
         let total=0
         let sr=await GMysqlMgr.query(sql,args)
-        if(sr.list&&sr.list.length>0)
+        if(sr.queryResult&&sr.queryResult.length>0)
         {
-            total=sr.list[0].num||0
+            total=sr.queryResult[0].num||0
         }
         return total
     }
@@ -217,7 +217,7 @@ export class MysqlBaseService<T extends BaseModel>
         }
         let tms:Array<any>=null
         let sr=await GMysqlMgr.query(sql,args)
-        tms = sr.list
+        tms = sr.queryResult
         return tms
     }
     async getCount(where?:string,args?:Array<any>)
@@ -228,11 +228,11 @@ export class MysqlBaseService<T extends BaseModel>
             sql+=" where "+where
         }
         let sr=await GMysqlMgr.query(sql,args)
-        if(sr.error||sr.results.length<=0)
+        if(sr.error||sr.queryResult.length<=0)
         {
             return 0
         }
-        return sr.results[0]["num"]||0
+        return sr.result[0]["num"]||0
     }
     async getRandoms(num:number,proterty?:string,where?:string,args?:Array<any>)
     {
@@ -249,7 +249,7 @@ export class MysqlBaseService<T extends BaseModel>
         args.push(num)
         let tms:Array<any>=null
         let sr=await GMysqlMgr.query(sql,args)
-        tms = sr.list
+        tms = sr.queryResult
         return tms
     }
     async updateProperty(set:string,where?:string,args?:Array<any>,limit?:number)

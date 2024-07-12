@@ -120,13 +120,14 @@ export class Engine
                     let time_str = (Date.now()-time)+"ms"
                     GLog.info("["+time_str+"] "+req.method+" "+req.url)
                 }
-            }).catch(()=>
+            }).catch((err)=>
             {
                 res.sendStatus(500)
                 let exreq=new Request(req,this._cfg)
                 let info = exreq.getDebugInfo()
                 info["tip"]="server error"
                 GLog.error(info)
+                GLog.error(err)
             })
         })
     }
