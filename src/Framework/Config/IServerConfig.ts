@@ -12,8 +12,8 @@ export class IServerConfig extends FrameworkConfig
     constructor(server_name:string)
     {
         super()
-        this._suffix=server_name
         this._server_name = server_name
+        this._suffix=this._server_name
     }
     init()
     {

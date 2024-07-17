@@ -3,14 +3,14 @@ import { jsonc } from "jsonc";
 
 export class Config
 {
-    protected _suffix:string=""
     protected _is_init:boolean=false
     protected _file_name=""
+    protected _suffix=""
     /**
      * 是否是debug调试模式，主要区别于读取数据档，debug默认读取file_d文件，release默认读取file_r文件，如果不存在都会读取file文件
      */
     static debug=false
-    static rootDataDir="data/"
+    static rootDataDir="data"
     constructor(filename)
     {
         this._file_name = filename
@@ -21,32 +21,20 @@ export class Config
         {
             return false
         }
-        let suffix2="_r"
-        if(Config.debug)
+        let path = Config.rootDataDir+this._file_name
+        if(this._suffix)
         {
-            suffix2="_d"
+            path+="_"+this._suffix+".json"
         }
-        let path = Config.rootDataDir+this._file_name+"_"+this._suffix+suffix2+".json"
+        else
+        {
+            path+=".json"
+        }
         path=path.toLowerCase()
         if(!fs.existsSync(path))
         {
-            path = Config.rootDataDir+this._file_name+"_"+this._suffix+".json"
-            path=path.toLowerCase()
-            if(!fs.existsSync(path))
-            {
-                path = Config.rootDataDir+this._file_name+suffix2+".json"
-                path=path.toLowerCase()
-                if(!fs.existsSync(path))
-                {
-                    path = Config.rootDataDir+this._file_name+".json"
-                    path=path.toLowerCase()
-                    if(!fs.existsSync(path))
-                    {
-                        console.error(path+" not exist!")
-                        return true
-                    }
-                }
-            }
+            console.error(path+" not exist!")
+            return false
         }
         
         let content = fs.readFileSync(path).toString()

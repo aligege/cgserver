@@ -6,6 +6,7 @@ import * as fs from "fs";
 import AlipayFormData from 'alipay-sdk/lib/form';
 import { GLog } from '../Logic/Log';
 import { GServerCfg } from '../Config/IServerConfig';
+import { Config } from '../Config/Config';
 
 export class AlipayResult
 {
@@ -105,7 +106,7 @@ class AlipayTool
             let app_key=""
             if(this._cfg.app_key.indexOf(".pem")>0)
             {
-                app_key=fs.readFileSync(this._cfg.app_key, 'ascii')
+                app_key=fs.readFileSync(Config.rootDataDir+this._cfg.app_key, 'ascii')
             }
             else
             {

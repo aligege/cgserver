@@ -10,6 +10,7 @@ import * as cors from "cors";
 import * as Express from 'express';
 import * as bodyParser from 'body-parser';
 import cookieParser = require('cookie-parser');
+import { Config } from '../../Config/Config';
 export class Engine
 {
     protected _app = Express()
@@ -46,8 +47,8 @@ export class Engine
         if(this._cfg.ssl)
         {
             const httpsOption = {
-                key : fs.readFileSync(this._cfg.ssl.key),
-                cert: fs.readFileSync(this._cfg.ssl.crt)
+                key : fs.readFileSync(Config.rootDataDir+this._cfg.ssl.key),
+                cert: fs.readFileSync(Config.rootDataDir+this._cfg.ssl.crt)
             }
             https.createServer(httpsOption, this._app).listen(port,()=>{
                 this._is_running=true

@@ -8,6 +8,7 @@ import { GEventTool } from '../Logic/EventTool';
 import { GServerCfg, IServerConfig } from '../Config/IServerConfig';
 import { GCgServer } from '../cgserver';
 import { BaseMsg } from './IWebSocket';
+import { Config } from '../Config/Config';
 
 export class ISocketServer
 {
@@ -116,8 +117,8 @@ export class ISocketServer
         {
             let options =
             {
-                key:fs.readFileSync("ssl/ssl2.key"),
-                cert: fs.readFileSync("ssl/ssl2.crt"),
+                key:fs.readFileSync(Config.rootDataDir+"ssl/ssl2.key"),
+                cert: fs.readFileSync(Config.rootDataDir+"ssl/ssl2.crt"),
                 //passphrase:'1234'//如果秘钥文件有密码的话，用这个属性设置密码
             }
             server = https.createServer(options,(request, response)=>

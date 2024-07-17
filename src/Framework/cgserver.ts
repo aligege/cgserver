@@ -47,6 +47,10 @@ class CgServer
     {
         this._custom_process_id=value
     }
+    get dataRootDir()
+    {
+        return Config.rootDataDir
+    }
     constructor()
     {
         this.init()

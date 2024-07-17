@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import * as fs from "fs";
 import { GServerCfg } from '../Config/IServerConfig';
+import { Config } from '../Config/Config';
 //developer.apple.com/documentation/appstorereceipts/responsebody
 class ReceiptInfo
 {
@@ -213,7 +214,7 @@ class AppleTool
 
         // Get the PEM-formatted private key string associated with the Key ID.
         const path = GServerCfg.apple.keyIds[keyIdentifier]
-        const keyString = fs.readFileSync(path).toString()
+        const keyString = fs.readFileSync(Config.rootDataDir+path).toString()
 
         // Create an Elliptic Curve Digital Signature Algorithm (ECDSA) object using the private key.
         const key = new ECKey(keyString, 'pem')
