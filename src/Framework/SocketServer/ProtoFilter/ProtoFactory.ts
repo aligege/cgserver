@@ -38,3 +38,5 @@ export class ProtoFactory
         return filter
     }
 }
+
+export let gProtoFactory=new ProtoFactory()

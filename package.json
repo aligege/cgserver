@@ -1,6 +1,6 @@
 {
   "name": "cgserver",
-  "version": "10.0.0",
+  "version": "10.0.2",
   "author": "trojan",
   "type": "commonjs",
   "description": "free for all.Websocket or Http",
@@ -31,8 +31,6 @@
   "license": "MIT",
   "dependencies": {
     "@alicloud/sms-sdk": "^1.1.6",
-    "@microsoft/tsdoc": "^0.15.0",
-    "@microsoft/tsdoc-config": "^0.17.0",
     "@types/cookie-parser": "^1.4.6",
     "@types/cors": "^2.8.17",
     "@types/crypto-js": "^4.2.2",
@@ -55,7 +53,6 @@
     "cors": "^2.8.5",
     "crypto-js": "^4.2.0",
     "ec-key": "0.0.4",
-    "eslint-plugin-tsdoc": "^0.3.0",
     "express": "^4.18.2",
     "fast-xml-parser": "^4.3.4",
     "formidable": "^3.5.1",

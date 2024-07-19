@@ -133,3 +133,5 @@ export class ControllerManager
         return this._ctr_cls[module_name][controller_name]
     }
 }
+
+export let gCtrMgr=new ControllerManager()

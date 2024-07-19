@@ -8,7 +8,8 @@ import * as cors from "cors";
 import * as Express from 'express';
 import cookieParser = require('cookie-parser');
 import { Config } from '../../Config/Config';
-import { global } from '../../global';
+import { gLog } from '../../Logic/Log';
+import { gCtrMgr } from './ControllerManager';
 export class Engine
 {
     protected _app = Express()
@@ -39,7 +40,7 @@ export class Engine
 
         if(!port)
         {
-            global.gLog.error(this._cfg)
+            gLog.error(this._cfg)
             return
         }
         if(this._cfg.ssl)
@@ -50,7 +51,7 @@ export class Engine
             }
             https.createServer(httpsOption, this._app).listen(port,()=>{
                 this._is_running=true
-                global.gLog.info("Server("+this._cfg.web_name+") running at https://127.0.0.1:" + port + "/")
+                gLog.info("Server("+this._cfg.web_name+") running at https://127.0.0.1:" + port + "/")
             });
         }
         else
@@ -58,7 +59,7 @@ export class Engine
             http.createServer(this._app).listen(port,()=>
             {
                 this._is_running=true
-                global.gLog.info("Server("+this._cfg.web_name+") running at http://127.0.0.1:" + port + "/")
+                gLog.info("Server("+this._cfg.web_name+") running at http://127.0.0.1:" + port + "/")
             });
         }
 
@@ -73,7 +74,7 @@ export class Engine
         this._app.use((err, req, res, next)=>{
             if(err)
             {
-                global.gLog.error(err)
+                gLog.error(err)
             }
             next(err);
         })
@@ -117,7 +118,7 @@ export class Engine
                 if(this._cfg.debug)
                 {
                     let time_str = (Date.now()-time)+"ms"
-                    global.gLog.info("["+time_str+"] "+req.method+" "+req.url)
+                    gLog.info("["+time_str+"] "+req.method+" "+req.url)
                 }
             }).catch((err)=>
             {
@@ -125,8 +126,8 @@ export class Engine
                 let exreq=new Request(req,this._cfg)
                 let info = exreq.getDebugInfo()
                 info["tip"]="server error"
-                global.gLog.error(info)
-                global.gLog.error(err)
+                gLog.error(info)
+                gLog.error(err)
             })
         })
     }
@@ -169,16 +170,16 @@ export class Engine
             res.sendStatus(500)
             let info = req.getDebugInfo()
             info["tip"]="not support method:"+method
-            global.gLog.error(info)
+            gLog.error(info)
             return null
         }
-        let action_name = global.gCtrMgr.getActionName(req.module,req.controller,pre_action+req.action)
+        let action_name = gCtrMgr.getActionName(req.module,req.controller,pre_action+req.action)
         if(!action_name)
         {
             res.sendStatus(500)
             let info = req.getDebugInfo()
             info["tip"]="request has no action"
-            global.gLog.error(info)
+            gLog.error(info)
             return null
         }
         return {
@@ -189,11 +190,11 @@ export class Engine
     }
     protected async _callCtrAction(action_name:string,req:Request,res:Response)
     {
-        let ctr = global.gCtrMgr.getStaticCtr(req.module,req.controller)
+        let ctr = gCtrMgr.getStaticCtr(req.module,req.controller)
         let cls_ctr = null
         if(!ctr)
         {
-            cls_ctr = global.gCtrMgr.getClass(req.module,req.controller)
+            cls_ctr = gCtrMgr.getClass(req.module,req.controller)
         }
         
         if(!ctr)
@@ -211,21 +212,21 @@ export class Engine
     {
         if(!this._is_running)
         {
-            global.gLog.error("webserver has paused:"+this._cfg.web_name)
+            gLog.error("webserver has paused:"+this._cfg.web_name)
             return
         }
         this._is_running=false
-        global.gLog.info("webserver paused:"+this._cfg.web_name)
+        gLog.info("webserver paused:"+this._cfg.web_name)
     }
     resume()
     {
         if(this._is_running)
         {
-            global.gLog.error("webserver is running:"+this._cfg.web_name)
+            gLog.error("webserver is running:"+this._cfg.web_name)
             return
         }
         this._is_running=true
-        global.gLog.info("webserver resumed:"+this._cfg.web_name)
+        gLog.info("webserver resumed:"+this._cfg.web_name)
     }
     getRenderHtml(req:Request,res:Response, datas:any)
     {

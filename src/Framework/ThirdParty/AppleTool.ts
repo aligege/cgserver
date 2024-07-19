@@ -3,7 +3,9 @@ import { v4 as uuidv4 } from 'uuid';
 
 import * as fs from "fs";
 import { Config } from '../Config/Config';
-import { global } from "../global";
+import { gLog } from "../Logic/Log";
+import { gHttpTool } from "../Logic/HttpTool";
+import { gServerCfg } from "../Config/IServerConfig";
 //developer.apple.com/documentation/appstorereceipts/responsebody
 class ReceiptInfo
 {
@@ -166,37 +168,37 @@ export class AppleTool
             "expire_date":latest_one?.expires_date,
             "receipt_expire_date":nb.unified_receipt?.receipt?.expiration_date
         }
-        global.gLog.info(msg)
-        global.gLog.info(nb)
+        gLog.info(msg)
+        gLog.info(nb)
     }
     async onVerify(receipt:string,environment:string)
     {
-        global.gLog.info("begin onVerify============================"+environment)
+        gLog.info("begin onVerify============================"+environment)
         let url = this._verifyUrl
         // if(environment.toLowerCase()=="sandbox")
         // {
         //     url=this._sandboxVerifyUrl
         // }
-        global.gLog.info("url============================"+url)
+        gLog.info("url============================"+url)
         let reqb = new RequestBody()
         reqb['receipt-data']=receipt
         //先验证生产环境
-        var resb:ResponseBody = (await global.gHttpTool.post({url,form:JSON.stringify(reqb)})).body
-        global.gLog.info("production end onVerify_Res============================status="+(resb?resb.status:"null"))
+        var resb:ResponseBody = (await gHttpTool.post({url,form:JSON.stringify(reqb)})).body
+        gLog.info("production end onVerify_Res============================status="+(resb?resb.status:"null"))
         //状态21007表示是沙盒环境
         if(resb&&resb.status==21007)
         {
             url=this._sandboxVerifyUrl
-            resb = (await global.gHttpTool.post({url,form:JSON.stringify(reqb)})).body
-            global.gLog.info("sandbox end onVerify_Res============================status="+(resb?resb.status:"null"))
+            resb = (await gHttpTool.post({url,form:JSON.stringify(reqb)})).body
+            gLog.info("sandbox end onVerify_Res============================status="+(resb?resb.status:"null"))
         }
-        global.gLog.info(resb)
+        gLog.info(resb)
         return resb
     }
     signature(nickname:string,create_time:number,appBundleID:string,productIdentifier:string,offerIdentifier:string)
     {
         let keyIdentifier="";
-        for(var k in global.gServerCfg.apple.keyIds)
+        for(var k in gServerCfg.apple.keyIds)
         {
             keyIdentifier=k
             break
@@ -211,7 +213,7 @@ export class AppleTool
                   create_time;
 
         // Get the PEM-formatted private key string associated with the Key ID.
-        const path = global.gServerCfg.apple.keyIds[keyIdentifier]
+        const path = gServerCfg.apple.keyIds[keyIdentifier]
         const keyString = fs.readFileSync(Config.rootDataDir+path).toString()
 
         // Create an Elliptic Curve Digital Signature Algorithm (ECDSA) object using the private key.

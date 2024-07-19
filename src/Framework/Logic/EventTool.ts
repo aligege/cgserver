@@ -28,3 +28,5 @@ export class EventTool
         return count
     }
 }
+
+export let gEventTool=new EventTool()

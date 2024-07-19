@@ -1,5 +1,7 @@
-import { global } from "../global"
+import { gLog } from "../Logic/Log"
+import { gDbCache } from "./Decorator/DBCache"
 import { EPropertyType, TableProperty, Property } from "./Decorator/Property"
+import { gMysqlMgr } from "./MysqlManager"
 
 export class BaseModel
 {
@@ -26,13 +28,13 @@ export class MysqlBaseService<T extends BaseModel>
     constructor(type: { new(): T})
     {
         this._t_type=type
-        if(global.gMysqlMgr.isValid)
+        if(gMysqlMgr.isValid)
         {
             this._init()
         }
         else
         {
-            global.gMysqlMgr.registerInitCb(this._init.bind(this))
+            gMysqlMgr.registerInitCb(this._init.bind(this))
         }
     }
     protected async _init()
@@ -48,7 +50,7 @@ export class MysqlBaseService<T extends BaseModel>
             throw new Error("数据表的类必须要具有Table装饰器")
         }
         this._table="`"+table.table+"`"
-        if(!global.gMysqlMgr.cfg.auto)
+        if(!gMysqlMgr.cfg.auto)
         {
             //未开启自动创建数据表
             return
@@ -56,7 +58,7 @@ export class MysqlBaseService<T extends BaseModel>
         let droped = await this._checkDropTable(table.version);
         if(!droped)
         {
-            global.gLog.info("table("+this._table+")无需升级...")
+            gLog.info("table("+this._table+")无需升级...")
             //既然版本号没变，就快速返回
             return
         }
@@ -111,17 +113,17 @@ export class MysqlBaseService<T extends BaseModel>
         {
             sql+=" comment=\'"+table.comment+"\';"
         }
-        let sr = await global.gMysqlMgr.query(sql)
+        let sr = await gMysqlMgr.query(sql)
         if(sr.error)
         {
-            global.gLog.error(sr.error)
+            gLog.error(sr.error)
             throw Error("table("+this._table+")创建失败...")
         }
         else
         {
-            global.gDbCache.setVersion(this.table,table.version);
+            gDbCache.setVersion(this.table,table.version);
 
-            global.gLog.info("table("+this._table+")初始化成功...")
+            gLog.info("table("+this._table+")初始化成功...")
             await this._onReCreated()
         }
     }
@@ -135,21 +137,21 @@ export class MysqlBaseService<T extends BaseModel>
     }
     protected async _checkDropTable(cur_version:number)
     {
-        let local_version = global.gDbCache.getVersion(this._table)
+        let local_version = gDbCache.getVersion(this._table)
         if(local_version==cur_version)
         {
             return false
         }
         let sql="drop table if exists "+this._table
-        let sr = await global.gMysqlMgr.query(sql)
+        let sr = await gMysqlMgr.query(sql)
         if(sr.error)
         {
-            global.gLog.error(sr.error)
+            gLog.error(sr.error)
             throw Error(sr.error)
         }
         else
         {
-            global.gLog.info("table("+this._table+")删除成功...")
+            gLog.info("table("+this._table+")删除成功...")
             await this._onDroped()
         }
         return true
@@ -161,7 +163,7 @@ export class MysqlBaseService<T extends BaseModel>
     async getById(id:any)
     {
         let tm:T=null
-        let sr=await global.gMysqlMgr.query("select * from "+this._table+" where id=? limit 1",[id])
+        let sr=await gMysqlMgr.query("select * from "+this._table+" where id=? limit 1",[id])
         if(sr.error||sr.queryResult.length<=0)
         {
             return tm
@@ -180,7 +182,7 @@ export class MysqlBaseService<T extends BaseModel>
         }
         sql+=" limit 1"
         let tm=null
-        let sr=await global.gMysqlMgr.query(sql,args)
+        let sr=await gMysqlMgr.query(sql,args)
         if(sr.queryResult&&sr.queryResult.length>0)
         {
             tm = sr.queryResult[0]
@@ -197,7 +199,7 @@ export class MysqlBaseService<T extends BaseModel>
             sql+=" where "+where
         }
         let total=0
-        let sr=await global.gMysqlMgr.query(sql,args)
+        let sr=await gMysqlMgr.query(sql,args)
         if(sr.queryResult&&sr.queryResult.length>0)
         {
             total=sr.queryResult[0].num||0
@@ -214,7 +216,7 @@ export class MysqlBaseService<T extends BaseModel>
             sql+=" where "+where
         }
         let tms:Array<any>=null
-        let sr=await global.gMysqlMgr.query(sql,args)
+        let sr=await gMysqlMgr.query(sql,args)
         tms = sr.queryResult
         return tms
     }
@@ -225,7 +227,7 @@ export class MysqlBaseService<T extends BaseModel>
         {
             sql+=" where "+where
         }
-        let sr=await global.gMysqlMgr.query(sql,args)
+        let sr=await gMysqlMgr.query(sql,args)
         if(sr.error||sr.queryResult.length<=0)
         {
             return 0
@@ -246,7 +248,7 @@ export class MysqlBaseService<T extends BaseModel>
         args=args||[]
         args.push(num)
         let tms:Array<any>=null
-        let sr=await global.gMysqlMgr.query(sql,args)
+        let sr=await gMysqlMgr.query(sql,args)
         tms = sr.queryResult
         return tms
     }
@@ -269,7 +271,7 @@ export class MysqlBaseService<T extends BaseModel>
         {
             sql+=" limit "+limit
         }
-        let sr = await global.gMysqlMgr.query(sql,args)
+        let sr = await gMysqlMgr.query(sql,args)
         return sr
     }
     async update(model:T,where?:string,args?:Array<any>,limit?:number)
@@ -295,7 +297,7 @@ export class MysqlBaseService<T extends BaseModel>
         {
             sql+=" limit "+limit
         }
-        let sr = await global.gMysqlMgr.query(sql,args)
+        let sr = await gMysqlMgr.query(sql,args)
         if(id)
         {
             model["id"]=id
@@ -324,19 +326,19 @@ export class MysqlBaseService<T extends BaseModel>
         let sql = "insert into "+this._table+" set ?"
         //这步的做法是为了去掉model种的TableProperty.key(___table___)
         model = JSON.parse(JSON.stringify(model))
-        let sr = await global.gMysqlMgr.query(sql,[model])
+        let sr = await gMysqlMgr.query(sql,[model])
         return sr
     }
     async removeById(id:any)
     {
         let sql = "delete from "+this._table+" where id=?"
-        let sr = await global.gMysqlMgr.query(sql,[id])
+        let sr = await gMysqlMgr.query(sql,[id])
         return sr
     }
     async remove(where:string,args?:Array<any>)
     {
         let sql = "delete from "+this._table+" where "+where
-        let sr = await global.gMysqlMgr.query(sql,args)
+        let sr = await gMysqlMgr.query(sql,args)
         return sr
     }
 }

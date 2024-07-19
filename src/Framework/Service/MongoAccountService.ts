@@ -1,7 +1,9 @@
 ﻿import { EErrorCode } from '../Config/_error_';
 import { MongoBaseService } from '../Database/Mongo/MongoBaseService';
 import { MongoBaseModel } from '../Database/Mongo/MongoManager';
-import { global } from '../global';
+import { gCacheTool } from '../Logic/CacheTool';
+import { gQQTool } from '../ThirdParty/QQTool';
+import { gWechatTool } from '../ThirdParty/WechatTool';
 import { EAccountFrom, EAccountState } from './ini';
 import { GMongoUserSer, MongoUserModel } from './MongoUserService';
 
@@ -173,7 +175,7 @@ export class MongoAccountService<T extends MongoAccountModel> extends MongoBaseS
                         {
                             if(from==EAccountFrom.QQ)
                             {
-                                let userInfo = await global.gQQTool.getUserInfo(access_token,openid)
+                                let userInfo = await gQQTool.getUserInfo(access_token,openid)
                                 if(!userInfo)
                                 {
                                     rs.errcode=EErrorCode.Server_Error
@@ -188,7 +190,7 @@ export class MongoAccountService<T extends MongoAccountModel> extends MongoBaseS
                             }
                             else if(from==EAccountFrom.WeChat)
                             {
-                                let userInfo = await global.gWechatOATool.getUserInfo(access_token,openid)
+                                let userInfo = await gWechatTool.getUserInfo(access_token,openid)
                                 if((<any>userInfo).errcode)
                                 {
                                     rs.errcode=EErrorCode.Server_Error
@@ -270,7 +272,7 @@ export class MongoAccountService<T extends MongoAccountModel> extends MongoBaseS
         else if(from==EAccountFrom.QuickPhone)
         {
             let key = "phone_code_"+unionid
-            let code = global.gCacheTool.get(key)
+            let code = gCacheTool.get(key)
             if(!code||code!=openid)
             {
                 rs.errcode=EErrorCode.Wrong_Phone_Code

@@ -1,9 +1,10 @@
 import { BaseController } from './BaseController';
 import { ESessionType } from '../../Config/FrameworkConfig';
-import { MongoCacheModel, } from '../../Service/MongoCacheService';
+import { MongoCacheModel, gMongoCacheSer, } from '../../Service/MongoCacheService';
 import { ERoleGroup } from '../../Service/ini';
 import { GMongoUserSer, MongoUserModel } from '../../Service/MongoUserService';
-import { global } from '../../global';
+import { gCacheTool } from '../../Logic/CacheTool';
+import { gRedisMgr } from '../../Database/RedisManager';
 export class MongoBaseUserController<T extends MongoUserModel> extends BaseController
 {
     protected _user_session_id="user_session_id"
@@ -79,7 +80,7 @@ export class MongoBaseUserController<T extends MongoUserModel> extends BaseContr
         //每次强制从cache中先找，提高效率
         //if(this._engine.cfg.session_type==ESessionType.Cache)
         {
-            user= global.gCacheTool.get(this._session_id)
+            user= gCacheTool.get(this._session_id)
         }
         if(user)
         {
@@ -87,7 +88,7 @@ export class MongoBaseUserController<T extends MongoUserModel> extends BaseContr
         }
         if(this._engine.cfg.session_type==ESessionType.Redis)
         {
-            let user_id = parseInt((await global.gRedisMgr.redis.get(this._session_id))||"-1")
+            let user_id = parseInt((await gRedisMgr.redis.get(this._session_id))||"-1")
             if(user_id>0)
             {
                 user = <T>(await GMongoUserSer.getById(user_id))
@@ -95,7 +96,7 @@ export class MongoBaseUserController<T extends MongoUserModel> extends BaseContr
         }
         else if(this._engine.cfg.session_type==ESessionType.Mongo)
         {
-            let user_id = (await global.gMongoCacheSer.getData(this._session_id))||-1
+            let user_id = (await gMongoCacheSer.getData(this._session_id))||-1
             if(user_id>0)
             {
                 user = <T>(await GMongoUserSer.getById(user_id))
@@ -113,15 +114,15 @@ export class MongoBaseUserController<T extends MongoUserModel> extends BaseContr
         {
             if(this._engine.cfg.session_type==ESessionType.Cache)
             {
-                global.gCacheTool.remove(this._session_id)
+                gCacheTool.remove(this._session_id)
             }
             else if(this._engine.cfg.session_type==ESessionType.Redis)
             {
-                global.gRedisMgr.redis.del(this._session_id)
+                gRedisMgr.redis.del(this._session_id)
             }
             else if(this._engine.cfg.session_type==ESessionType.Mongo)
             {
-                global.gMongoCacheSer.deleteOne({key:this._session_id})
+                gMongoCacheSer.deleteOne({key:this._session_id})
             }
             this._session_id = null
         }
@@ -152,18 +153,18 @@ export class MongoBaseUserController<T extends MongoUserModel> extends BaseContr
         {
             if(time>24*60*60)
             {
-                global.gCacheTool.add(this._session_id,user,24*60*60*1000)
+                gCacheTool.add(this._session_id,user,24*60*60*1000)
             }
             else
             {
-                global.gCacheTool.add(this._session_id,user,time*1000)
+                gCacheTool.add(this._session_id,user,time*1000)
             }
         }
         if(this._engine.cfg.session_type==ESessionType.Redis)
         {
-            global.gRedisMgr.redis.set(this._session_id,user.id).then(()=>
+            gRedisMgr.redis.set(this._session_id,user.id).then(()=>
             {
-                global.gRedisMgr.redis.expire(this._session_id,time)
+                gRedisMgr.redis.expire(this._session_id,time)
             })
         }
         else if(this._engine.cfg.session_type==ESessionType.Mongo)
@@ -172,7 +173,7 @@ export class MongoBaseUserController<T extends MongoUserModel> extends BaseContr
             cm.key=this._session_id
             cm.data=user.id
             cm.expireAt=Date.now()+time*1000
-            global.gMongoCacheSer.updateOne(cm,{key:cm.key},true)
+            gMongoCacheSer.updateOne(cm,{key:cm.key},true)
         }
         this._self_user = user
     }

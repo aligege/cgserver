@@ -1,6 +1,7 @@
-﻿import { EErrorCode } from './../Config/_error_';
+﻿import { gLog } from '../Logic/Log';
+import { EErrorCode } from './../Config/_error_';
 import * as mysql2 from 'mysql2/promise';
-import { global } from '../global';
+import { gDbCache } from './Decorator/DBCache';
 export class MysqlConfig
 {
     open=false
@@ -57,7 +58,7 @@ export class MysqlManager
         //这个的初始化位置不能变，必须位于cbs前，pool后
         if(cfg.auto)
         {
-            await global.gDbCache.init()
+            await gDbCache.init()
         }
         for(let i=0;i<this._init_cbs.length;++i)
         {
@@ -75,7 +76,7 @@ export class MysqlManager
         {
             //表示没有开通数据库，不用记录错误日志
             sr.error=EErrorCode.No_Mysql
-            global.gLog.error(sr.error)
+            gLog.error(sr.error)
             return sr
         }
         try
@@ -87,7 +88,7 @@ export class MysqlManager
         catch(error)
         {
             sr.error=EErrorCode.No_Mysql
-            global.gLog.error(sr.error)
+            gLog.error(sr.error)
             return sr
         }
         return sr
@@ -112,8 +113,9 @@ export class MysqlManager
         }catch(err)
         {
             srs.error = err
-            global.gLog.error(err)
+            gLog.error(err)
         }
     }
 }
 
+export let gMysqlMgr=new MysqlManager()

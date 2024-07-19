@@ -1,5 +1,4 @@
-import { global } from "../../global";
-import { MongoBaseModel } from "./MongoManager";
+import { MongoBaseModel, gMongoMgr } from "./MongoManager";
 import * as mongo from 'mongodb';
 
 export class MongoBaseService<T extends MongoBaseModel>
@@ -16,14 +15,14 @@ export class MongoBaseService<T extends MongoBaseModel>
     }
     get mongoDb()
     {
-        return global.gMongoMgr.getMongo(this._dbname)
+        return gMongoMgr.getMongo(this._dbname)
     }
     protected _dbname=""
     get dbname()
     {
         if(!this._dbname)
         {
-            this._dbname=global.gMongoMgr.defdbname
+            this._dbname=gMongoMgr.defdbname
         }
         return this._dbname
     }

@@ -1,6 +1,8 @@
 import * as _ from "underscore";
 import * as URLEncode from "urlencode";
-import { global } from "../global";
+import { gServerCfg } from "../Config/IServerConfig";
+import { gLog } from "../Logic/Log";
+import { gHttpTool } from "../Logic/HttpTool";
 
 export class WechatOAMsg
 {
@@ -43,13 +45,13 @@ export class WechatTool
      */
     getAuthCodeUrl()
     {
-        if(!global.gServerCfg.wechat)
+        if(!gServerCfg.wechat)
         {
-            global.gLog.error("wechat config not found!")
+            gLog.error("wechat config not found!")
             return null
         }
-        let url = "https://open.weixin.qq.com/connect/qrconnect?appid="+ global.gServerCfg.wechat.app_id
-        url+="&redirect_uri="+URLEncode.encode(global.gServerCfg.wechat.redirect_uri)
+        let url = "https://open.weixin.qq.com/connect/qrconnect?appid="+ gServerCfg.wechat.app_id
+        url+="&redirect_uri="+URLEncode.encode(gServerCfg.wechat.redirect_uri)
         url+="&response_type=code&scope=snsapi_login"
         //必须	client端的状态值。用于第三方应用防止CSRF攻击，成功授权后回调时会原样带回。请务必严格按照流程检查用户与state参数状态的绑定。
         let state=_.random(1000000,9999999)
@@ -62,13 +64,13 @@ export class WechatTool
         {
             return null
         }
-        if(!global.gServerCfg.wechat)
+        if(!gServerCfg.wechat)
         {
-            global.gLog.error("wechat config not found!")
+            gLog.error("wechat config not found!")
             return null
         }
-        let url="https://api.weixin.qq.com/sns/oauth2/access_token?appid="+global.gServerCfg.wechat.app_id+"&secret="+global.gServerCfg.wechat.app_key+"&code="+auth_code+"&grant_type=authorization_code"
-        let rs = await global.gHttpTool.get(url)
+        let url="https://api.weixin.qq.com/sns/oauth2/access_token?appid="+gServerCfg.wechat.app_id+"&secret="+gServerCfg.wechat.app_key+"&code="+auth_code+"&grant_type=authorization_code"
+        let rs = await gHttpTool.get(url)
         /*
         { 
             "access_token":"ACCESS_TOKEN", 
@@ -86,14 +88,14 @@ export class WechatTool
         }
         else
         {
-            global.gLog.error(rs.body)
+            gLog.error(rs.body)
         }
         return null
     }
     async getUserInfo(access_token:string,openid:string):Promise<WechatUserInfo>
     {
         let url = "https://api.weixin.qq.com/sns/userinfo?access_token="+access_token+"&openid="+openid
-        let rs = await global.gHttpTool.get(url)
+        let rs = await gHttpTool.get(url)
         if(rs.body)
         {
             return rs.body
@@ -141,3 +143,5 @@ export class WechatTool
         return xmlStr
     }
 }
+
+export let gWechatTool=new WechatTool()

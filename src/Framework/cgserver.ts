@@ -3,7 +3,12 @@ import { Config } from "./Config/Config";
 import { IWebServer } from "./WebServer/IWebServer";
 import { ISocketServer } from "./SocketServer/ISocketServer";
 import { DbConfig } from "./Config/DbConfig";
-import { global } from "./global";
+import { gMSSqlMgr } from "./Database/MSSqlManager";
+import { gRedisMgr } from "./Database/RedisManager";
+import { gMysqlMgr } from "./Database/MysqlManager";
+import { gMongoMgr } from "./Database/Mongo/MongoManager";
+import { gLog } from "./Logic/Log";
+import { gEventTool } from "./Logic/EventTool";
 
 export class CgServer
 {
@@ -60,8 +65,8 @@ export class CgServer
 
         process.env.TZ = "Asia/Shanghai"
 
-        global.gEventTool.on("socket_server_init_done",this.onStart.bind(this))
-        global.gEventTool.on("web_server_init_done",this.onStart.bind(this))
+        gEventTool.on("socket_server_init_done",this.onStart.bind(this))
+        gEventTool.on("web_server_init_done",this.onStart.bind(this))
 
         let argv = process.argv||[]
         for(let i=0;i<argv.length;++i)
@@ -142,7 +147,7 @@ export class CgServer
     }
     onUnCaughtException(e)
     {
-        global.gLog.error(e.stack)
+        gLog.error(e.stack)
         let events=this._events["uncaughtexception"]||[]
         for(let i=0;i<events.length;++i)
         {
@@ -159,15 +164,15 @@ export class CgServer
     }
     async initDb(dbcfg:DbConfig)
     {
-        await global.gMSSqlMgr.init(dbcfg.mssql)
-        await global.gMysqlMgr.init(dbcfg.mysql)
-        await global.gRedisMgr.init(dbcfg.redis)
+        await gMSSqlMgr.init(dbcfg.mssql)
+        await gMysqlMgr.init(dbcfg.mysql)
+        await gRedisMgr.init(dbcfg.redis)
         let mongos=dbcfg.mongos||[]
         if(dbcfg.mongo)
         {
             mongos.push(dbcfg.mongo)
         }
-        await global.gMongoMgr.init(mongos)
+        await gMongoMgr.init(mongos)
     }
     pause()
     {
@@ -192,3 +197,5 @@ export class CgServer
         }
     }
 }
+
+export let gCgServer=new CgServer()

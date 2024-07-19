@@ -167,3 +167,4 @@ export class Log
         }
     }
 }
+export let gLog = new Log()

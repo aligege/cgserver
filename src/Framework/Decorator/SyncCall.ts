@@ -1,4 +1,4 @@
-import { global } from "../global"
+import { gSyncQueueTool } from "../Logic/SyncQueueTool"
 
 /**
  * 异步函数变为同步函数，当前进程有效
@@ -12,7 +12,7 @@ export function SyncCall(target: any, propertyName: string, descriptor: TypedPro
     descriptor.value = function () 
     {
         let self=this
-        let ret = global.gSyncQueueTool.add(method.name,async ()=>
+        let ret = gSyncQueueTool.add(method.name,async ()=>
         {
             return await method.apply(self, arguments)
         })
@@ -37,7 +37,7 @@ export function SyncCall2(param_index?:number)
             {
                 key = propertyName + "_" + arguments[param_index]
             }
-            let ret = global.gSyncQueueTool.add(key,async ()=>
+            let ret = gSyncQueueTool.add(key,async ()=>
             {
                 return await method.apply(self, arguments)
             })

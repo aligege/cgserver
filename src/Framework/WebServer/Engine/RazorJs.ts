@@ -1,6 +1,6 @@
 ﻿'use strict';
 
-import { global } from "../../global";
+import { gLog } from "../../Logic/Log";
 
 var  _suffix = ".cshtml"
 var  _MATCH_HTML = /[&<>\'"]/g
@@ -251,7 +251,7 @@ export class RazorJs
             {
                 return html
             }
-            global.gLog.error("no view:"+tmpl_path)
+            gLog.error("no view:"+tmpl_path)
             return "Server Error(No View)"
         }
         data = data || {};

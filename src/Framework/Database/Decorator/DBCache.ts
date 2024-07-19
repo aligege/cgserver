@@ -1,5 +1,5 @@
 import * as fs from "fs";
-import { global } from "../../global";
+import { gLog } from "../../Logic/Log";
 
 export class VersionModel
 {
@@ -22,7 +22,7 @@ export class DBCache
     protected _path=__dirname+"/tmp_table_version.json"
     async init()
     {
-        global.gLog.warn("mysql auto 功能建议只使用在开发环境中，因为会导致数据丢失，数据表重建")
+        gLog.warn("mysql auto 功能建议只使用在开发环境中，因为会导致数据丢失，数据表重建")
         if(fs.existsSync(this._path))
         {
             try{
@@ -31,7 +31,7 @@ export class DBCache
             }
             catch(e)
             {
-                global.gLog.info("error:"+this._path)
+                gLog.info("error:"+this._path)
                 process.exit()
             }
         }
@@ -71,3 +71,4 @@ export class DBCache
         return vm.version
     }
 }
+export let gDbCache=new DBCache()

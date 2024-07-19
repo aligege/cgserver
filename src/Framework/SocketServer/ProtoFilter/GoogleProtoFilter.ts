@@ -1,4 +1,4 @@
-import { global } from '../../global';
+import { gLog } from '../../Logic/Log';
 import { IProtoFilter } from './IProtoFilter';
 import * as protobufjs from 'protobufjs';
 
@@ -19,7 +19,7 @@ export class GoogleProtoFilter implements IProtoFilter
         }
         catch(e)
         {
-            global.gLog.error(e)
+            gLog.error(e)
             return false
         }
         return true
@@ -50,13 +50,13 @@ export class GoogleProtoFilter implements IProtoFilter
         let body = this._root.lookupType(root)
         if(!body)
         {
-            global.gLog.info("proto body not in proto(!"+root+")")
+            gLog.info("proto body not in proto(!"+root+")")
             return null
         }
         let msgBody = body.decode(data)
         if(!msgBody)
         {
-            global.gLog.info("proto body decode wrong!")
+            gLog.info("proto body decode wrong!")
             return null
         }
         let objBody = body.toObject(msgBody)

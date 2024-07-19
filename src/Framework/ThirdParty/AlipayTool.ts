@@ -5,7 +5,8 @@ import { AliPayUtil, RsaSignParam } from "alipay_sdk2/AliPayUtil";
 import * as fs from "fs";
 import AlipayFormData from 'alipay-sdk/lib/form';
 import { Config } from '../Config/Config';
-import { global } from '../global';
+import { gServerCfg } from '../Config/IServerConfig';
+import { gLog } from '../Logic/Log';
 
 export class AlipayResult
 {
@@ -73,28 +74,28 @@ export class AlipayTool
     }
     init()
     {
-        if(!global.gServerCfg.alipay
-            ||!global.gServerCfg.alipay.open)
+        if(!gServerCfg.alipay
+            ||!gServerCfg.alipay.open)
         {
             return false
         }
         let suffix=""
-        if(global.gServerCfg.alipay.dev)
+        if(gServerCfg.alipay.dev)
         {
             suffix="_dev"
         }
         this._cfg={
-            app_id: global.gServerCfg.alipay["app_id"+suffix],
-            app_key: global.gServerCfg.alipay["app_key"+suffix],
-            gateway: global.gServerCfg.alipay["gateway"+suffix],
+            app_id: gServerCfg.alipay["app_id"+suffix],
+            app_key: gServerCfg.alipay["app_key"+suffix],
+            gateway: gServerCfg.alipay["gateway"+suffix],
             //RSA1 RSA2
-            signType: global.gServerCfg.alipay["signType"+suffix],
+            signType: gServerCfg.alipay["signType"+suffix],
             /** 指定private key类型, 默认： PKCS1, PKCS8: PRIVATE KEY, PKCS1: RSA PRIVATE KEY */
-            keyType: global.gServerCfg.alipay["signType"+suffix],
-            alipay_root_cert_sn: global.gServerCfg.alipay["alipay_root_cert_sn"+suffix],
-            alipay_cert_sn: global.gServerCfg.alipay["alipay_cert_sn"+suffix],
-            app_cert_sn: global.gServerCfg.alipay["app_cert_sn"+suffix],
-            notify_url: global.gServerCfg.alipay["notify_url"+suffix]
+            keyType: gServerCfg.alipay["signType"+suffix],
+            alipay_root_cert_sn: gServerCfg.alipay["alipay_root_cert_sn"+suffix],
+            alipay_cert_sn: gServerCfg.alipay["alipay_cert_sn"+suffix],
+            app_cert_sn: gServerCfg.alipay["app_cert_sn"+suffix],
+            notify_url: gServerCfg.alipay["notify_url"+suffix]
         }
         if(this._cfg.alipay_cert_sn)
         {
@@ -119,7 +120,7 @@ export class AlipayTool
                 keyType:this._cfg.keyType
             })
         }
-        global.gLog.info("alipay init success!")
+        gLog.info("alipay init success!")
     }
     /**
      *  charset:"utf-8",method:"alipay.trade.app.pay",sign_type:"RSA2,version:"1.0"
@@ -198,7 +199,7 @@ export class AlipayTool
     {
         if(!this._alipaySdk)
         {
-            global.gLog.error("并未配置alipay或者初始化失败")
+            gLog.error("并未配置alipay或者初始化失败")
             return
         }
         const formData = new AlipayFormData();

@@ -81,3 +81,5 @@ export class CacheTool
         delete this._items[key]
     }
 }
+
+export let gCacheTool=new CacheTool()

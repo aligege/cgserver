@@ -1,4 +1,3 @@
-import { global } from '../global';
 import { FrameworkConfig } from './FrameworkConfig';
 
 export class IServerConfig extends FrameworkConfig
@@ -22,7 +21,8 @@ export class IServerConfig extends FrameworkConfig
         {
             return ret
         }
-        global.gServerCfg=this
+        gServerCfg=this
         return ret
     }
 }
+export let gServerCfg:IServerConfig=null

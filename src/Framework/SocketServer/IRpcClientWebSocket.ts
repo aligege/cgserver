@@ -2,7 +2,8 @@ import _ = require("underscore");
 import { IRpc, RpcMsg } from "./IRpc";
 import { IClientWebSocket } from "./IClientWebSocket";
 import { core } from "../Core/Core";
-import { global } from "../global";
+import { gLog } from "../Logic/Log";
+import { gEventTool } from "../Logic/EventTool";
 
 export class IRpcClientWebSocket extends IClientWebSocket implements IRpc
 {
@@ -41,7 +42,7 @@ export class IRpcClientWebSocket extends IClientWebSocket implements IRpc
     {
         if(!msg)
         {
-            global.gLog.error("send null msg!")
+            gLog.error("send null msg!")
             return
         }
         if(!msg.__rpcid)
@@ -62,16 +63,16 @@ export class IRpcClientWebSocket extends IClientWebSocket implements IRpc
             }
             handler = setTimeout(()=>
             {
-                global.gEventTool.off(msg.__rpcid,func)
+                gEventTool.off(msg.__rpcid,func)
                 resolve({errcode:{id:10086,des:"timeout"}})
             },3000)
-            global.gEventTool.once(msg.__rpcid,func)
+            gEventTool.once(msg.__rpcid,func)
             super.send(msg)
         })
     }
     receive_other_all(msg:RpcMsg)
     {
-        global.gLog.error({des:"no handle",msg})
+        gLog.error({des:"no handle",msg})
     }
     protected async _onMessage(msg:RpcMsg)
     {
@@ -82,7 +83,7 @@ export class IRpcClientWebSocket extends IClientWebSocket implements IRpc
             {
                 return
             }
-            global.gEventTool.emit(msg.__rpcid,msg)
+            gEventTool.emit(msg.__rpcid,msg)
             return
         }
         super._onMessage(msg)

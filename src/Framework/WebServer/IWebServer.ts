@@ -1,7 +1,10 @@
 import { Engine } from './Engine/Engine';
 import { WebServerConfig } from '../Config/FrameworkConfig';
 import { RazorJs } from './Engine/RazorJs';
-import { global } from '../global';
+import { gServerCfg } from '../Config/IServerConfig';
+import { gCgServer } from '../cgserver';
+import { gEventTool } from '../Logic/EventTool';
+import { gLog } from '../Logic/Log';
 
 //实现对controller的手动注册
 export class IWebServer
@@ -13,22 +16,22 @@ export class IWebServer
      */
     async start(cfg:WebServerConfig)
     {
-        global.gCgServer.addWebServer(this)
+        gCgServer.addWebServer(this)
         if(!cfg)
         {
-            global.gLog.error("webserver 配置不存在，启动服务器失败")
+            gLog.error("webserver 配置不存在，启动服务器失败")
             return false
         }
         
-        let dbcfg=global.gServerCfg.db
-        await global.gCgServer.initDb(dbcfg)
+        let dbcfg=gServerCfg.db
+        await gCgServer.initDb(dbcfg)
         //初始化web引擎
         this._engine = new Engine(cfg,new RazorJs())
         this._engine.start()
 
         this._registerController()
         this._registerRouter()
-        global.gEventTool.emit("web_server_init_done")
+        gEventTool.emit("web_server_init_done")
         return true
     }
     pause()

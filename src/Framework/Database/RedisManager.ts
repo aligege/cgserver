@@ -1,5 +1,5 @@
 ﻿import * as redis from 'redis';
-import { global } from '../global';
+import { gLog } from '../Logic/Log';
 export class RedisConfig
 {
     open=false
@@ -31,7 +31,7 @@ export class RedisManager
                 return
             }
             this._redisCfg=redisCfg
-            global.gLog.info("begin connect redis="+JSON.stringify(redisCfg))
+            gLog.info("begin connect redis="+JSON.stringify(redisCfg))
             this._redis = redis.createClient(redisCfg)
             this._redis.on("connect", ()=>
             {
@@ -53,7 +53,7 @@ export class RedisManager
     }
     onConnect()
     {
-        global.gLog.info("redis has connected!")
+        gLog.info("redis has connected!")
     }
     onEnd()
     {
@@ -62,6 +62,8 @@ export class RedisManager
     }
     onError(err)
     {
-        global.gLog.info("Error connected="+this._redis+": "+ err)
+        gLog.info("Error connected="+this._redis+": "+ err)
     }
 }
+
+export let gRedisMgr=new RedisManager()

@@ -1,4 +1,4 @@
-import { global } from "../global"
+import { gLog } from "../Logic/Log"
 
 export class Timer
 {
@@ -49,11 +49,11 @@ export class Timer
             {
                 if(e&&e.stack)
                 {
-                    global.gLog.error(e.stack)
+                    gLog.error(e.stack)
                 }
                 else
                 {   
-                    global.gLog.error(e)
+                    gLog.error(e)
                 }
             }
         }, timeout, ...args)
@@ -79,11 +79,11 @@ export class Timer
             {
                 if(e&&e.stack)
                 {
-                    global.gLog.error(e.stack)
+                    gLog.error(e.stack)
                 }
                 else
                 {   
-                    global.gLog.error(e)
+                    gLog.error(e)
                 }
             }
         }, timeout, ...args)

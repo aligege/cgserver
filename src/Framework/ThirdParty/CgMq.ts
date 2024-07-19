@@ -2,7 +2,7 @@ import { core } from "../Core/Core";
 import { IRpcServerWebSocket } from "../SocketServer/IRpcServerWebSocket";
 import * as _ from "underscore";
 import { RpcMsg } from "../SocketServer/IRpc";
-import { global } from "../global";
+import { gLog } from "../Logic/Log";
 
 class CgMqServerWebsocket extends IRpcServerWebSocket
 {
@@ -91,7 +91,7 @@ export class CgMq
         this._onmsg=onmsg
         if(this._inited)
         {
-            global.gLog.error("dulplicate init for CgMq")
+            gLog.error("dulplicate init for CgMq")
             return true
         }
         this._inited=true
@@ -132,7 +132,7 @@ export class CgMq
         let ret_rpcmsg = await this._ws.push(group,data,to_id)
         if(this._ws.debug_msg)
         {
-            global.gLog.info("["+(Date.now()-time)+"ms] callRemote:"+group+"-"+func_name)
+            gLog.info("["+(Date.now()-time)+"ms] callRemote:"+group+"-"+func_name)
         }
         return ret_rpcmsg
     }

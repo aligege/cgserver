@@ -1,6 +1,6 @@
 import { core } from "../Core/Core"
+import { gLog } from "../Logic/Log"
 import { RpcMsg } from "../SocketServer/IRpc"
-import { global } from "../global"
 import { CgMq, RpcConfig } from "./CgMq"
 
 class Remote
@@ -63,7 +63,7 @@ export class Rpc
         let func = this[cmd]
         if(!func)
         {
-            global.gLog.error({des:"rpc no cmd",msg})
+            gLog.error({des:"rpc no cmd",msg})
             return
         }
         let data = await core.safeCall(func,this,...msg.data?.args,msg)

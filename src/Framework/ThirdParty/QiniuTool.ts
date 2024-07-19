@@ -1,27 +1,28 @@
 import * as qiniu from "qiniu";
-import { global } from "../global";
+import { gServerCfg } from "../Config/IServerConfig";
+import { gLog } from "../Logic/Log";
 
 export class QiniuTool
 {
     get host()
     {
-        if(!global.gServerCfg.qiniu)
+        if(!gServerCfg.qiniu)
         {
             return ""
         }
-        return global.gServerCfg.qiniu.host
+        return gServerCfg.qiniu.host
     }
     getUploadToken(filename)
     {
-        if(!global.gServerCfg.qiniu)
+        if(!gServerCfg.qiniu)
         {
-            global.gLog.error("qiniu config not found!")
+            gLog.error("qiniu config not found!")
             return ""
         }
-        let mac = new qiniu.auth.digest.Mac(global.gServerCfg.qiniu.accessKey, global.gServerCfg.qiniu.secretKey)
+        let mac = new qiniu.auth.digest.Mac(gServerCfg.qiniu.accessKey, gServerCfg.qiniu.secretKey)
         let options = 
         {
-            scope: global.gServerCfg.qiniu.bucket+":"+filename,
+            scope: gServerCfg.qiniu.bucket+":"+filename,
         }
         let putPolicy = new qiniu.rs.PutPolicy(options)
         let uploadToken = putPolicy.uploadToken(mac)

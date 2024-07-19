@@ -1,5 +1,6 @@
 import { core } from "../Core/Core"
-import { global } from "../global"
+import { gSyncQueueTool } from "../Logic/SyncQueueTool"
+import { gMongoCacheSer } from "../Service/MongoCacheService"
 
 /**
  * 异步函数变为同步函数
@@ -15,15 +16,15 @@ export function SyncCallServer(target: any, propertyName: string, descriptor: Ty
         let key = "sync_"+method.name
         let func = async ()=>
         {
-            let item = await global.gMongoCacheSer.getData(key)
+            let item = await gMongoCacheSer.getData(key)
             let ret = null
             while(item)
             {
                 await core.sleep(200)
-                item = await global.gMongoCacheSer.getData(key)
+                item = await gMongoCacheSer.getData(key)
             }
             //10秒后过期，避免卡死
-            let mcm = await global.gMongoCacheSer.addData(key,true,Date.now()+10*1000)
+            let mcm = await gMongoCacheSer.addData(key,true,Date.now()+10*1000)
             if(!mcm)
             {
                 await func()
@@ -31,11 +32,11 @@ export function SyncCallServer(target: any, propertyName: string, descriptor: Ty
             return
         }
         await func()
-        let ret = global.gSyncQueueTool.add(method.name,async ()=>
+        let ret = gSyncQueueTool.add(method.name,async ()=>
         {
             return await method.apply(self, arguments)
         })
-        await global.gMongoCacheSer.deleteOne({key})
+        await gMongoCacheSer.deleteOne({key})
         return ret
     }
 }
@@ -59,15 +60,15 @@ export let SyncCallServer2=function(params_index?:number)
             }
             let func = async ()=>
             {
-                let item = await global.gMongoCacheSer.getData(key)
+                let item = await gMongoCacheSer.getData(key)
                 let ret = null
                 while(item)
                 {
                     await core.sleep(200)
-                    item = await global.gMongoCacheSer.getData(key)
+                    item = await gMongoCacheSer.getData(key)
                 }
                 //10秒后过期，避免卡死
-                let mcm = await global.gMongoCacheSer.addData(key,true,Date.now()+10*1000)
+                let mcm = await gMongoCacheSer.addData(key,true,Date.now()+10*1000)
                 if(!mcm)
                 {
                     await func()
@@ -75,11 +76,11 @@ export let SyncCallServer2=function(params_index?:number)
                 return
             }
             await func()
-            let ret = global.gSyncQueueTool.add(method.name,async ()=>
+            let ret = gSyncQueueTool.add(method.name,async ()=>
             {
                 return await method.apply(self, arguments)
             })
-            await global.gMongoCacheSer.deleteOne({key})
+            await gMongoCacheSer.deleteOne({key})
             return ret
         }
     }

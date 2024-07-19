@@ -1,4 +1,4 @@
-import { global } from '../global';
+import { gLog } from '../Logic/Log';
 import { ISocketServer } from './ISocketServer';
 import { IWebSocket } from './IWebSocket';
 import { EProtoType } from './ProtoFilter/IProtoFilter';
@@ -29,11 +29,11 @@ export class IClientWebSocket extends IWebSocket
     {
         if (!data)
         {
-            global.gLog.info("Send Message warning:null data!")
+            gLog.info("Send Message warning:null data!")
             return
         }
-        global.gLog.info("broadCast:----------------------------------")
-        global.gLog.info(data)
+        gLog.info("broadCast:----------------------------------")
+        gLog.info(data)
         let msg = this._protoFilter.encode(data)
         this._server.broadCast(msg)
     }

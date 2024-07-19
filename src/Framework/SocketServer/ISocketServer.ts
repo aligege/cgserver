@@ -3,10 +3,12 @@ import * as ws from 'websocket';
 import * as fs from "fs";
 import * as http from "http";
 import * as https from "https";
-import { IServerConfig } from '../Config/IServerConfig';
+import { IServerConfig, gServerCfg } from '../Config/IServerConfig';
 import { BaseMsg } from './IWebSocket';
 import { Config } from '../Config/Config';
-import { global } from '../global';
+import { gCgServer } from '../cgserver';
+import { gLog } from '../Logic/Log';
+import { gEventTool } from '../Logic/EventTool';
 
 export class ISocketServer
 {
@@ -66,31 +68,31 @@ export class ISocketServer
     }
     async run()
     {
-        global.gCgServer.addSocketServer(this)
-        let dbcfg=global.gServerCfg.db
-        await global.gCgServer.initDb(dbcfg)
+        gCgServer.addSocketServer(this)
+        let dbcfg=gServerCfg.db
+        await gCgServer.initDb(dbcfg)
         this.initWebSocket()
     }
     pause()
     {
         if(!this._is_runging)
         {
-            global.gLog.error("websocketserver has paused:"+this._cfg.port)
+            gLog.error("websocketserver has paused:"+this._cfg.port)
             return
         }
         this._is_runging=false
         this._listening_websocket.closeAllConnections()
-        global.gLog.info("websocketserver paused:"+this._cfg.port)
+        gLog.info("websocketserver paused:"+this._cfg.port)
     }
     resume()
     {
         if(this._is_runging)
         {
-            global.gLog.error("websocketserver is running:"+this._cfg.port)
+            gLog.error("websocketserver is running:"+this._cfg.port)
             return
         }
         this._is_runging=true
-        global.gLog.error("websocketserver resumed:"+this._cfg.port)
+        gLog.error("websocketserver resumed:"+this._cfg.port)
     }
     /*
         把所有的客户端链接保存起来
@@ -121,7 +123,7 @@ export class ISocketServer
             }
             server = https.createServer(options,(request, response)=>
             {
-                global.gLog.info((new Date()) + 'wss Received request for ' + request.url)
+                gLog.info((new Date()) + 'wss Received request for ' + request.url)
                 response.writeHead(200)
                 response.end()
             })
@@ -130,7 +132,7 @@ export class ISocketServer
         {
             server = http.createServer((request, response)=>
             {
-                global.gLog.info((new Date()) + 'ws Received request for ' + request.url)
+                gLog.info((new Date()) + 'ws Received request for ' + request.url)
                 response.writeHead(200)
                 response.end()
             })
@@ -157,16 +159,16 @@ export class ISocketServer
     onListenning()
     {
         this._is_runging=true
-        global.gEventTool.emit("socket_server_init_done")
+        gEventTool.emit("socket_server_init_done")
         let info = (new Date()) + "  Server "+ this.name +" is listening on port "+this._cfg.port
-        global.gLog.info(info)
+        gLog.info(info)
     }
     onRequest(req:ws.request)
     {
         if(!this._is_runging)
         {
             req.reject()
-            global.gLog.error(' Connection from origin ' + req.origin + ' rejected.')
+            gLog.error(' Connection from origin ' + req.origin + ' rejected.')
             return
         }
         let protocol = null
@@ -178,7 +180,7 @@ export class ISocketServer
         if (!allowed)
         {
             req.reject()
-            global.gLog.error(' Connection from origin ' + req.origin + ' rejected.')
+            gLog.error(' Connection from origin ' + req.origin + ' rejected.')
             return
         }
         try
@@ -186,16 +188,16 @@ export class ISocketServer
             let conn = req.accept(this._accepted_protocol, req.origin)
             if(!conn)
             {
-                global.gLog.error(' protocol reject')
+                gLog.error(' protocol reject')
                 return
             }
-            global.gLog.info((new Date()) + ' Connection accepted.')
+            gLog.info((new Date()) + ' Connection accepted.')
             let server_name = this._getServerNameByCookies(req.cookies)
             this.createWebSocketObjectByProtocol(server_name,conn,req)
         }
         catch(e)
         {
-            global.gLog.error(' protocol reject')
+            gLog.error(' protocol reject')
         }
     }
     createWebSocketObjectByProtocol(server_name:string,_ws:ws.connection,req:ws.request):IClientWebSocket
@@ -204,7 +206,7 @@ export class ISocketServer
         let cls = this._name_vs_class[server_name]
         if(!cls)
         {
-            global.gLog.error("(createWebSocketObjectByProtocol in server("+this.name+"))no this websocket handle class="+server_name)
+            gLog.error("(createWebSocketObjectByProtocol in server("+this.name+"))no this websocket handle class="+server_name)
             return null
         }
         let ws_server = <IClientWebSocket>(new cls(this))

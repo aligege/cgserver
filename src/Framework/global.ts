@@ -34,7 +34,6 @@ export class global
     static gCgServer=new CgServer()
     static gDbCache=new DBCache()
     static gTriggerMgr=new TriggerManager()
-    static gServerCfg:IServerConfig=null
     static gMongoMgr=new MongoManager()
     static gMSSqlMgr=new MSSqlManager()
     static gMysqlMgr=new MysqlManager()

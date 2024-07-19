@@ -1,7 +1,7 @@
 import * as request from "request";
 import * as qs from "querystring";
 import { core } from "../Core/Core";
-import { global } from "../global";
+import { gLog } from "./Log";
 
 export class HttpTool
 {
@@ -30,7 +30,7 @@ export class HttpTool
         }
         if(this._debug)
         {
-            global.gLog.info("prepare get:"+options.url)
+            gLog.info("prepare get:"+options.url)
         }
         return new Promise((resolve,reject)=>
         {
@@ -39,8 +39,8 @@ export class HttpTool
                 let originbody=body
                 if(error)
                 {
-                    global.gLog.error("get:"+options.url)
-                    global.gLog.error(error)
+                    gLog.error("get:"+options.url)
+                    gLog.error(error)
                 }
                 try
                 {
@@ -55,7 +55,7 @@ export class HttpTool
                 }
                 if(this._debug)
                 {
-                    global.gLog.info({
+                    gLog.info({
                         dttime:(Date.now()-time)+"ms",
                         url:options.url,
                         originbody:originbody
@@ -79,7 +79,7 @@ export class HttpTool
         }
         if(this._debug)
         {
-            global.gLog.info("prepare post:"+options.url)
+            gLog.info("prepare post:"+options.url)
         }
         return new Promise((resolve,reject)=>
         {
@@ -88,8 +88,8 @@ export class HttpTool
                 let originbody=body
                 if(error)
                 {
-                    global.gLog.error("post:"+options.url)
-                    global.gLog.error(error)
+                    gLog.error("post:"+options.url)
+                    gLog.error(error)
                 }
                 try
                 {
@@ -104,7 +104,7 @@ export class HttpTool
                 }
                 if(this._debug)
                 {
-                    global.gLog.info({
+                    gLog.info({
                         dttime:(Date.now()-time)+"ms",
                         url:options.url,
                         originbody:originbody
@@ -115,3 +115,5 @@ export class HttpTool
         })
     }
 }
+
+export let gHttpTool = new HttpTool()

@@ -1,4 +1,5 @@
-import { global } from "../global"
+import { gServerCfg } from "../Config/IServerConfig"
+import { gLog } from "../Logic/Log"
 
 let SMSClient =require("@alicloud/sms-sdk")
 
@@ -8,7 +9,7 @@ export class SMSTool
     protected _sms_client=null
     init()
     {
-        if(!global.gServerCfg.aliSms)
+        if(!gServerCfg.aliSms)
         {
             return false
         }
@@ -17,8 +18,8 @@ export class SMSTool
             return true
         }
         this._is_init = true
-        this._sms_client = new SMSClient({accessKeyId:global.gServerCfg.aliSms.accessKeyId,secretAccessKey:global.gServerCfg.aliSms.secretAccessKey})
-        global.gLog.info("SMSClient init success!")
+        this._sms_client = new SMSClient({accessKeyId:gServerCfg.aliSms.accessKeyId,secretAccessKey:gServerCfg.aliSms.secretAccessKey})
+        gLog.info("SMSClient init success!")
     }
     /**
      * 发送短信验证码
@@ -32,8 +33,8 @@ export class SMSTool
         {
             this._sms_client.sendSMS({
                 PhoneNumbers:phone,
-                SignName:global.gServerCfg.aliSms.signName,
-                TemplateCode:global.gServerCfg.aliSms.templateCode,
+                SignName:gServerCfg.aliSms.signName,
+                TemplateCode:gServerCfg.aliSms.templateCode,
                 TemplateParam:JSON.stringify({code:code})
             }).then((res)=>
             {
@@ -43,12 +44,12 @@ export class SMSTool
                 }
                 else
                 {
-                    global.gLog.error("phone:"+phone+" code:"+res.Code)
+                    gLog.error("phone:"+phone+" code:"+res.Code)
                     resolve(res.Code)
                 }
             },(err)=>
             {
-                global.gLog.error(err)
+                gLog.error(err)
                 resolve(err)
             })
         })

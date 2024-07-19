@@ -3,7 +3,7 @@ import { Entity } from './Entity';
 import { AiObject } from './AiObject';
 import { core } from "../Core/Core";
 import { Rect } from './Astar';
-import { global } from '../global';
+import { gLog } from '../Logic/Log';
 
 export enum ETriggerType{
     Region=0,
@@ -114,8 +114,8 @@ export class TriggerManager
         {
             return false;
         }
-        global.gLog.info("pos.x" + pos.x + "  pos.y=" + pos.y);
-        global.gLog.info("region.x" + region.x + "  region.y=" + region.y);
+        gLog.info("pos.x" + pos.x + "  pos.y=" + pos.y);
+        gLog.info("region.x" + region.x + "  region.y=" + region.y);
         if (pos.x < (region.x - region.width / 2))
         {
             return false;
@@ -193,7 +193,7 @@ export class TriggerManager
         {
             return
         }
-        global.gLog.info("some one triggered in")
+        gLog.info("some one triggered in")
         this._regionTriggers.aiObj.onTriggerIn(obj, trigger)
     }
 
@@ -204,7 +204,7 @@ export class TriggerManager
         {
             return
         }
-        global.gLog.info("some one triggered out")
+        gLog.info("some one triggered out")
         this._regionTriggers.aiObj.onTriggerOut(obj, trigger)
     }
 
@@ -276,3 +276,5 @@ export class TriggerManager
 
     }
 }
+
+export let gTriggerMgr=new TriggerManager()

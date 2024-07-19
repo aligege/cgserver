@@ -1,9 +1,9 @@
 ﻿import { core } from '../Core/Core';
 import * as _ from "underscore";
 
-import { EConditionType } from "./TriggerMgr"
+import { EConditionType, gTriggerMgr } from "./TriggerMgr"
 import { Point } from './Point';
-import { global } from '../global';
+import { gLog } from '../Logic/Log';
 
 export class BehaviorAI
 {
@@ -34,7 +34,7 @@ export class BehaviorAI
         }
 
         this._triggers = []
-        let code = global.gTriggerMgr.addConditionTriggerEvent(EConditionType.Die, this.onTriggerDie.bind(this), { code: this._obj.getCode() })
+        let code = gTriggerMgr.addConditionTriggerEvent(EConditionType.Die, this.onTriggerDie.bind(this), { code: this._obj.getCode() })
         this._triggers.push({ type: EConditionType.Die, code: code })
     }
     //启动行为树AI
@@ -42,7 +42,7 @@ export class BehaviorAI
     {
         if (!this._behavior_data)
         {
-            global.gLog.info("------------error------------this._behavior_data  can not be null!");
+            gLog.info("------------error------------this._behavior_data  can not be null!");
             return;
         }
         this.goto(this._behavior_data.start);
@@ -52,7 +52,7 @@ export class BehaviorAI
     {
         for (let i = 0, length = this._triggers.length; i < length; ++i)
         {
-            global.gTriggerMgr.removeConditionTriggerEvent(this._triggers[i].type, this._triggers[i].code);
+            gTriggerMgr.removeConditionTriggerEvent(this._triggers[i].type, this._triggers[i].code);
         }
         this._triggers = [];
     }
@@ -184,7 +184,7 @@ export class BehaviorAI
         }
         else
         {
-            global.gLog.info("---------warning--------_goto->behavior_name=" + behavior_name + ".animaiton not exist!");
+            gLog.info("---------warning--------_goto->behavior_name=" + behavior_name + ".animaiton not exist!");
         }
     }
     //检查有没有已经达到的条件,又的话就执行他的相关事件
@@ -221,7 +221,7 @@ export class BehaviorAI
                         if (targetInfo)
                         {
                             if (this._behavior_data.name == "sm")
-                                global.gLog.info("distance" + targetInfo.distance);
+                                gLog.info("distance" + targetInfo.distance);
                             this._targetObj = targetInfo.target;
                         }
                     }

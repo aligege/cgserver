@@ -2,7 +2,9 @@ import { IProtoFilter,EProtoType } from "./ProtoFilter/IProtoFilter";
 import * as ws from 'websocket';
 import { core } from '../Core/Core';
 import * as _ from "underscore";
-import { global } from "../global";
+import { gProtoFactory } from "./ProtoFilter/ProtoFactory";
+import { gSyncQueueTool } from "../Logic/SyncQueueTool";
+import { gLog } from "../Logic/Log";
 
 export class BaseMsg
 {
@@ -100,12 +102,12 @@ export class IWebSocket
         this._req = _req
         if(!this._protoFilter)
         {
-            this._protoFilter = global.gProtoFactory.createFilter(this._protoType)
+            this._protoFilter = gProtoFactory.createFilter(this._protoType)
             this._protoFilter.init(this._protoPath)
         }
         this._ws.on("message",this.onMessage.bind(this))
         this._ws.on("error",this.onError.bind(this))
-        this._ws.on("close",this.onClose.bind(this))
+    this._ws.on("close",this.onClose.bind(this))
         this.onOpen()
     }
     onMessage(message:ws.Message)
@@ -115,7 +117,7 @@ export class IWebSocket
             let msg = this._onDecode(message)
             if(this._is_sync_msg)
             {
-                global.gSyncQueueTool.add(this._socket_id+"",this._onMessage,this,msg)
+                gSyncQueueTool.add(this._socket_id+"",this._onMessage,this,msg)
             }
             else
             {
@@ -124,7 +126,7 @@ export class IWebSocket
         }
         catch (e)
         {
-            global.gLog.error(this.tipKey+' Received Message Handle Error: ' + e)
+            gLog.error(this.tipKey+' Received Message Handle Error: ' + e)
         }
     }
     protected _onDecode(message:ws.Message,...params)
@@ -154,16 +156,16 @@ export class IWebSocket
     {
         if(!msg)
         {
-            global.gLog.error({tipKey:this.tipKey,action:"receive",error:"no cmd",msg})
+            gLog.error({tipKey:this.tipKey,action:"receive",error:"no cmd",msg})
             return false
         }
         if(this._debug_msg && !this._nodebugmsgs[msg.cmd])
         {
-            global.gLog.info({tipKey:this.tipKey,action:"receive",msg})
+            gLog.info({tipKey:this.tipKey,action:"receive",msg})
         }
         if (!msg.cmd)
         {
-            global.gLog.error({tipKey:this.tipKey,action:"receive",error:"no cmd",msg})
+            gLog.error({tipKey:this.tipKey,action:"receive",error:"no cmd",msg})
             return false
         }
         return true
@@ -187,7 +189,7 @@ export class IWebSocket
             }
             else
             {
-                global.gLog.error(this.tipKey+' Received Message warning: no cmd handle,cmd=' + jsonData.cmd)
+                gLog.error(this.tipKey+' Received Message warning: no cmd handle,cmd=' + jsonData.cmd)
             }
         }
         else
@@ -196,7 +198,7 @@ export class IWebSocket
         }
         if(this._debug_msg&&!this._nodebugmsgs[jsonData.cmd])
         {
-            global.gLog.info("["+(Date.now()-time)+"ms] "+jsonData.cmd)
+            gLog.info("["+(Date.now()-time)+"ms] "+jsonData.cmd)
         }
     }
     onOpen(e?)
@@ -209,7 +211,7 @@ export class IWebSocket
     }
     onClose(reasonCode:number, description:string)
     {
-        global.gLog.info(this.tipKey+" onClose resonCode="+reasonCode+"  des="+description)
+        gLog.info(this.tipKey+" onClose resonCode="+reasonCode+"  des="+description)
     }
     filterSendMsg(msg:BaseMsg)
     {
@@ -219,13 +221,13 @@ export class IWebSocket
         }
         if (!msg)
         {
-            global.gLog.error(this.tipKey+" Send Message warning:null data!")
+            gLog.error(this.tipKey+" Send Message warning:null data!")
             return false
         }
         if(this._debug_msg
             &&msg.cmd!="heartbeat")
         {
-            global.gLog.info({tipKey:this.tipKey,action:"send",msg})
+            gLog.info({tipKey:this.tipKey,action:"send",msg})
         }
         return true
     }

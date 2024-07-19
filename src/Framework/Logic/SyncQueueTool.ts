@@ -48,3 +48,4 @@ export class SyncQueueTool
         return error
     }
 }
+export let gSyncQueueTool=new SyncQueueTool()

@@ -2,7 +2,7 @@ import { IWebSocket } from './IWebSocket';
 import * as ws from 'websocket';
 import { EProtoType } from './ProtoFilter/IProtoFilter';
 import * as http from "http";
-import { global } from '../global';
+import { gLog } from '../Logic/Log';
 /**
  * 连接到服务器的websocket
  * 默认自动重连
@@ -69,7 +69,7 @@ export class IServerWebSocket extends IWebSocket
     protected _connect()
     {
         let url = "ws://" + this._host + ":" + this._port + "/"
-        global.gLog.info("Trying to connect to server : " + url)
+        gLog.info("Trying to connect to server : " + url)
         let _ws = new ws.client()
         _ws.on("connect",super.onConnect.bind(this))
         _ws.on("connectFailed",this.onClose.bind(this))
@@ -78,7 +78,7 @@ export class IServerWebSocket extends IWebSocket
     onOpen(e?)
     {
         super.onOpen(e)
-        global.gLog.info("success to connect to " + this._host + ":" + this._port)
+        gLog.info("success to connect to " + this._host + ":" + this._port)
     }
     onClose(reasonCode:number, description:string)
     {

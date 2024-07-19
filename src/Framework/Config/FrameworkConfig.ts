@@ -1,4 +1,4 @@
-﻿import { global } from "../global";
+﻿import { gLog } from "../Logic/Log";
 import { Config } from "./Config";
 import { DbConfig } from "./DbConfig";
 export enum ESessionType
@@ -229,7 +229,7 @@ export class FrameworkConfig extends Config
     init()
     {
         let ret = super.init()
-        global.gLog.init(this.log,this.console_level||0)
+        gLog.init(this.log,this.console_level||0)
         return ret
     }
 }

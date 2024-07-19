@@ -1,7 +1,7 @@
 import * as mongo from 'mongodb';
 import { EErrorCode } from '../../Config/_error_';
 import { core } from '../../Core/Core';
-import { global } from '../../global';
+import { gLog } from '../../Logic/Log';
 export class MongoConfig
 {
     open=false
@@ -66,14 +66,14 @@ export class MongoManager
     {
         if(this._dbs[cfg.database])
         {
-            global.gLog.error("数据库配置得database不能相同!database="+cfg.database)
+            gLog.error("数据库配置得database不能相同!database="+cfg.database)
             return false
         }
         let mongoext = new MongoExt()
         let ret = await mongoext.init(cfg)
         if(!ret)
         {
-            global.gLog.error("数据库初始化失败!cfg="+JSON.stringify(cfg))
+            gLog.error("数据库初始化失败!cfg="+JSON.stringify(cfg))
             return false
         }
         this._dbs[cfg.database]=mongoext
@@ -141,7 +141,7 @@ export class MongoExt
         }
         this._mongocfg=cfg
         this._inited = true
-        global.gLog.info("mongo config="+JSON.stringify(this._mongocfg))
+        gLog.info("mongo config="+JSON.stringify(this._mongocfg))
         this._mongoClient = new mongo.MongoClient("mongodb://"+this._mongocfg.host+":"+this._mongocfg.port,this._mongocfg.options)
         await core.safeCall(this._mongoClient.connect,this._mongoClient)
         this.onConnect()
@@ -163,7 +163,7 @@ export class MongoExt
     onConnect()
     {
         this._mongo_init_succ = true
-        global.gLog.info("mongo has connected!")
+        gLog.info("mongo has connected!")
     }
     /**
      * 获取自增长id
@@ -189,7 +189,7 @@ export class MongoExt
         }
         catch(e)
         {
-            global.gLog.error(e.stack)
+            gLog.error(e.stack)
         }
         return -2
     }
@@ -237,8 +237,8 @@ export class MongoExt
         }
         catch(e)
         {
-            global.gLog.error({collection,property,where})
-            global.gLog.error(e.stack)
+            gLog.error({collection,property,where})
+            gLog.error(e.stack)
             rs.errcode=EErrorCode.Mongo_Error
         }
         rs.one=one
@@ -273,8 +273,8 @@ export class MongoExt
         }
         catch(e)
         {
-            global.gLog.error({collection,property,where,sort,skip,limit})
-            global.gLog.error(e.stack)
+            gLog.error({collection,property,where,sort,skip,limit})
+            gLog.error(e.stack)
             rs.errcode=EErrorCode.Mongo_Error
         }
         rs.list=list
@@ -296,8 +296,8 @@ export class MongoExt
         }
         catch(e)
         {
-            global.gLog.error({collection,where})
-            global.gLog.error(e.stack)
+            gLog.error({collection,where})
+            gLog.error(e.stack)
             rs.errcode=EErrorCode.Mongo_Error
         }
         rs.count=count
@@ -319,8 +319,8 @@ export class MongoExt
         }
         catch(e)
         {
-            global.gLog.error({collection,where})
-            global.gLog.error(e.stack)
+            gLog.error({collection,where})
+            gLog.error(e.stack)
             rs.errcode=EErrorCode.Mongo_Error
         }
         if(del_rs)
@@ -345,8 +345,8 @@ export class MongoExt
         }
         catch(e)
         {
-            global.gLog.error({collection,where})
-            global.gLog.error(e.stack)
+            gLog.error({collection,where})
+            gLog.error(e.stack)
             rs.errcode=EErrorCode.Mongo_Error
         }
         if(del_rs)
@@ -376,8 +376,8 @@ export class MongoExt
         }
         catch(e)
         {
-            global.gLog.error({collection,data})
-            global.gLog.error(e.stack)
+            gLog.error({collection,data})
+            gLog.error(e.stack)
             rs.errcode=EErrorCode.Mongo_Error
         }
         rs.rs=in_rs
@@ -398,8 +398,8 @@ export class MongoExt
         }
         catch(e)
         {
-            global.gLog.error({collection,data})
-            global.gLog.error(e.stack)
+            gLog.error({collection,data})
+            gLog.error(e.stack)
             rs.errcode=EErrorCode.Mongo_Error
         }
         rs.rs=in_rs
@@ -448,8 +448,8 @@ export class MongoExt
         }
         catch(e)
         {
-            global.gLog.error({collection,model,where,upsert})
-            global.gLog.error(e.stack)
+            gLog.error({collection,model,where,upsert})
+            gLog.error(e.stack)
             rs.errcode=EErrorCode.Mongo_Error
         }
         rs.rs=up_rs
@@ -486,8 +486,8 @@ export class MongoExt
         }
         catch(e)
         {
-            global.gLog.error({collection,model,where,upsert})
-            global.gLog.error(e.stack)
+            gLog.error({collection,model,where,upsert})
+            gLog.error(e.stack)
             rs.errcode=EErrorCode.Mongo_Error
         }
         rs.rs=up_rs
@@ -508,8 +508,8 @@ export class MongoExt
         }
         catch(e)
         {
-            global.gLog.error({collection,index})
-            global.gLog.error(e.stack)
+            gLog.error({collection,index})
+            gLog.error(e.stack)
             rs.errcode=EErrorCode.Mongo_Error
         }
         rs.rs=i_rs
@@ -552,7 +552,7 @@ export class MongoExt
         }
         catch(e)
         {
-            global.gLog.error(e.stack)
+            gLog.error(e.stack)
             rs.errcode=EErrorCode.Mongo_Error
         }
         rs.list=list
@@ -591,7 +591,7 @@ export class MongoExt
         catch(e)
         {
             await session.abortTransaction()
-            global.gLog.error(e.stack)
+            gLog.error(e.stack)
         }
         finally
         {
@@ -600,3 +600,5 @@ export class MongoExt
         return false
     }
 }
+
+export let gMongoMgr = new MongoManager()

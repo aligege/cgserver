@@ -1,5 +1,6 @@
 import { MongoBaseService } from "../Database/Mongo/MongoBaseService"
 import { MongoBaseModel } from "../Database/Mongo/MongoManager"
+import { gCgServer } from "../cgserver"
 
 //暂时就用这个了，反正没啥用户
 export class MongoCacheModel extends MongoBaseModel
@@ -17,7 +18,7 @@ export class MongoCacheService extends MongoBaseService<MongoCacheModel>
     constructor()
     {
         super("cache",MongoCacheModel)
-        global.gCgServer.addListener("start",()=>
+        gCgServer.addListener("start",()=>
         {
             if(!this.mongoDb)
             {
@@ -51,3 +52,5 @@ export class MongoCacheService extends MongoBaseService<MongoCacheModel>
         return mcm
     }
 }
+
+export let gMongoCacheSer=new MongoCacheService()
