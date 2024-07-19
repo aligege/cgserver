@@ -1,6 +1,6 @@
-import { gLog } from "../Logic/Log"
-import { gDbCache } from "./Decorator/DBCache"
-import { EPropertyType, TableProperty, Property } from "./Decorator/Property"
+import { gLog } from "../../Logic/Log"
+import { gDbCache } from "../Decorator/DBCache"
+import { EPropertyType, TableProperty, Property } from "../Decorator/Property"
 import { gMysqlMgr } from "./MysqlManager"
 
 export class BaseModel

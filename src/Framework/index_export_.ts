@@ -22,10 +22,10 @@ export { Type } from './Database/Decorator/Type';
 export { EPropertyType } from './Database/Decorator/Property';
 ///数据库相关
 export { MongoBaseService } from './Database/Mongo/MongoBaseService';
-export { BaseModel as MysqlBaseModel } from './Database/MysqlBaseService';
+export { BaseModel as MysqlBaseModel } from './Database/Mysql/MysqlBaseService';
 export { MongoBaseModel,MongoManager,MongoExt } from './Database/Mongo/MongoManager';
-export { MysqlBaseService } from './Database/MysqlBaseService';
-export { SqlReturn,SqlReturns } from './Database/MysqlManager';
+export { MysqlBaseService } from './Database/Mysql/MysqlBaseService';
+export { SqlReturn,SqlReturns } from './Database/Mysql/MysqlManager';
 export { RedisManager } from './Database/RedisManager';
 
 export { ERoleGroup,EUserState,EAccountFrom } from './Service/ini';
@@ -37,9 +37,9 @@ export { MysqlUserModel } from './Service/MysqlUserService';
 export { MongoUserModel } from './Service/MongoUserService';
 export { MongoCacheModel } from './Service/MongoCacheService';
 export { DbConfig } from './Config/DbConfig';
-export { MSSqlConfig } from './Database/MSSqlManager';
+export { MSSqlConfig } from './Database/MSSql/MSSqlManager';
 export { MongoConfig } from './Database/Mongo/MongoManager';
-export { MysqlConfig } from './Database/MysqlManager';
+export { MysqlConfig } from './Database/Mysql/MysqlManager';
 export { RedisConfig } from './Database/RedisManager';
 
 export { EProtoType } from './SocketServer/ProtoFilter/IProtoFilter';

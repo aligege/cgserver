@@ -1,5 +1,5 @@
 ﻿import * as _ from "underscore";
-import { MysqlBaseService, BaseModel } from "../Database/MysqlBaseService";
+import { MysqlBaseService, BaseModel } from "../Database/Mysql/MysqlBaseService";
 import { PrimaryKey } from "../Database/Decorator/PrimaryKey";
 import { NotNull } from "../Database/Decorator/NotNull";
 import { EPropertyType } from "../Database/Decorator/Property";

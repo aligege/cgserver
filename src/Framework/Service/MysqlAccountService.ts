@@ -1,5 +1,5 @@
 ﻿import { EPropertyType } from '../Database/Decorator/Property';
-import { BaseModel, MysqlBaseService } from '../Database/MysqlBaseService';
+import { BaseModel, MysqlBaseService } from '../Database/Mysql/MysqlBaseService';
 import { EErrorCode } from '../Config/_error_';
 import { GUserSer, MysqlUserModel } from './MysqlUserService';
 import { Table } from '../Database/Decorator/Table';

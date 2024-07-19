@@ -1,7 +1,7 @@
-﻿import { gLog } from '../Logic/Log';
-import { EErrorCode } from './../Config/_error_';
+﻿import { gLog } from '../../Logic/Log';
+import { EErrorCode } from '../../Config/_error_';
 import * as mysql2 from 'mysql2/promise';
-import { gDbCache } from './Decorator/DBCache';
+import { gDbCache } from '../Decorator/DBCache';
 export class MysqlConfig
 {
     open=false

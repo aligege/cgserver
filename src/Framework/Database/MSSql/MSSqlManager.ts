@@ -1,5 +1,5 @@
 import * as mssql from "mssql";
-import { gDbCache } from "./Decorator/DBCache";
+import { gDbCache } from "../Decorator/DBCache";
 export class MSSqlConfig
 {
     open    = false
