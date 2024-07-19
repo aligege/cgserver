@@ -250,3 +250,5 @@ export class AppleTool
         return
     }
 }
+
+export let gAppleTool=new AppleTool()

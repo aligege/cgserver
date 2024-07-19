@@ -1,67 +1,66 @@
-import { TriggerManager } from './AI/TriggerMgr';
-import { IServerConfig } from './Config/IServerConfig';
-import { ByteTool } from './Core/ByteTool';
-import { DBCache } from './Database/Decorator/DBCache';
-import { MSSqlManager } from './Database/MSSqlManager';
-import { MongoManager } from './Database/Mongo/MongoManager';
-import { MongoServiceManager } from './Database/Mongo/MongoServiceManager';
-import { MysqlManager } from './Database/MysqlManager';
-import { RedisManager } from './Database/RedisManager';
-import { CacheTool } from './Logic/CacheTool';
-import { EventTool } from './Logic/EventTool';
-import { HttpTool } from './Logic/HttpTool';
-import { Log } from './Logic/Log';
-import { SyncQueueTool } from './Logic/SyncQueueTool';
-import { MongoCacheService } from './Service/MongoCacheService';
-import { ProtoFactory } from './SocketServer/ProtoFilter/ProtoFactory';
-import { AlipayTool } from './ThirdParty/AlipayTool';
-import { SMSTool } from './ThirdParty/Alisms';
-import { AppleTool } from './ThirdParty/AppleTool';
-import { EmailTool } from './ThirdParty/EmailTool';
-import { QQTool } from './ThirdParty/QQTool';
-import { QiniuTool } from './ThirdParty/QiniuTool';
-import { WechatTool } from './ThirdParty/WechatTool';
-import { ControllerManager } from './WebServer/Engine/ControllerManager';
-import { CgServer } from './cgserver';
-import { core } from './Core/Core';
+import { gTriggerMgr } from "./AI/TriggerMgr"
+import { gByteTool } from "./Core/ByteTool"
+import { gDbCache } from "./Database/Decorator/DBCache"
+import { gMSSqlMgr } from "./Database/MSSqlManager"
+import { gMongoMgr } from "./Database/Mongo/MongoManager"
+import { gMongoServiceMgr } from "./Database/Mongo/MongoServiceManager"
+import { gMysqlMgr } from "./Database/MysqlManager"
+import { gRedisMgr } from "./Database/RedisManager"
+import { gCacheTool } from "./Logic/CacheTool"
+import { gEventTool } from "./Logic/EventTool"
+import { gHttpTool } from "./Logic/HttpTool"
+import { gLog } from "./Logic/Log"
+import { gSyncQueueTool } from "./Logic/SyncQueueTool"
+import { gMongoCacheSer } from "./Service/MongoCacheService"
+import { gProtoFactory } from "./SocketServer/ProtoFilter/ProtoFactory"
+import { gAlipayTool } from "./ThirdParty/AlipayTool"
+import { gSMSTool } from "./ThirdParty/Alisms"
+import { gAppleTool } from "./ThirdParty/AppleTool"
+import { gEmailTool } from "./ThirdParty/EmailTool"
+import { gQQTool } from "./ThirdParty/QQTool"
+import { gQiniuTool } from "./ThirdParty/QiniuTool"
+import { gWechatTool } from "./ThirdParty/WechatTool"
+import { gCtrMgr } from "./WebServer/Engine/ControllerManager"
+import { gCgServer } from "./cgserver"
+import { core } from "./Core/Core"
 
 /**
  * cg引擎的，全局对象
  */
 export class global
 {
-    static gMongoServiceMgr=new MongoServiceManager()
-    static gCgServer=new CgServer()
-    static gDbCache=new DBCache()
-    static gTriggerMgr=new TriggerManager()
-    static gMongoMgr=new MongoManager()
-    static gMSSqlMgr=new MSSqlManager()
-    static gMysqlMgr=new MysqlManager()
-    static gRedisMgr=new RedisManager()
-    static gCacheTool=new CacheTool()
-    static gHttpTool=new HttpTool()
-    static gLog = new Log()
-    static gSyncQueueTool=new SyncQueueTool()
-    static gEventTool=new EventTool()
-    static gByteTool=new ByteTool()
-    static gSmsTool=new SMSTool()
-    static gEmailTool=new EmailTool()
-    static gQiniuTool=new QiniuTool()
-    static gQQTool=new QQTool()
-    static gWechatTool=new WechatTool()
-    static gWechatOATool=new WechatTool()
-    static gAlipayTool=new AlipayTool()
-    static gAppleTool=new AppleTool()
-    static gProtoFactory=new ProtoFactory()
+    static gMongoServiceMgr1=gMongoServiceMgr
+    static gCgServer1=gCgServer
+    static gDbCache1=gDbCache
+    static gTriggerMgr1=gTriggerMgr
+    static gMongoMgr1=gMongoMgr
+    static gMSSqlMgr1=gMSSqlMgr
+    static gMysqlMgr1=gMysqlMgr
+    static gRedisMgr1=gRedisMgr
+    static gCacheTool1=gCacheTool
+    static gHttpTool1=gHttpTool
+    static gLog1 = gLog
+    static gSyncQueueTool1=gSyncQueueTool
+    static gEventTool1=gEventTool
+    static gByteTool1=gByteTool
+    static gSmsTool1=gSMSTool
+    static gEmailTool1=gEmailTool
+    static gQiniuTool1=gQiniuTool
+    static gQQTool1=gQQTool
+    static gWechatTool1=gWechatTool
+    static gWechatOATool1=gWechatTool
+    static gAlipayTool1=gAlipayTool
+    static gAppleTool1=gAppleTool
+    static gProtoFactory1=gProtoFactory
     /**
      * web服务中mvc的控制器管理器
      */
-    static gCtrMgr=new ControllerManager()
+    static gCtrMgr=gCtrMgr
     /**
      * mongo版本的缓存服务
      * 可以用来缓存kv数据
      */
-    static gMongoCacheSer = new MongoCacheService()
+    static gMongoCacheSer = gMongoCacheSer
     /**
      * 一些通用的常用函数，
      * 比如格式化字符串，常用加解密，

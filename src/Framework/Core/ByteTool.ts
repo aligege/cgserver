@@ -79,3 +79,5 @@ export class ByteTool {
         return this.getUint8Array(8, (view) => { view.setFloat64(0, num, littleEndian) })
     }
 }
+
+export let gByteTool = new ByteTool()

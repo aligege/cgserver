@@ -55,3 +55,5 @@ export class SMSTool
         })
     }
 }
+
+export let gSMSTool=new SMSTool()

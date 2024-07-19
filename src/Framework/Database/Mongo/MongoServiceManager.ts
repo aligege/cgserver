@@ -29,3 +29,5 @@ export class MongoServiceManager
         return this._services[dbname][table] as T
     }
 }
+
+export let gMongoServiceMgr=new MongoServiceManager()

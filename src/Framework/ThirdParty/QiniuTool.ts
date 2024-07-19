@@ -29,3 +29,5 @@ export class QiniuTool
         return uploadToken
     }
 }
+
+export let gQiniuTool=new QiniuTool()

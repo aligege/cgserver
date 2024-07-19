@@ -223,3 +223,5 @@ export class AlipayTool
         return url_or_html
     }
 }
+
+export let gAlipayTool=new AlipayTool()

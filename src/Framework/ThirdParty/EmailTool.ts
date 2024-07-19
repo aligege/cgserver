@@ -40,3 +40,5 @@ export class EmailTool
         })
     }
 }
+
+export let gEmailTool=new EmailTool()
