@@ -1,6 +1,6 @@
+import { global } from '../global';
 import { FrameworkConfig } from './FrameworkConfig';
 
-export let GServerCfg:IServerConfig=null
 export class IServerConfig extends FrameworkConfig
 {
     port=-1
@@ -22,7 +22,7 @@ export class IServerConfig extends FrameworkConfig
         {
             return ret
         }
-        GServerCfg=this
+        global.gServerCfg=this
         return ret
     }
 }

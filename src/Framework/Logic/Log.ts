@@ -15,8 +15,7 @@ colors.setTheme({
   debug: 'magenta',  
   error: 'red'  
 });
-export let GLog:Log=null
-class Log
+export class Log
 {
     //default log
     protected _logger:log4js.Logger = null
@@ -168,4 +167,3 @@ class Log
         }
     }
 }
-GLog=new Log()

@@ -2,10 +2,10 @@
 let request = require('request');
 import * as _ from "underscore";
 import * as crypto from "crypto";
-import { GLog } from "../Logic/Log";
 import * as CryptoJS from "crypto-js";
 import ECKey from "ec-key";
 import { v4 } from "uuid";
+import { global } from "../global";
 
 /**
  * 常用的工具函数类
@@ -764,7 +764,7 @@ export class core
                 {
                     rs=await func.call(thisArg,...params).catch((reason)=>
                     {
-                        GLog.error(reason)
+                        global.gLog.error(reason)
                         rs={errcode:{id:1008611,des:"failed"}}
                     })
                 }
@@ -772,7 +772,7 @@ export class core
                 {
                     rs=await func(...params).catch((reason)=>
                     {
-                        GLog.error(reason)
+                        global.gLog.error(reason)
                         rs={errcode:{id:1008612,des:"failed"}}
                     })
                 }
@@ -792,7 +792,7 @@ export class core
         }
         catch(e)
         {
-            GLog.error(e.stack)
+            global.gLog.error(e.stack)
             return {errcode:{id:1008613,des:"failed"}}
         }
     }

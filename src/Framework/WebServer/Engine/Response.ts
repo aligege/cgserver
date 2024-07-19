@@ -1,8 +1,8 @@
 import * as Express from 'express';
 import * as fs from "fs";
 import * as mime from "mime";
-import { GLog } from "../../Logic/Log";
 import { WebServerConfig } from "../../Config/FrameworkConfig";
+import { global } from '../../global';
 
 export class Response
 {
@@ -99,6 +99,6 @@ export class Response
         {
             return
         }
-        GLog.info(data)
+        global.gLog.info(data)
     }
 }

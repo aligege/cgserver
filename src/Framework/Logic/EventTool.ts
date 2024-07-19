@@ -1,5 +1,5 @@
 import * as EventEmitter from "events";
-class EventTool
+export class EventTool
 {
     protected _event_emitter=new EventEmitter()
     constructor()
@@ -28,4 +28,3 @@ class EventTool
         return count
     }
 }
-export let GEventTool=new EventTool()

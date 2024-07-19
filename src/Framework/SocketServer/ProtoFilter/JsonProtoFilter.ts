@@ -1,6 +1,6 @@
 import { IProtoFilter } from './IProtoFilter';
 import { core } from '../../Core/Core';
-import { GLog } from '../../Logic/Log';
+import { global } from '../../global';
 
 export class JsonProtoFilter implements IProtoFilter
 {
@@ -27,7 +27,7 @@ export class JsonProtoFilter implements IProtoFilter
         }
         catch(e)
         {
-            GLog.error("decode json data Failed-----data="+data)
+            global.gLog.error("decode json data Failed-----data="+data)
             return
         }
         return data

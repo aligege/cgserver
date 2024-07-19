@@ -1,5 +1,5 @@
-import { core } from './Core';
-import { GLog } from '../Logic/Log';
+import { global } from "../global"
+
 export class Timer
 {
     protected _deadline:number = -1
@@ -49,11 +49,11 @@ export class Timer
             {
                 if(e&&e.stack)
                 {
-                    GLog.error(e.stack)
+                    global.gLog.error(e.stack)
                 }
                 else
                 {   
-                    GLog.error(e)
+                    global.gLog.error(e)
                 }
             }
         }, timeout, ...args)
@@ -79,11 +79,11 @@ export class Timer
             {
                 if(e&&e.stack)
                 {
-                    GLog.error(e.stack)
+                    global.gLog.error(e.stack)
                 }
                 else
                 {   
-                    GLog.error(e)
+                    global.gLog.error(e)
                 }
             }
         }, timeout, ...args)

@@ -1,7 +1,6 @@
 import { BaseController } from "../Controller/BaseController";
 
-export let GCtrMgr:ControllerManager = null
-class ControllerManager
+export class ControllerManager
 {
     protected _static_ctr:{[module_name:string]:{[ctrname:string]:BaseController}}={}
     protected _ctr_cls:{[module_name:string]:{[ctrname:string]:any}}={}
@@ -131,4 +130,3 @@ class ControllerManager
         return this._ctr_cls[module_name][controller_name]
     }
 }
-GCtrMgr = new ControllerManager()

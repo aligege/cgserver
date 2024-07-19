@@ -1,5 +1,7 @@
-﻿import { GLog } from './../../Logic/Log';
-'use strict';
+﻿'use strict';
+
+import { global } from "../../global";
+
 var  _suffix = ".cshtml"
 var  _MATCH_HTML = /[&<>\'"]/g
 var  _ENCODE_HTML_RULES = {
@@ -249,7 +251,7 @@ export class RazorJs
             {
                 return html
             }
-            GLog.error("no view:"+tmpl_path)
+            global.gLog.error("no view:"+tmpl_path)
             return "Server Error(No View)"
         }
         data = data || {};

@@ -1,6 +1,5 @@
 import * as _ from "underscore";
 
-export let GCacheTool:CacheTool = null
 class CacheItem
 {
     key:string = ""
@@ -8,7 +7,7 @@ class CacheItem
     milliseconds:number=0
     expire_time=-1
 }
-class CacheTool
+export class CacheTool
 {
     protected _items:{[key:string]:CacheItem}={}
     constructor()
@@ -82,4 +81,3 @@ class CacheTool
         delete this._items[key]
     }
 }
-GCacheTool = new CacheTool()

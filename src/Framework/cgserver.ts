@@ -1,18 +1,11 @@
-
-
-import { GLog } from "./Logic/Log";
-import { GEventTool } from './Logic/EventTool';
 import { core } from "./Core/Core";
 import { Config } from "./Config/Config";
 import { IWebServer } from "./WebServer/IWebServer";
 import { ISocketServer } from "./SocketServer/ISocketServer";
-import { GMSSqlMgr } from "./Database/MSSqlManager";
-import { GMysqlMgr } from "./Database/MysqlManager";
-import { GRedisMgr } from "./Database/RedisManager";
-import { GMongoMgr } from "./Database/MongoManager";
 import { DbConfig } from "./Config/DbConfig";
+import { global } from "./global";
 
-class CgServer
+export class CgServer
 {
     protected _webservers:IWebServer[]=[]
     get webServers()
@@ -67,8 +60,8 @@ class CgServer
 
         process.env.TZ = "Asia/Shanghai"
 
-        GEventTool.on("socket_server_init_done",this.onStart.bind(this))
-        GEventTool.on("web_server_init_done",this.onStart.bind(this))
+        global.gEventTool.on("socket_server_init_done",this.onStart.bind(this))
+        global.gEventTool.on("web_server_init_done",this.onStart.bind(this))
 
         let argv = process.argv||[]
         for(let i=0;i<argv.length;++i)
@@ -149,7 +142,7 @@ class CgServer
     }
     onUnCaughtException(e)
     {
-        GLog.error(e.stack)
+        global.gLog.error(e.stack)
         let events=this._events["uncaughtexception"]||[]
         for(let i=0;i<events.length;++i)
         {
@@ -166,15 +159,15 @@ class CgServer
     }
     async initDb(dbcfg:DbConfig)
     {
-        await GMSSqlMgr.init(dbcfg.mssql)
-        await GMysqlMgr.init(dbcfg.mysql)
-        await GRedisMgr.init(dbcfg.redis)
+        await global.gMSSqlMgr.init(dbcfg.mssql)
+        await global.gMysqlMgr.init(dbcfg.mysql)
+        await global.gRedisMgr.init(dbcfg.redis)
         let mongos=dbcfg.mongos||[]
         if(dbcfg.mongo)
         {
             mongos.push(dbcfg.mongo)
         }
-        await GMongoMgr.init(mongos)
+        await global.gMongoMgr.init(mongos)
     }
     pause()
     {
@@ -199,4 +192,3 @@ class CgServer
         }
     }
 }
-export let GCgServer=new CgServer()

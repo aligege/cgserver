@@ -1,4 +1,4 @@
-class ByteTool {
+export class ByteTool {
     //构建一个视图，把字节数组写到缓存中，索引从0开始
     getView(bytes: Uint8Array) {
         var view = new DataView(new ArrayBuffer(bytes.length));
@@ -79,4 +79,3 @@ class ByteTool {
         return this.getUint8Array(8, (view) => { view.setFloat64(0, num, littleEndian) })
     }
 }
-export let GByteTool = new ByteTool()

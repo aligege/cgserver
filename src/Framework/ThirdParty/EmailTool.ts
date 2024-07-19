@@ -1,43 +1,41 @@
 
 import * as nodeMailer from "nodemailer";
-import { GServerCfg } from "../Config/IServerConfig";
-import { GLog } from "../Logic/Log";
-export let GEmailTool:EmailTool=null
-class EmailTool
+import { global } from "../global";
+
+export class EmailTool
 {
     send(to:string,subject:string,html:string)
     {
         return new Promise((resolve,reject)=>
         {   
-            if(!GServerCfg.email)
+            if(!global.gServerCfg.email)
             {
-                GLog.error("email config not found!")
+                global.gLog.error("email config not found!")
                 resolve("email config not found!")
                 return
             }
             let transport = nodeMailer.createTransport({
-                    host: GServerCfg.email.host,
-                    port: GServerCfg.email.port,
-                    secure: GServerCfg.email.secure,
+                    host: global.gServerCfg.email.host,
+                    port: global.gServerCfg.email.port,
+                    secure: global.gServerCfg.email.secure,
                     auth: 
                     {
-                        user: GServerCfg.email.auth.user,
-                        pass: GServerCfg.email.auth.pass
+                        user: global.gServerCfg.email.auth.user,
+                        pass: global.gServerCfg.email.auth.pass
                     }
             })
             let mail =
             {
-                from: GServerCfg.email.from,
+                from: global.gServerCfg.email.from,
                 to: to,
                 subject: subject,
                 html: html
             }
             transport.sendMail(mail,(_err,msg)=>
             {
-                GLog.error(_err)
+                global.gLog.error(_err)
                 resolve(_err)
             })
         })
     }
 }
-GEmailTool = new EmailTool()

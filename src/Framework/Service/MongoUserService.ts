@@ -1,6 +1,6 @@
 ﻿import * as _ from "underscore";
-import { MongoBaseService } from "../Database/MongoBaseService";
-import { MongoBaseModel } from "../Database/MongoManager";
+import { MongoBaseService } from "../Database/Mongo/MongoBaseService";
+import { MongoBaseModel } from "../Database/Mongo/MongoManager";
 import { ERoleGroup } from "./ini";
 import { SyncCall } from "../Decorator/SyncCall";
 
@@ -28,13 +28,13 @@ export class MongoUserModel extends MongoBaseModel
     create_time:number = 0
 }
 //暂时不实例化，方便重写
-export let GUserSer:UserService<MongoUserModel>=null
-export class UserService<T extends MongoUserModel> extends MongoBaseService<T>
+export let GMongoUserSer:MongoUserService<MongoUserModel>=null
+export class MongoUserService<T extends MongoUserModel> extends MongoBaseService<T>
 {
     constructor(table:string,type: { new(): T})
     {
         super(table,type)
-        GUserSer = this
+        GMongoUserSer = this
     }
     @SyncCall
     protected async _createNewUser(account_id:number,nickname:string,sex:number,logo:string,group?:ERoleGroup)
@@ -80,7 +80,7 @@ export class UserService<T extends MongoUserModel> extends MongoBaseService<T>
     }
     async getByAccountId(account_id:number)
     {
-        let pm:T = await this.get(null,{account_id:account_id})
+        let pm:T = await this.get({account_id:account_id})
         return pm
     }
     async updateBaseInfoByAccount(account_id:number,nickname:string,sex:number,logo:string)
@@ -91,7 +91,7 @@ export class UserService<T extends MongoUserModel> extends MongoBaseService<T>
             sex:sex,
             logo:logo
         }
-        let sr = await this.updateOne(model,{account_id:account_id})
+        let sr = await this.updateOne({account_id:account_id},model)
         if(sr.errcode)
         {
             return "更新失败"

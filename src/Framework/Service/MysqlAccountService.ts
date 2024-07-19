@@ -1,16 +1,14 @@
 ﻿import { EPropertyType } from '../Database/Decorator/Property';
 import { BaseModel, MysqlBaseService } from '../Database/MysqlBaseService';
-import { GCacheTool } from '../Logic/CacheTool';
 import { EErrorCode } from '../Config/_error_';
 import { GUserSer, MysqlUserModel } from './MysqlUserService';
-import { GQQTool } from '../ThirdParty/QQTool';
-import { GWechatTool } from '../ThirdParty/WechatTool';
 import { Table } from '../Database/Decorator/Table';
 import { PrimaryKey } from '../Database/Decorator/PrimaryKey';
 import { NotNull } from '../Database/Decorator/NotNull';
 import { Type } from '../Database/Decorator/Type';
 import { AutoIncrement } from '../Database/Decorator/AutoIncrement';
 import { EAccountFrom, EAccountState } from './ini';
+import { global } from '../global';
 
 @Table("account",1,"账号")
 export class MysqlAccountModel extends BaseModel
@@ -227,7 +225,7 @@ export class MysqlAccountService<T extends MysqlAccountModel> extends MysqlBaseS
                         {
                             if(from==EAccountFrom.QQ)
                             {
-                                let userInfo = await GQQTool.getUserInfo(access_token,openid)
+                                let userInfo = await global.gQQTool.getUserInfo(access_token,openid)
                                 if(userInfo.ret)
                                 {
                                     rs.errcode=EErrorCode.Server_Error
@@ -242,7 +240,7 @@ export class MysqlAccountService<T extends MysqlAccountModel> extends MysqlBaseS
                             }
                             else if(from==EAccountFrom.WeChat)
                             {
-                                let userInfo = await GWechatTool.getUserInfo(access_token,openid)
+                                let userInfo = await global.gWechatTool.getUserInfo(access_token,openid)
                                 if((<any>userInfo).errcode)
                                 {
                                     rs.errcode=EErrorCode.Server_Error
@@ -319,7 +317,7 @@ export class MysqlAccountService<T extends MysqlAccountModel> extends MysqlBaseS
         else if(from==EAccountFrom.QuickPhone)
         {
             let key = "phone_code_"+unionid
-            let code = GCacheTool.get(key)
+            let code = global.gCacheTool.get(key)
             if(!code||code!=openid)
             {
                 rs.errcode=EErrorCode.Wrong_Phone_Code

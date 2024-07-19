@@ -1,9 +1,9 @@
 import { Point } from './Point';
 import { Entity } from './Entity';
 import { AiObject } from './AiObject';
-import { GLog } from './../Logic/Log';
 import { core } from "../Core/Core";
 import { Rect } from './Astar';
+import { global } from '../global';
 
 export enum ETriggerType{
     Region=0,
@@ -21,8 +21,7 @@ export class Trigger
 }
 let _GTriggerCode = 0
 
-export let GTriggerMgr:TriggerManager = null
-class TriggerManager
+export class TriggerManager
 {
     protected _regionTriggers:{ triggerInfos: Array<{trigger:Trigger}>, objInfos: Array<{obj:Entity,prePos:Point}>, aiObj: AiObject }=null
     protected _conditionTriggers={}
@@ -115,8 +114,8 @@ class TriggerManager
         {
             return false;
         }
-        GLog.info("pos.x" + pos.x + "  pos.y=" + pos.y);
-        GLog.info("region.x" + region.x + "  region.y=" + region.y);
+        global.gLog.info("pos.x" + pos.x + "  pos.y=" + pos.y);
+        global.gLog.info("region.x" + region.x + "  region.y=" + region.y);
         if (pos.x < (region.x - region.width / 2))
         {
             return false;
@@ -194,7 +193,7 @@ class TriggerManager
         {
             return
         }
-        GLog.info("some one triggered in")
+        global.gLog.info("some one triggered in")
         this._regionTriggers.aiObj.onTriggerIn(obj, trigger)
     }
 
@@ -205,7 +204,7 @@ class TriggerManager
         {
             return
         }
-        GLog.info("some one triggered out")
+        global.gLog.info("some one triggered out")
         this._regionTriggers.aiObj.onTriggerOut(obj, trigger)
     }
 
@@ -277,4 +276,3 @@ class TriggerManager
 
     }
 }
-GTriggerMgr=new TriggerManager()

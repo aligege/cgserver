@@ -2,7 +2,7 @@ import * as Express from 'express';
 import { URL } from 'url';
 import { WebServerConfig } from "../../Config/FrameworkConfig";
 import { core } from "../../Core/Core";
-import { GLog } from "../../Logic/Log";
+import { global } from '../../global';
 
 export class Request
 {
@@ -94,7 +94,7 @@ export class Request
             }
             catch(e)
             {
-                GLog.error("post data--"+body+"--parse error")
+                global.gLog.error("post data--"+body+"--parse error")
                 body = {}
             }
         }
@@ -280,6 +280,6 @@ export class Request
             return
         }
         let debuginfo = this.getDebugInfo()
-        GLog.info(debuginfo)
+        global.gLog.info(debuginfo)
     }
 }

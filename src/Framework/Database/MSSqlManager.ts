@@ -1,5 +1,5 @@
 import * as mssql from "mssql";
-import { GDBCache } from "./Decorator/DBCache";
+import { global } from "../global";
 export class MSSqlConfig
 {
     open    = false
@@ -18,8 +18,7 @@ export class MssqlReturn
     list:Array<any>=null
 }
 
-export let GMSSqlMgr:MSSqlManager=null
-class MSSqlManager
+export class MSSqlManager
 {
     protected _init_cbs=[]
     protected _pool:mssql.ConnectionPool = null
@@ -47,7 +46,7 @@ class MSSqlManager
         this._pool  = await mssql.connect(<any>cfg)
         console.log("mssql config="+JSON.stringify(cfg))
         //这个的初始化位置不能变，必须位于cbs前，pool后
-        await GDBCache.init()
+        await global.gDbCache.init()
         for(let i=0;i<this._init_cbs.length;++i)
         {
             this._init_cbs[i]()
@@ -58,4 +57,3 @@ class MSSqlManager
         this._init_cbs.push(cb)
     }
 }
-GMSSqlMgr=new MSSqlManager()

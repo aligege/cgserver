@@ -3,9 +3,8 @@ import { JsonProtoFilter } from './JsonProtoFilter';
 import { IProtoFilter } from './IProtoFilter';
 import { EProtoType } from "./IProtoFilter";
 
-export let GProtoFactory:ProtoFactory=null
 type ProtoFilterClass = new()=>IProtoFilter
-class ProtoFactory
+export class ProtoFactory
 {
     protected _filters=new Map<EProtoType,IProtoFilter>()
     protected _type_filter_classes=new Map<EProtoType,ProtoFilterClass>()
@@ -39,4 +38,3 @@ class ProtoFactory
         return filter
     }
 }
-GProtoFactory=new ProtoFactory()

@@ -1,5 +1,5 @@
 import { MSSqlConfig } from "../Database/MSSqlManager"
-import { MongoConfig } from "../Database/MongoManager"
+import { MongoConfig } from "../Database/Mongo/MongoManager"
 import { MysqlConfig } from "../Database/MysqlManager"
 import { RedisConfig } from "../Database/RedisManager"
 

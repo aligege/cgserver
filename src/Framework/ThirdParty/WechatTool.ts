@@ -1,8 +1,24 @@
 import * as _ from "underscore";
 import * as URLEncode from "urlencode";
-import { GServerCfg } from "../Config/IServerConfig";
-import { GHttpTool } from "../Logic/HttpTool";
-import { GLog } from "../Logic/Log";
+import { global } from "../global";
+
+export class WechatOAMsg
+{
+    // <xml>
+    // <ToUserName><![CDATA[toUser]]></ToUserName>
+    // <FromUserName><![CDATA[fromUser]]></FromUserName>
+    // <CreateTime>1348831860</CreateTime>
+    // <MsgType><![CDATA[text]]></MsgType>
+    // <Content><![CDATA[this is a test]]></Content>
+    // <MsgId>1234567890123456</MsgId>
+    // </xml>
+    toUserName=""
+    fromUserName=""//其实是一个userid
+    createTime=-1
+    msgType=""//text文本
+    content=""
+    msgId=-1//只有收到消息才会有
+}
 
 export class WechatUserInfo
 {
@@ -20,7 +36,6 @@ export class WechatUserInfo
     unionid="o6_bmasdasdsad6_2sgVt7hMZOPfL"
 }
 
-export let GWechatTool:WechatTool=null
 export class WechatTool
 {
     /**
@@ -28,13 +43,13 @@ export class WechatTool
      */
     getAuthCodeUrl()
     {
-        if(!GServerCfg.wechat)
+        if(!global.gServerCfg.wechat)
         {
-            GLog.error("wechat config not found!")
+            global.gLog.error("wechat config not found!")
             return null
         }
-        let url = "https://open.weixin.qq.com/connect/qrconnect?appid="+ GServerCfg.wechat.app_id
-        url+="&redirect_uri="+URLEncode.encode(GServerCfg.wechat.redirect_uri)
+        let url = "https://open.weixin.qq.com/connect/qrconnect?appid="+ global.gServerCfg.wechat.app_id
+        url+="&redirect_uri="+URLEncode.encode(global.gServerCfg.wechat.redirect_uri)
         url+="&response_type=code&scope=snsapi_login"
         //必须	client端的状态值。用于第三方应用防止CSRF攻击，成功授权后回调时会原样带回。请务必严格按照流程检查用户与state参数状态的绑定。
         let state=_.random(1000000,9999999)
@@ -47,13 +62,13 @@ export class WechatTool
         {
             return null
         }
-        if(!GServerCfg.wechat)
+        if(!global.gServerCfg.wechat)
         {
-            GLog.error("wechat config not found!")
+            global.gLog.error("wechat config not found!")
             return null
         }
-        let url="https://api.weixin.qq.com/sns/oauth2/access_token?appid="+GServerCfg.wechat.app_id+"&secret="+GServerCfg.wechat.app_key+"&code="+auth_code+"&grant_type=authorization_code"
-        let rs = await GHttpTool.get(url)
+        let url="https://api.weixin.qq.com/sns/oauth2/access_token?appid="+global.gServerCfg.wechat.app_id+"&secret="+global.gServerCfg.wechat.app_key+"&code="+auth_code+"&grant_type=authorization_code"
+        let rs = await global.gHttpTool.get(url)
         /*
         { 
             "access_token":"ACCESS_TOKEN", 
@@ -71,19 +86,58 @@ export class WechatTool
         }
         else
         {
-            GLog.error(rs.body)
+            global.gLog.error(rs.body)
         }
         return null
     }
     async getUserInfo(access_token:string,openid:string):Promise<WechatUserInfo>
     {
         let url = "https://api.weixin.qq.com/sns/userinfo?access_token="+access_token+"&openid="+openid
-        let rs = await GHttpTool.get(url)
+        let rs = await global.gHttpTool.get(url)
         if(rs.body)
         {
             return rs.body
         }
         return null
     }
+    //公众号
+    convertOAMsg(xmlStr:string)
+    {
+        if(!xmlStr)
+        {
+            return null
+        }
+        let msg = new WechatOAMsg()
+        let pre = "<ToUserName><![CDATA["
+        xmlStr=xmlStr.substr(xmlStr.indexOf(pre)+pre.length)
+        msg.toUserName=xmlStr.substr(0,xmlStr.indexOf("]"))
+        pre = "<FromUserName><![CDATA["
+        xmlStr=xmlStr.substr(xmlStr.indexOf(pre)+pre.length)
+        msg.fromUserName=xmlStr.substr(0,xmlStr.indexOf("]"))
+        pre = "<CreateTime>"
+        xmlStr=xmlStr.substr(xmlStr.indexOf(pre)+pre.length)
+        msg.createTime=parseInt(xmlStr.substr(0,xmlStr.indexOf("<")))
+        pre = "<MsgType><![CDATA["
+        xmlStr=xmlStr.substr(xmlStr.indexOf(pre)+pre.length)
+        msg.msgType=xmlStr.substr(0,xmlStr.indexOf("]"))
+        pre = "<Content><![CDATA["
+        xmlStr=xmlStr.substr(xmlStr.indexOf(pre)+pre.length)
+        msg.content=xmlStr.substr(0,xmlStr.indexOf("]"))
+        pre = "<MsgId>"
+        xmlStr=xmlStr.substr(xmlStr.indexOf(pre)+pre.length)
+        msg.msgId=parseInt(xmlStr.substr(0,xmlStr.indexOf("<")))
+        return msg
+    }
+    //公众号
+    toReplyXmlStr(msg:WechatOAMsg)
+    {
+        let xmlStr="<xml>"
+        xmlStr+="<ToUserName><![CDATA["+msg.toUserName+"]]></ToUserName>"
+        xmlStr+="<FromUserName><![CDATA["+msg.fromUserName+"]]></FromUserName>"
+        xmlStr+="<CreateTime>"+msg.createTime+"</CreateTime>"
+        xmlStr+="<MsgType><![CDATA["+msg.msgType+"]]></MsgType>"
+        xmlStr+="<Content><![CDATA["+msg.content+"]]></Content>"
+        xmlStr+="</xml>"
+        return xmlStr
+    }
 }
-GWechatTool=new WechatTool()

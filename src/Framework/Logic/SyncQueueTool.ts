@@ -37,7 +37,7 @@ class SyncQueueItem
         this.running=false
     }
 }
-class SyncQueueTool
+export class SyncQueueTool
 {
     //队列数据,一个key队列必须有先后
     protected _queues:{[key:string]:SyncQueueItem}={}
@@ -48,4 +48,3 @@ class SyncQueueTool
         return error
     }
 }
-export let GSyncQueueTool=new SyncQueueTool()

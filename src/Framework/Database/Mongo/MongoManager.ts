@@ -1,7 +1,7 @@
-import { GLog } from '../Logic/Log';
 import * as mongo from 'mongodb';
-import { EErrorCode } from '../Config/_error_';
-import { core } from '../Core/Core';
+import { EErrorCode } from '../../Config/_error_';
+import { core } from '../../Core/Core';
+import { global } from '../../global';
 export class MongoConfig
 {
     open=false
@@ -66,18 +66,21 @@ export class MongoManager
     {
         if(this._dbs[cfg.database])
         {
-            GLog.error("数据库配置得database不能相同!database="+cfg.database)
+            global.gLog.error("数据库配置得database不能相同!database="+cfg.database)
             return false
         }
         let mongoext = new MongoExt()
         let ret = await mongoext.init(cfg)
         if(!ret)
         {
-            GLog.error("数据库初始化失败!cfg="+JSON.stringify(cfg))
+            global.gLog.error("数据库初始化失败!cfg="+JSON.stringify(cfg))
             return false
         }
         this._dbs[cfg.database]=mongoext
-        this._defdbname=cfg.database
+        if(!this._defdbname)
+        {
+            this._defdbname=cfg.database
+        }
         return true
     }
     async removeMongo(dbname:string,force=false)
@@ -98,7 +101,6 @@ export class MongoManager
         return this._dbs[dbname]
     }
 }
-export let GMongoMgr = new MongoManager()
 export class MongoExt
 {
     protected _mongocfg:MongoConfig=null
@@ -139,7 +141,7 @@ export class MongoExt
         }
         this._mongocfg=cfg
         this._inited = true
-        GLog.info("mongo config="+JSON.stringify(this._mongocfg))
+        global.gLog.info("mongo config="+JSON.stringify(this._mongocfg))
         this._mongoClient = new mongo.MongoClient("mongodb://"+this._mongocfg.host+":"+this._mongocfg.port,this._mongocfg.options)
         await core.safeCall(this._mongoClient.connect,this._mongoClient)
         this.onConnect()
@@ -161,7 +163,7 @@ export class MongoExt
     onConnect()
     {
         this._mongo_init_succ = true
-        GLog.info("mongo has connected!")
+        global.gLog.info("mongo has connected!")
     }
     /**
      * 获取自增长id
@@ -187,11 +189,11 @@ export class MongoExt
         }
         catch(e)
         {
-            GLog.error(e.stack)
+            global.gLog.error(e.stack)
         }
         return -2
     }
-    protected _convertWhere(where?:any)
+    protected _convertWhere(where?:{[key:string]:any})
     {
         if(!where||!where._id)
         {
@@ -219,7 +221,7 @@ export class MongoExt
      * 获取单条消息
      * @param collection 
      */
-    async findOne(collection:string,property={},where={})
+    async findOne(collection:string,where:{[key:string]:any}={},property:{[key:string]:any}={})
     {
         this._convertWhere(where)
         let rs = {errcode:<{id:number,des:string}>null,one:null}
@@ -235,14 +237,14 @@ export class MongoExt
         }
         catch(e)
         {
-            GLog.error({collection,property,where})
-            GLog.error(e.stack)
+            global.gLog.error({collection,property,where})
+            global.gLog.error(e.stack)
             rs.errcode=EErrorCode.Mongo_Error
         }
         rs.one=one
         return rs
     }
-    async findMany(collection:string,property={},where={},sort?:{},skip=0,limit=0)
+    async findMany(collection:string,where:{[key:string]:any}={},property:{[key:string]:any}={},sort?:{[key:string]:any},skip=0,limit=0)
     {
         this._convertWhere(where)
         let rs = {errcode:<{id:number,des:string}>null,list:<any[]>null}
@@ -271,14 +273,14 @@ export class MongoExt
         }
         catch(e)
         {
-            GLog.error({collection,property,where,sort,skip,limit})
-            GLog.error(e.stack)
+            global.gLog.error({collection,property,where,sort,skip,limit})
+            global.gLog.error(e.stack)
             rs.errcode=EErrorCode.Mongo_Error
         }
         rs.list=list
         return rs
     }
-    async countDocuments(collection:string,where?:{},options?: mongo.CountDocumentsOptions)
+    async countDocuments(collection:string,where?:{[key:string]:any},options?: mongo.CountDocumentsOptions)
     {
         this._convertWhere(where)
         let rs = {errcode:<{id:number,des:string}>null,count:-1}
@@ -294,14 +296,14 @@ export class MongoExt
         }
         catch(e)
         {
-            GLog.error({collection,where})
-            GLog.error(e.stack)
+            global.gLog.error({collection,where})
+            global.gLog.error(e.stack)
             rs.errcode=EErrorCode.Mongo_Error
         }
         rs.count=count
         return rs
     }
-    async deleteOne(collection,where)
+    async deleteOne(collection:string,where:{[key:string]:any})
     {
         this._convertWhere(where)
         let rs = {errcode:<{id:number,des:string}>null,count:-1}
@@ -317,8 +319,8 @@ export class MongoExt
         }
         catch(e)
         {
-            GLog.error({collection,where})
-            GLog.error(e.stack)
+            global.gLog.error({collection,where})
+            global.gLog.error(e.stack)
             rs.errcode=EErrorCode.Mongo_Error
         }
         if(del_rs)
@@ -327,7 +329,7 @@ export class MongoExt
         }
         return rs
     }
-    async deleteMany(collection,where)
+    async deleteMany(collection:string,where:{[key:string]:any})
     {
         this._convertWhere(where)
         let rs = {errcode:<{id:number,des:string}>null,count:-1}
@@ -343,8 +345,8 @@ export class MongoExt
         }
         catch(e)
         {
-            GLog.error({collection,where})
-            GLog.error(e.stack)
+            global.gLog.error({collection,where})
+            global.gLog.error(e.stack)
             rs.errcode=EErrorCode.Mongo_Error
         }
         if(del_rs)
@@ -358,7 +360,7 @@ export class MongoExt
      * @param collection 
      * @param data 
      */
-    async insertOne(collection:string,data)
+    async insertOne(collection:string,data:any)
     {
         let rs = {errcode:<{id:number,des:string}>null,rs:<mongo.InsertOneResult<any>>null}
         if(!this._mongoDb)
@@ -374,14 +376,14 @@ export class MongoExt
         }
         catch(e)
         {
-            GLog.error({collection,data})
-            GLog.error(e.stack)
+            global.gLog.error({collection,data})
+            global.gLog.error(e.stack)
             rs.errcode=EErrorCode.Mongo_Error
         }
         rs.rs=in_rs
         return rs
     }
-    async insertManay(collection:string,data:[])
+    async insertManay(collection:string,data:any[])
     {
         let rs = {errcode:<{id:number,des:string}>null,rs:<mongo.InsertManyResult<any>>null}
         if(!this._mongoDb)
@@ -396,14 +398,14 @@ export class MongoExt
         }
         catch(e)
         {
-            GLog.error({collection,data})
-            GLog.error(e.stack)
+            global.gLog.error({collection,data})
+            global.gLog.error(e.stack)
             rs.errcode=EErrorCode.Mongo_Error
         }
         rs.rs=in_rs
         return rs
     }
-    async updateOne(collection:string,model?:{},where?:{},upsert=false)
+    async updateOne(collection:string,where:{[key:string]:any},model:any,upsert=false)
     {
         let _id = model["_id"]
         delete model["_id"]
@@ -446,8 +448,8 @@ export class MongoExt
         }
         catch(e)
         {
-            GLog.error({collection,model,where,upsert})
-            GLog.error(e.stack)
+            global.gLog.error({collection,model,where,upsert})
+            global.gLog.error(e.stack)
             rs.errcode=EErrorCode.Mongo_Error
         }
         rs.rs=up_rs
@@ -458,7 +460,7 @@ export class MongoExt
         }
         return rs
     }
-    async updateMany(collection:string,model,where?:{},upsert=false)
+    async updateMany(collection:string,where:{[key:string]:any},model:any,upsert=false)
     {
         this._convertWhere(where)
         let rs = {errcode:<{id:number,des:string}>null,rs:<mongo.Document | mongo.UpdateResult>null}
@@ -484,8 +486,8 @@ export class MongoExt
         }
         catch(e)
         {
-            GLog.error({collection,model,where,upsert})
-            GLog.error(e.stack)
+            global.gLog.error({collection,model,where,upsert})
+            global.gLog.error(e.stack)
             rs.errcode=EErrorCode.Mongo_Error
         }
         rs.rs=up_rs
@@ -506,14 +508,14 @@ export class MongoExt
         }
         catch(e)
         {
-            GLog.error({collection,index})
-            GLog.error(e.stack)
+            global.gLog.error({collection,index})
+            global.gLog.error(e.stack)
             rs.errcode=EErrorCode.Mongo_Error
         }
         rs.rs=i_rs
         return rs
     }
-    async simpleAggregate(collection:string,property?:{},where?:{},size?:number,random_size?:number)
+    async simpleAggregate(collection:string,where?:{[key:string]:any},property?:{[key:string]:any},size?:number,random_size?:number)
     {
         this._convertWhere(where)
         let rs = {errcode:<{id:number,des:string}>null,list:<any[]>null}
@@ -550,7 +552,7 @@ export class MongoExt
         }
         catch(e)
         {
-            GLog.error(e.stack)
+            global.gLog.error(e.stack)
             rs.errcode=EErrorCode.Mongo_Error
         }
         rs.list=list
@@ -589,7 +591,7 @@ export class MongoExt
         catch(e)
         {
             await session.abortTransaction()
-            GLog.error(e.stack)
+            global.gLog.error(e.stack)
         }
         finally
         {

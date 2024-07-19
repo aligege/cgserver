@@ -1,10 +1,9 @@
 import * as request from "request";
 import * as qs from "querystring";
-import { GLog } from "./Log";
 import { core } from "../Core/Core";
+import { global } from "../global";
 
-export let GHttpTool:HttpTool=null
-class HttpTool
+export class HttpTool
 {
     protected _debug=false
     get debug()
@@ -31,7 +30,7 @@ class HttpTool
         }
         if(this._debug)
         {
-            GLog.info("prepare get:"+options.url)
+            global.gLog.info("prepare get:"+options.url)
         }
         return new Promise((resolve,reject)=>
         {
@@ -40,8 +39,8 @@ class HttpTool
                 let originbody=body
                 if(error)
                 {
-                    GLog.error("get:"+options.url)
-                    GLog.error(error)
+                    global.gLog.error("get:"+options.url)
+                    global.gLog.error(error)
                 }
                 try
                 {
@@ -56,7 +55,7 @@ class HttpTool
                 }
                 if(this._debug)
                 {
-                    GLog.info({
+                    global.gLog.info({
                         dttime:(Date.now()-time)+"ms",
                         url:options.url,
                         originbody:originbody
@@ -80,7 +79,7 @@ class HttpTool
         }
         if(this._debug)
         {
-            GLog.info("prepare post:"+options.url)
+            global.gLog.info("prepare post:"+options.url)
         }
         return new Promise((resolve,reject)=>
         {
@@ -89,8 +88,8 @@ class HttpTool
                 let originbody=body
                 if(error)
                 {
-                    GLog.error("post:"+options.url)
-                    GLog.error(error)
+                    global.gLog.error("post:"+options.url)
+                    global.gLog.error(error)
                 }
                 try
                 {
@@ -105,7 +104,7 @@ class HttpTool
                 }
                 if(this._debug)
                 {
-                    GLog.info({
+                    global.gLog.info({
                         dttime:(Date.now()-time)+"ms",
                         url:options.url,
                         originbody:originbody
@@ -116,4 +115,3 @@ class HttpTool
         })
     }
 }
-GHttpTool = new HttpTool()

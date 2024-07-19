@@ -1,4 +1,5 @@
-import { GMongoMgr, MongoBaseModel } from "./MongoManager";
+import { global } from "../../global";
+import { MongoBaseModel } from "./MongoManager";
 import * as mongo from 'mongodb';
 
 export class MongoBaseService<T extends MongoBaseModel>
@@ -15,14 +16,14 @@ export class MongoBaseService<T extends MongoBaseModel>
     }
     get mongoDb()
     {
-        return GMongoMgr.getMongo(this._dbname)
+        return global.gMongoMgr.getMongo(this._dbname)
     }
     protected _dbname=""
     get dbname()
     {
         if(!this._dbname)
         {
-            this._dbname=GMongoMgr.defdbname
+            this._dbname=global.gMongoMgr.defdbname
         }
         return this._dbname
     }
@@ -55,34 +56,34 @@ export class MongoBaseService<T extends MongoBaseModel>
         let rs=await this.mongoDb.findOne(this._table,null,{id:id})
         return rs.one as T
     }
-    async get(property=null,where=null)
+    async get(where:{[key:string]:any}=null,property:{[key:string]:any}=null)
     {
-        let rs = await this.mongoDb.findOne(this._table,property,where)
+        let rs = await this.mongoDb.findOne(this._table,where,property)
         return rs.one as T
     }
-    async countDocuments(where=null,options?: mongo.CountDocumentsOptions)
+    async countDocuments(where:{[key:string]:any}=null,options?: mongo.CountDocumentsOptions)
     {
         let rs = await this.mongoDb.countDocuments(this._table,where)
         return rs.count
     }
-    async gets(property=null,where=null,sort=null,skip=0,limit=0)
+    async gets(where:{[key:string]:any}=null,property=null,sort=null,skip=0,limit=0)
     {
-        let rs = await this.mongoDb.findMany(this._table,property,where,sort,skip,limit)
+        let rs = await this.mongoDb.findMany(this._table,where,property,sort,skip,limit)
         return rs.list as T[]
     }
-    async getRandoms(num:number,property:any,where=null)
+    async getRandoms(num:number,where:{[key:string]:any},property:{[key:string]:any}=null)
     {
-        let rs = await this.mongoDb.simpleAggregate(this._table,property,where,null,num)
+        let rs = await this.mongoDb.simpleAggregate(this._table,where,property,null,num)
         return rs.list as T[]
     }
-    async updateOne(model:any,where?:any,upsert=false)
+    async updateOne(where:{[key:string]:any},model:any,upsert=false)
     {
-        let rs = await this.mongoDb.updateOne(this._table,model,where,upsert)
+        let rs = await this.mongoDb.updateOne(this._table,where,model,upsert)
         return rs
     }
-    async updateMany(model:any,where=null)
+    async updateMany(where:{[key:string]:any},model:any=null,upsert=false)
     {
-        let rs = await this.mongoDb.updateMany(this._table,model,where)
+        let rs = await this.mongoDb.updateMany(this._table,where,model,upsert)
         return rs
     }
     async insert(model:T)
@@ -116,7 +117,7 @@ export class MongoBaseService<T extends MongoBaseModel>
      * @param where 数组内赛选条件 比如 "items.id":1
      * @param pre_match 数组上一级赛选条件 比如 "user_id":1
      */
-    async getsInArray<T>(array:string,where?:any,pre_match?:any)
+    async getsInArray<T>(array:string,where?:{[key:string]:any},pre_match?:any)
     {
         let agg = this.aggregate()
         if(pre_match)
@@ -142,7 +143,7 @@ export class MongoBaseService<T extends MongoBaseModel>
      * @param where 数组内赛选条件 比如 "items.id":1
      * @param pre_match 数组上一级赛选条件 比如 "user_id":1
      */
-    async getInArray<T>(array:string,where?:any,pre_match?:any)
+    async getInArray<T>(array:string,where?:{[key:string]:any},pre_match?:any)
     {
         let items = await this.getsInArray<T>(array,where,pre_match)
         if(items.length<=0)

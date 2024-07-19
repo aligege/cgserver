@@ -1,6 +1,5 @@
-import { GCgServer } from "../cgserver"
-import { MongoBaseService } from "../Database/MongoBaseService"
-import { MongoBaseModel } from "../Database/MongoManager"
+import { MongoBaseService } from "../Database/Mongo/MongoBaseService"
+import { MongoBaseModel } from "../Database/Mongo/MongoManager"
 
 //暂时就用这个了，反正没啥用户
 export class MongoCacheModel extends MongoBaseModel
@@ -10,13 +9,12 @@ export class MongoCacheModel extends MongoBaseModel
     expireAt=Date.now()+365*24*60*60*1000
 }
 
-export let GMongoCacheSer:MongoCacheService=null
-class MongoCacheService extends MongoBaseService<MongoCacheModel>
+export class MongoCacheService extends MongoBaseService<MongoCacheModel>
 {
     constructor()
     {
         super("cache",MongoCacheModel)
-        GCgServer.addListener("start",()=>
+        global.gCgServer.addListener("start",()=>
         {
             if(!this.mongoDb)
             {
@@ -29,7 +27,7 @@ class MongoCacheService extends MongoBaseService<MongoCacheModel>
     }
     async getData(key:string)
     {
-        let cm:MongoCacheModel = await this.get(null,{key:key})
+        let cm:MongoCacheModel = await this.get({key:key})
         if(!cm)
         {
             return null
@@ -42,7 +40,7 @@ class MongoCacheService extends MongoBaseService<MongoCacheModel>
         mcm.key=key
         mcm.data=data
         mcm.expireAt=expireAt
-        let rs = await this.updateOne(mcm,{key:mcm.key},true)
+        let rs = await this.updateOne({key:mcm.key},mcm,true)
         if(rs.rs.upsertedCount<=0)
         {
             return null
@@ -50,4 +48,3 @@ class MongoCacheService extends MongoBaseService<MongoCacheModel>
         return mcm
     }
 }
-GMongoCacheSer = new MongoCacheService()

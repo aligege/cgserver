@@ -1,10 +1,9 @@
 import { BaseController } from './BaseController';
 import { MysqlUserModel, GUserSer } from '../../Service/MysqlUserService';
-import { GCacheTool } from '../../Logic/CacheTool';
 import { ESessionType } from '../../Config/FrameworkConfig';
-import { GRedisMgr } from '../../Database/RedisManager';
-import { MongoCacheModel, GMongoCacheSer } from '../../Service/MongoCacheService';
+import { MongoCacheModel } from '../../Service/MongoCacheService';
 import { ERoleGroup } from '../../Service/ini';
+import { global } from '../../global';
 export class MysqlBaseUserController<T extends MysqlUserModel> extends BaseController
 {
     protected _user_session_id="user_session_id"
@@ -80,7 +79,7 @@ export class MysqlBaseUserController<T extends MysqlUserModel> extends BaseContr
         //每次强制从cache中先找，提高效率
         //if(this._engine.cfg.session_type==ESessionType.Cache)
         {
-            user= GCacheTool.get(this._session_id)
+            user= global.gCacheTool.get(this._session_id)
         }
         if(user)
         {
@@ -88,7 +87,7 @@ export class MysqlBaseUserController<T extends MysqlUserModel> extends BaseContr
         }
         if(this._engine.cfg.session_type==ESessionType.Redis)
         {
-            let user_id = parseInt((await GRedisMgr.get(this._session_id))||"-1")
+            let user_id = parseInt((await global.gRedisMgr.redis.get(this._session_id))||"-1")
             if(user_id>0)
             {
                 user = <T>(await GUserSer.getById(user_id))
@@ -96,7 +95,7 @@ export class MysqlBaseUserController<T extends MysqlUserModel> extends BaseContr
         }
         else if(this._engine.cfg.session_type==ESessionType.Mongo)
         {
-            let user_id = (await GMongoCacheSer.getData(this._session_id))||-1
+            let user_id = (await global.gMongoCacheSer.getData(this._session_id))||-1
             if(user_id>0)
             {
                 user = <T>(await GUserSer.getById(user_id))
@@ -114,15 +113,15 @@ export class MysqlBaseUserController<T extends MysqlUserModel> extends BaseContr
         {
             if(this._engine.cfg.session_type==ESessionType.Cache)
             {
-                GCacheTool.remove(this._session_id)
+                global.gCacheTool.remove(this._session_id)
             }
             else if(this._engine.cfg.session_type==ESessionType.Redis)
             {
-                GRedisMgr.del(this._session_id)
+                global.gRedisMgr.redis.del(this._session_id)
             }
             else if(this._engine.cfg.session_type==ESessionType.Mongo)
             {
-                GMongoCacheSer.deleteOne({key:this._session_id})
+                global.gMongoCacheSer.deleteOne({key:this._session_id})
             }
             this._session_id = null
         }
@@ -153,18 +152,18 @@ export class MysqlBaseUserController<T extends MysqlUserModel> extends BaseContr
         {
             if(time>24*60*60)
             {
-                GCacheTool.add(this._session_id,user,24*60*60*1000)
+                global.gCacheTool.add(this._session_id,user,24*60*60*1000)
             }
             else
             {
-                GCacheTool.add(this._session_id,user,time*1000)
+                global.gCacheTool.add(this._session_id,user,time*1000)
             }
         }
         if(this._engine.cfg.session_type==ESessionType.Redis)
         {
-            GRedisMgr.set(this._session_id,user.id).then(()=>
+            global.gRedisMgr.redis.set(this._session_id,user.id).then(()=>
             {
-                GRedisMgr.expire(this._session_id,time)
+                global.gRedisMgr.redis.expire(this._session_id,time)
             })
         }
         else if(this._engine.cfg.session_type==ESessionType.Mongo)
@@ -173,7 +172,7 @@ export class MysqlBaseUserController<T extends MysqlUserModel> extends BaseContr
             cm.key=this._session_id
             cm.data=user.id
             cm.expireAt=Date.now()+time*1000
-            GMongoCacheSer.updateOne(cm,{key:cm.key},true)
+            global.gMongoCacheSer.updateOne(cm,{key:cm.key},true)
         }
         this._self_user = user
     }

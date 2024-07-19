@@ -1,11 +1,9 @@
 ﻿import { EErrorCode } from '../Config/_error_';
-import { MongoBaseService } from '../Database/MongoBaseService';
-import { MongoBaseModel } from '../Database/MongoManager';
-import { GCacheTool } from '../Logic/CacheTool';
-import { GQQTool } from '../ThirdParty/QQTool';
-import { GWechatTool } from '../ThirdParty/WechatTool';
+import { MongoBaseService } from '../Database/Mongo/MongoBaseService';
+import { MongoBaseModel } from '../Database/Mongo/MongoManager';
+import { global } from '../global';
 import { EAccountFrom, EAccountState } from './ini';
-import { GUserSer, MongoUserModel } from './MongoUserService';
+import { GMongoUserSer, MongoUserModel } from './MongoUserService';
 
 export class MongoAccountModel extends MongoBaseModel
 {
@@ -161,7 +159,7 @@ export class MongoAccountService<T extends MongoAccountModel> extends MongoBaseS
         }
         if(force_user)
         {
-            let user = await GUserSer.getByAccountId(account.id)
+            let user = await GMongoUserSer.getByAccountId(account.id)
             if(!user)
             {
                 switch(from)
@@ -175,7 +173,7 @@ export class MongoAccountService<T extends MongoAccountModel> extends MongoBaseS
                         {
                             if(from==EAccountFrom.QQ)
                             {
-                                let userInfo = await GQQTool.getUserInfo(access_token,openid)
+                                let userInfo = await global.gQQTool.getUserInfo(access_token,openid)
                                 if(!userInfo)
                                 {
                                     rs.errcode=EErrorCode.Server_Error
@@ -190,7 +188,7 @@ export class MongoAccountService<T extends MongoAccountModel> extends MongoBaseS
                             }
                             else if(from==EAccountFrom.WeChat)
                             {
-                                let userInfo = await GWechatTool.getUserInfo(access_token,openid)
+                                let userInfo = await global.gWechatOATool.getUserInfo(access_token,openid)
                                 if((<any>userInfo).errcode)
                                 {
                                     rs.errcode=EErrorCode.Server_Error
@@ -213,7 +211,7 @@ export class MongoAccountService<T extends MongoAccountModel> extends MongoBaseS
                                 }
                             }
                         }
-                        let user = await GUserSer.add(account.id,extra_info.nickname,extra_info.sex,extra_info.logo)
+                        let user = await GMongoUserSer.add(account.id,extra_info.nickname,extra_info.sex,extra_info.logo)
                         if(!user)
                         {
                             this.deleteOne({id:account.id})
@@ -228,11 +226,11 @@ export class MongoAccountService<T extends MongoAccountModel> extends MongoBaseS
                         let user:MongoUserModel = null
                         if(extra_info)
                         {
-                            user = await GUserSer.add(account.id,extra_info.nickname,extra_info.sex,extra_info.logo)
+                            user = await GMongoUserSer.add(account.id,extra_info.nickname,extra_info.sex,extra_info.logo)
                         }
                         else
                         {
-                            user = await GUserSer.add(account.id,null,null,null)
+                            user = await GMongoUserSer.add(account.id,null,null,null)
                         }
                         if(!user)
                         {
@@ -272,7 +270,7 @@ export class MongoAccountService<T extends MongoAccountModel> extends MongoBaseS
         else if(from==EAccountFrom.QuickPhone)
         {
             let key = "phone_code_"+unionid
-            let code = GCacheTool.get(key)
+            let code = global.gCacheTool.get(key)
             if(!code||code!=openid)
             {
                 rs.errcode=EErrorCode.Wrong_Phone_Code
@@ -282,7 +280,7 @@ export class MongoAccountService<T extends MongoAccountModel> extends MongoBaseS
         }
         else if(from==EAccountFrom.Phone)
         {
-            rs.account = await this.get(null,{phone:unionid,password:openid})
+            rs.account = await this.get({phone:unionid,password:openid})
             if(!rs.account)
             {
                 rs.errcode=EErrorCode.Login_Failed
@@ -290,7 +288,7 @@ export class MongoAccountService<T extends MongoAccountModel> extends MongoBaseS
         }
         else if(from==EAccountFrom.Email)
         {
-            rs.account = await this.get(null,{email:unionid,password:openid})
+            rs.account = await this.get({email:unionid,password:openid})
             if(!rs.account)
             {
                 rs.errcode=EErrorCode.Login_Failed
@@ -298,7 +296,7 @@ export class MongoAccountService<T extends MongoAccountModel> extends MongoBaseS
         }
         else if(from==EAccountFrom.Name||from==EAccountFrom.Guest)
         {
-            rs.account = await this.get(null,{name:unionid,password:openid})
+            rs.account = await this.get({name:unionid,password:openid})
             if(!rs.account&&from==EAccountFrom.Name)
             {
                 rs.errcode=EErrorCode.Login_Failed
@@ -316,7 +314,7 @@ export class MongoAccountService<T extends MongoAccountModel> extends MongoBaseS
             case EAccountFrom.Phone:
             {
                 am.phone=key
-                let temp=await this.get({id:1},{phone:key})
+                let temp=await this.get({phone:key},{id:1})
                 if(temp)
                 {
                     rs.errcode=EErrorCode.Account_Phone_Exist
@@ -327,7 +325,7 @@ export class MongoAccountService<T extends MongoAccountModel> extends MongoBaseS
             case EAccountFrom.Email:
             {
                 am.email=key
-                let temp=await this.get({id:1},{email:key})
+                let temp=await this.get({email:key},{id:1})
                 if(temp)
                 {
                     rs.errcode=EErrorCode.Account_Email_Exist
@@ -338,7 +336,7 @@ export class MongoAccountService<T extends MongoAccountModel> extends MongoBaseS
             case EAccountFrom.Name:
             {
                 am.name=key
-                let temp=await this.get({id:1},{name:key})
+                let temp=await this.get({name:key},{id:1})
                 if(temp)
                 {
                     rs.errcode=EErrorCode.Account_Name_Exist
@@ -365,7 +363,7 @@ export class MongoAccountService<T extends MongoAccountModel> extends MongoBaseS
             rs.errcode=EErrorCode.Mysql_Error
             return rs
         }
-        let user = await GUserSer.add(am.id,extra.nickname,extra.sex,extra.logo)
+        let user = await GMongoUserSer.add(am.id,extra.nickname,extra.sex,extra.logo)
         if(!user)
         {
             this.deleteOne({id:am.id})
