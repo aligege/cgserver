@@ -8,7 +8,10 @@ export class MongoCacheModel extends MongoBaseModel
     data=null
     expireAt=Date.now()+365*24*60*60*1000
 }
-
+/**
+ * mongo版本的缓存服务
+ * 可以用来缓存kv数据
+ */
 export class MongoCacheService extends MongoBaseService<MongoCacheModel>
 {
     constructor()

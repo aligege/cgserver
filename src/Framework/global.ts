@@ -23,7 +23,11 @@ import { QiniuTool } from './ThirdParty/QiniuTool';
 import { WechatTool } from './ThirdParty/WechatTool';
 import { ControllerManager } from './WebServer/Engine/ControllerManager';
 import { CgServer } from './cgserver';
+import { core } from './Core/Core';
 
+/**
+ * cg引擎的，全局对象
+ */
 export class global
 {
     static gMongoServiceMgr=new MongoServiceManager()
@@ -50,6 +54,19 @@ export class global
     static gAlipayTool=new AlipayTool()
     static gAppleTool=new AppleTool()
     static gProtoFactory=new ProtoFactory()
+    /**
+     * web服务中mvc的控制器管理器
+     */
     static gCtrMgr=new ControllerManager()
+    /**
+     * mongo版本的缓存服务
+     * 可以用来缓存kv数据
+     */
     static gMongoCacheSer = new MongoCacheService()
+    /**
+     * 一些通用的常用函数，
+     * 比如格式化字符串，常用加解密，
+     * 时间计算，类型判断等
+     */
+    static core = core
 }

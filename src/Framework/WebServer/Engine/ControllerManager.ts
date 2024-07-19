@@ -1,5 +1,8 @@
 import { BaseController } from "../Controller/BaseController";
 
+/**
+ * web服务中mvc的控制器管理器
+ */
 export class ControllerManager
 {
     protected _static_ctr:{[module_name:string]:{[ctrname:string]:BaseController}}={}

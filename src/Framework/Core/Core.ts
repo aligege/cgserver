@@ -8,7 +8,9 @@ import { v4 } from "uuid";
 import { global } from "../global";
 
 /**
- * 常用的工具函数类
+ * 一些通用的常用函数，
+ * 比如格式化字符串，常用加解密，
+ * 时间计算，类型判断等
  */
 export class core 
 {
