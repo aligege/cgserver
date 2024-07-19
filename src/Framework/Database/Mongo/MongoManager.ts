@@ -223,6 +223,10 @@ export class MongoExt
      */
     async findOne(collection:string,where:{[key:string]:any}={},property:{[key:string]:any}={})
     {
+        if(!where)
+        {
+            where={}
+        }
         this._convertWhere(where)
         let rs = {errcode:<{id:number,des:string}>null,one:null}
         if(!this._mongoDb)
@@ -246,6 +250,10 @@ export class MongoExt
     }
     async findMany(collection:string,where:{[key:string]:any}={},property:{[key:string]:any}={},sort?:{[key:string]:any},skip=0,limit=0)
     {
+        if(!where)
+        {
+            where={}
+        }
         this._convertWhere(where)
         let rs = {errcode:<{id:number,des:string}>null,list:<any[]>null}
         if(!this._mongoDb)
