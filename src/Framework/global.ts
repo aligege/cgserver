@@ -27,35 +27,34 @@ import { core } from "./Core/Core"
 /**
  * cg引擎的，全局对象
  */
-export class global
-{
-    static gMongoServiceMgr1=gMongoServiceMgr
-    static gCgServer1=gCgServer
-    static gDbCache1=gDbCache
-    static gTriggerMgr1=gTriggerMgr
-    static gMongoMgr1=gMongoMgr
-    static gMSSqlMgr1=gMSSqlMgr
-    static gMysqlMgr1=gMysqlMgr
-    static gRedisMgr1=gRedisMgr
-    static gCacheTool1=gCacheTool
-    static gHttpTool1=gHttpTool
-    static gLog1 = gLog
-    static gSyncQueueTool1=gSyncQueueTool
-    static gEventTool1=gEventTool
-    static gByteTool1=gByteTool
-    static gSmsTool1=gSMSTool
-    static gEmailTool1=gEmailTool
-    static gQiniuTool1=gQiniuTool
-    static gQQTool1=gQQTool
-    static gWechatTool1=gWechatTool
-    static gWechatOATool1=gWechatTool
-    static gAlipayTool1=gAlipayTool
-    static gAppleTool1=gAppleTool
-    static gProtoFactory1=gProtoFactory
+export class global {
+    static gMongoServiceMgr = gMongoServiceMgr
+    static gCgServer = gCgServer
+    static gDbCache = gDbCache
+    static gTriggerMgr = gTriggerMgr
+    static gMongoMgr = gMongoMgr
+    static gMSSqlMgr = gMSSqlMgr
+    static gMysqlMgr = gMysqlMgr
+    static gRedisMgr = gRedisMgr
+    static gCacheTool = gCacheTool
+    static gHttpTool = gHttpTool
+    static gLog = gLog
+    static gSyncQueueTool = gSyncQueueTool
+    static gEventTool = gEventTool
+    static gByteTool = gByteTool
+    static gSmsTool = gSMSTool
+    static gEmailTool = gEmailTool
+    static gQiniuTool = gQiniuTool
+    static gQQTool = gQQTool
+    static gWechatTool = gWechatTool
+    static gWechatOATool = gWechatTool
+    static gAlipayTool = gAlipayTool
+    static gAppleTool = gAppleTool
+    static gProtoFactory = gProtoFactory
     /**
      * web服务中mvc的控制器管理器
      */
-    static gCtrMgr=gCtrMgr
+    static gCtrMgr = gCtrMgr
     /**
      * mongo版本的缓存服务
      * 可以用来缓存kv数据

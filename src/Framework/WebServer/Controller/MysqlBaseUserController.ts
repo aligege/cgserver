@@ -173,7 +173,7 @@ export class MysqlBaseUserController<T extends MysqlUserModel> extends BaseContr
             cm.key=this._session_id
             cm.data=user.id
             cm.expireAt=Date.now()+time*1000
-            gMongoCacheSer.updateOne(cm,{key:cm.key},true)
+            gMongoCacheSer.updateOne({key:cm.key},cm,true)
         }
         this._self_user = user
     }

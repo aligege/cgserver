@@ -52,7 +52,7 @@ export class MongoBaseService<T extends MongoBaseModel>
      */
     async getById(id:any)
     {
-        let rs=await this.mongoDb.findOne(this._table,null,{id:id})
+        let rs=await this.mongoDb.findOne(this._table,{id:id})
         return rs.one as T
     }
     async get(where:{[key:string]:any}=null,property:{[key:string]:any}=null)

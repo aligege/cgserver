@@ -89,7 +89,7 @@ export class MongoAccountService<T extends MongoAccountModel> extends MongoBaseS
      */
     async getByThird(unionid:string,openid:string)
     {
-        let am:T = await this.get(null,{unionid:unionid,openid:openid})
+        let am:T = await this.get({unionid:unionid,openid:openid})
         return am
     }
     /**
@@ -98,12 +98,12 @@ export class MongoAccountService<T extends MongoAccountModel> extends MongoBaseS
      */
     async getByUnionid(unionid:string)
     {
-        let am:T = await this.get(null,{unionid:unionid})
+        let am:T = await this.get({unionid:unionid})
         return am
     }
     async getByPhone(phone:string)
     {
-        let am:T = await this.get(null,{phone:phone+""})
+        let am:T = await this.get({phone:phone+""})
         return am
     }
     /**
@@ -253,7 +253,7 @@ export class MongoAccountService<T extends MongoAccountModel> extends MongoBaseS
         }
         account.login_time=Date.now()
         account.login_ip=ip
-        this.updateOne({login_time:account.login_time,login_ip:account.login_ip},{id:account.id})
+        this.updateOne({id:account.id},{login_time:account.login_time,login_ip:account.login_ip})
         rs.account = account
         return rs
     }
