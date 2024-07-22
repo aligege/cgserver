@@ -4,7 +4,7 @@ import { MongoCacheModel, gMongoCacheSer, } from '../../Service/MongoCacheServic
 import { ERoleGroup } from '../../Service/ini';
 import { GMongoUserSer, MongoUserModel } from '../../Service/MongoUserService';
 import { gCacheTool } from '../../Logic/CacheTool';
-import { gRedisMgr } from '../../Database/RedisManager';
+import { gRedisMgr } from '../../Database/Redis/RedisManager';
 export class MongoBaseUserController<T extends MongoUserModel> extends BaseController
 {
     protected _user_session_id="user_session_id"

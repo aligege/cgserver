@@ -1,5 +1,5 @@
 ﻿import * as redis from 'redis';
-import { gLog } from '../Logic/Log';
+import { gLog } from '../../Logic/Log';
 export class RedisConfig
 {
     open=false

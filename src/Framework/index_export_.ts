@@ -26,7 +26,6 @@ export { BaseModel as MysqlBaseModel } from './Database/Mysql/MysqlBaseService';
 export { MongoBaseModel,MongoManager,MongoExt } from './Database/Mongo/MongoManager';
 export { MysqlBaseService } from './Database/Mysql/MysqlBaseService';
 export { SqlReturn,SqlReturns } from './Database/Mysql/MysqlManager';
-export { RedisManager } from './Database/RedisManager';
 
 export { ERoleGroup,EUserState,EAccountFrom } from './Service/ini';
 export { MysqlAccountService} from './Service/MysqlAccountService';
@@ -40,7 +39,7 @@ export { DbConfig } from './Config/DbConfig';
 export { MSSqlConfig } from './Database/MSSql/MSSqlManager';
 export { MongoConfig } from './Database/Mongo/MongoManager';
 export { MysqlConfig } from './Database/Mysql/MysqlManager';
-export { RedisConfig } from './Database/RedisManager';
+export { RedisConfig,RedisManager } from './Database/Redis/RedisManager';
 
 export { EProtoType } from './SocketServer/ProtoFilter/IProtoFilter';
 export { GoogleProtoFilter } from './SocketServer/ProtoFilter/GoogleProtoFilter';

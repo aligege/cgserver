@@ -4,7 +4,7 @@ import { ESessionType } from '../../Config/FrameworkConfig';
 import { MongoCacheModel, gMongoCacheSer } from '../../Service/MongoCacheService';
 import { ERoleGroup } from '../../Service/ini';
 import { gCacheTool } from '../../Logic/CacheTool';
-import { gRedisMgr } from '../../Database/RedisManager';
+import { gRedisMgr } from '../../Database/Redis/RedisManager';
 export class MysqlBaseUserController<T extends MysqlUserModel> extends BaseController
 {
     protected _user_session_id="user_session_id"

@@ -4,11 +4,11 @@ import { IWebServer } from "./WebServer/IWebServer";
 import { ISocketServer } from "./SocketServer/ISocketServer";
 import { DbConfig } from "./Config/DbConfig";
 import { gMSSqlMgr } from "./Database/MSSql/MSSqlManager";
-import { gRedisMgr } from "./Database/RedisManager";
 import { gMysqlMgr } from "./Database/Mysql/MysqlManager";
 import { gMongoMgr } from "./Database/Mongo/MongoManager";
 import { gLog } from "./Logic/Log";
 import { gEventTool } from "./Logic/EventTool";
+import { gRedisMgr } from "./Database/Redis/RedisManager";
 
 export class CgServer
 {

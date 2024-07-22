@@ -5,7 +5,6 @@ import { gMSSqlMgr } from "./Database/MSSql/MSSqlManager"
 import { gMongoMgr } from "./Database/Mongo/MongoManager"
 import { gMongoServiceMgr } from "./Database/Mongo/MongoServiceManager"
 import { gMysqlMgr } from "./Database/Mysql/MysqlManager"
-import { gRedisMgr } from "./Database/RedisManager"
 import { gCacheTool } from "./Logic/CacheTool"
 import { gEventTool } from "./Logic/EventTool"
 import { gHttpTool } from "./Logic/HttpTool"
@@ -23,6 +22,7 @@ import { gWechatTool } from "./ThirdParty/WechatTool"
 import { gCtrMgr } from "./WebServer/Engine/ControllerManager"
 import { gCgServer } from "./cgserver"
 import { core } from "./Core/Core"
+import { gRedisMgr } from "./Database/Redis/RedisManager"
 
 /**
  * cg引擎的，全局对象
