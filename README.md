@@ -1,3 +1,9 @@
+10.0.9
+1、修复mongoservicemanager的接口bug
+10.0.8
+1、精简mongoservicemanager的接口
+10.0.7
+1、细微修改mongoservicemanager
 10.0.1-10.0.7
 1、一些列优化和bug修正
 10.0.0

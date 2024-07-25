@@ -49,6 +49,16 @@ export class CgServer
     {
         return Config.rootDataDir
     }
+    protected _timezone="Asia/Shanghai"
+    get timezone()
+    {
+        return this._timezone
+    }
+    set timezone(value:string)
+    {
+        this._timezone=value
+        process.env.TZ = "Asia/Shanghai"
+    }
     constructor()
     {
         this.init()

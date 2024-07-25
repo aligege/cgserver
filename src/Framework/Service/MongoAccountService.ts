@@ -1,11 +1,12 @@
 ﻿import { EErrorCode } from '../Config/_error_';
 import { MongoBaseService } from '../Database/Mongo/MongoBaseService';
 import { MongoBaseModel } from '../Database/Mongo/MongoManager';
+import { gMongoServiceMgr } from '../Database/Mongo/MongoServiceManager';
 import { gCacheTool } from '../Logic/CacheTool';
 import { gQQTool } from '../ThirdParty/QQTool';
 import { gWechatTool } from '../ThirdParty/WechatTool';
 import { EAccountFrom, EAccountState } from './ini';
-import { GMongoUserSer, MongoUserModel } from './MongoUserService';
+import { MongoUserModel, MongoUserService } from './MongoUserService';
 
 export class MongoAccountModel extends MongoBaseModel
 {
@@ -161,7 +162,8 @@ export class MongoAccountService<T extends MongoAccountModel> extends MongoBaseS
         }
         if(force_user)
         {
-            let user = await GMongoUserSer.getByAccountId(account.id)
+            let userser = gMongoServiceMgr.getService<MongoUserService<any>>("user")
+            let user = await userser.getByAccountId(account.id)
             if(!user)
             {
                 switch(from)
@@ -213,7 +215,7 @@ export class MongoAccountService<T extends MongoAccountModel> extends MongoBaseS
                                 }
                             }
                         }
-                        let user = await GMongoUserSer.add(account.id,extra_info.nickname,extra_info.sex,extra_info.logo)
+                        let user = await userser.add(account.id,extra_info.nickname,extra_info.sex,extra_info.logo)
                         if(!user)
                         {
                             this.deleteOne({id:account.id})
@@ -228,11 +230,11 @@ export class MongoAccountService<T extends MongoAccountModel> extends MongoBaseS
                         let user:MongoUserModel = null
                         if(extra_info)
                         {
-                            user = await GMongoUserSer.add(account.id,extra_info.nickname,extra_info.sex,extra_info.logo)
+                            user = await userser.add(account.id,extra_info.nickname,extra_info.sex,extra_info.logo)
                         }
                         else
                         {
-                            user = await GMongoUserSer.add(account.id,null,null,null)
+                            user = await userser.add(account.id,null,null,null)
                         }
                         if(!user)
                         {
@@ -365,7 +367,8 @@ export class MongoAccountService<T extends MongoAccountModel> extends MongoBaseS
             rs.errcode=EErrorCode.Mysql_Error
             return rs
         }
-        let user = await GMongoUserSer.add(am.id,extra.nickname,extra.sex,extra.logo)
+        let userser = gMongoServiceMgr.getService<MongoUserService<any>>("user")
+        let user = await userser.add(am.id,extra.nickname,extra.sex,extra.logo)
         if(!user)
         {
             this.deleteOne({id:am.id})

@@ -28,14 +28,8 @@ export class MongoUserModel extends MongoBaseModel
     create_time:number = 0
 }
 //暂时不实例化，方便重写
-export let GMongoUserSer:MongoUserService<MongoUserModel>=null
 export class MongoUserService<T extends MongoUserModel> extends MongoBaseService<T>
 {
-    constructor(table:string,type: { new(): T})
-    {
-        super(table,type)
-        GMongoUserSer = this
-    }
     @SyncCall
     protected async _createNewUser(account_id:number,nickname:string,sex:number,logo:string,group?:ERoleGroup)
     {

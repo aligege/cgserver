@@ -1,5 +1,7 @@
 import { MongoBaseModel, gMongoMgr } from "./MongoManager";
 import * as mongo from 'mongodb';
+import { gMongoServiceMgr } from "./MongoServiceManager";
+
 
 export class MongoBaseService<T extends MongoBaseModel>
 {
@@ -26,13 +28,19 @@ export class MongoBaseService<T extends MongoBaseModel>
         }
         return this._dbname
     }
+    set dbname(db:string)
+    {
+        this._dbname=db
+    }
     protected _t_type:{ new(): T}=null
     constructor(table:string,type: { new(): T},dbname="")
     {
         this._t_type=type
         this._table=table
         this._dbname=dbname
+        gMongoServiceMgr.addService(this)
     }
+
     async getNextId(key:string="")
     {
         if(!key)
@@ -150,5 +158,10 @@ export class MongoBaseService<T extends MongoBaseModel>
             return null
         }
         return items[0]
+    }
+    async distinct(key:string|number,where:{[key:string]:any}={})
+    {
+        let rs = await this.mongoDb.distinct(this._table,key,where)
+        return rs
     }
 }

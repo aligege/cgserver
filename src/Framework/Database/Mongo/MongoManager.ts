@@ -248,6 +248,33 @@ export class MongoExt
         rs.one=one
         return rs
     }
+    async distinct(collection:string,key:string|number,where:{[key:string]:any}={})
+    {
+        if(!where)
+        {
+            where={}
+        }
+        this._convertWhere(where)
+        let rs = {errcode:<{id:number,des:string}>null,lst:null}
+        if(!this._mongoDb)
+        {
+            rs.errcode=EErrorCode.No_Mongo
+            return rs
+        }
+        let lst = null
+        try{
+            let col = this._mongoDb.collection(collection)
+            lst = await col.distinct(key,where)
+        }
+        catch(e)
+        {
+            gLog.error({collection,key,where})
+            gLog.error(e.stack)
+            rs.errcode=EErrorCode.Mongo_Error
+        }
+        rs.lst=lst
+        return rs
+    }
     async findMany(collection:string,where:{[key:string]:any}={},property:{[key:string]:any}={},sort?:{[key:string]:any},skip=0,limit=0)
     {
         if(!where)
