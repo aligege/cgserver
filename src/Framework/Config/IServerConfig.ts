@@ -1,3 +1,4 @@
+import { gLog } from '../Logic/Log';
 import { FrameworkConfig } from './FrameworkConfig';
 
 export class IServerConfig extends FrameworkConfig
@@ -16,12 +17,17 @@ export class IServerConfig extends FrameworkConfig
     }
     init()
     {
+        if(gServerCfg)
+        {
+            gLog.error("ServerConfig init must be unique")
+            return
+        }
+        gServerCfg=this
         let ret = super.init()
         if(!ret)
         {
             return ret
         }
-        gServerCfg=this
         return ret
     }
 }

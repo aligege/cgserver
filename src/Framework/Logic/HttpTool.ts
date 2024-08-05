@@ -80,6 +80,7 @@ export class HttpTool
         if(this._debug)
         {
             gLog.info("prepare post:"+options.url)
+            gLog.info("prepare post data:"+JSON.stringify(options.json||options.body||options.formData||options.form||options.qs))
         }
         return new Promise((resolve,reject)=>
         {

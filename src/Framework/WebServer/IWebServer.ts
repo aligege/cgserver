@@ -1,10 +1,11 @@
 import { Engine } from './Engine/Engine';
 import { WebServerConfig } from '../Config/FrameworkConfig';
 import { RazorJs } from './Engine/RazorJs';
-import { gServerCfg } from '../Config/IServerConfig';
 import { gCgServer } from '../cgserver';
 import { gEventTool } from '../Logic/EventTool';
 import { gLog } from '../Logic/Log';
+import { DbConfig } from '../index_export_';
+import { gServerCfg } from '../Config/IServerConfig';
 
 //实现对controller的手动注册
 export class IWebServer
@@ -14,7 +15,7 @@ export class IWebServer
      * 启动服务器
      * @param server_index 这个是服务器的配置index
      */
-    async start(cfg:WebServerConfig)
+    async start(cfg:WebServerConfig,dbcfg?:DbConfig)
     {
         gCgServer.addWebServer(this)
         if(!cfg)
@@ -22,9 +23,14 @@ export class IWebServer
             gLog.error("webserver 配置不存在，启动服务器失败")
             return false
         }
-        
-        let dbcfg=gServerCfg.db
-        await gCgServer.initDb(dbcfg)
+        if(!dbcfg&&gServerCfg)
+        {
+            dbcfg=gServerCfg.db
+        }
+        if(dbcfg)
+        {
+            await gCgServer.initDb(dbcfg)
+        }
         //初始化web引擎
         this._engine = new Engine(cfg,new RazorJs())
         this._engine.start()

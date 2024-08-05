@@ -174,6 +174,10 @@ export class CgServer
     }
     async initDb(dbcfg:DbConfig)
     {
+        if(!dbcfg)
+        {
+            return
+        }
         await gMSSqlMgr.init(dbcfg.mssql)
         await gMysqlMgr.init(dbcfg.mysql)
         await gRedisMgr.init(dbcfg.redis)

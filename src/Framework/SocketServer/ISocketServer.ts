@@ -3,7 +3,7 @@ import * as ws from 'websocket';
 import * as fs from "fs";
 import * as http from "http";
 import * as https from "https";
-import { IServerConfig, gServerCfg } from '../Config/IServerConfig';
+import { IServerConfig } from '../Config/IServerConfig';
 import { BaseMsg } from './IWebSocket';
 import { Config } from '../Config/Config';
 import { gCgServer } from '../cgserver';
@@ -69,8 +69,10 @@ export class ISocketServer
     async run()
     {
         gCgServer.addSocketServer(this)
-        let dbcfg=gServerCfg.db
-        await gCgServer.initDb(dbcfg)
+        if(this._cfg.db)
+        {
+            await gCgServer.initDb(this._cfg.db)
+        }
         this.initWebSocket()
     }
     pause()
