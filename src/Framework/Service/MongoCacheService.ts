@@ -15,9 +15,9 @@ export class MongoCacheModel extends MongoBaseModel
  */
 export class MongoCacheService extends MongoBaseService<MongoCacheModel>
 {
-    constructor()
+    constructor(table:string,type: { new(): MongoCacheModel},dbname="")
     {
-        super("cache",MongoCacheModel)
+        super(table,type,dbname)
         gCgServer.addListener("start",()=>
         {
             if(!this.mongoDb)
@@ -53,4 +53,4 @@ export class MongoCacheService extends MongoBaseService<MongoCacheModel>
     }
 }
 
-export let gMongoCacheSer=new MongoCacheService()
+export let gMongoCacheSer=new MongoCacheService("cache",MongoCacheModel)

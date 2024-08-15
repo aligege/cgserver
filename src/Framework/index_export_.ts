@@ -34,7 +34,7 @@ export { MysqlUserService } from './Service/MysqlUserService';
 export { MongoUserService } from './Service/MongoUserService';
 export { MysqlUserModel } from './Service/MysqlUserService';
 export { MongoUserModel } from './Service/MongoUserService';
-export { MongoCacheModel } from './Service/MongoCacheService';
+export { MongoCacheModel,MongoCacheService } from './Service/MongoCacheService';
 export { DbConfig } from './Config/DbConfig';
 export { MSSqlConfig } from './Database/MSSql/MSSqlManager';
 export { MongoConfig } from './Database/Mongo/MongoManager';
