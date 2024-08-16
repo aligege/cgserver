@@ -224,8 +224,7 @@ export class IWebSocket
             gLog.error(this.tipKey+" Send Message warning:null data!")
             return false
         }
-        if(this._debug_msg
-            &&msg.cmd!="heartbeat")
+        if(this._debug_msg&&!this._nodebugmsgs[msg.cmd])
         {
             gLog.info({tipKey:this.tipKey,action:"send",msg})
         }
