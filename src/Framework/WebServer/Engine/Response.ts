@@ -9,6 +9,7 @@ export class Response
     protected _res:Express.Response=null
     protected _cookie_prefix=""
     protected _cfg:WebServerConfig=null
+    public debug=false
     get baseRes()
     {
         return this._res
@@ -16,6 +17,7 @@ export class Response
     constructor(res:Express.Response,cfg:WebServerConfig)
     {
         this._cfg = cfg
+        this.debug = this._cfg.debug||false
         this._res = res
         this._cookie_prefix = this._cfg.cookie.prefix
     }
@@ -95,7 +97,7 @@ export class Response
     }
     debugInfo(data:any)
     {
-        if(!this._cfg.debug)
+        if(!this.debug)
         {
             return
         }

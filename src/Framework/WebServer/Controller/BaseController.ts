@@ -137,4 +137,13 @@ export class BaseController
     {
         return this._request.remoteHost
     }
+    forceDebug()
+    {
+        //静态控制器，传过来全是空
+        if(this._request)
+        {
+            this._request.debugInfo()
+        }
+        this._response.debug=true
+    }
 }
