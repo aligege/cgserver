@@ -9,6 +9,7 @@ import { gMongoMgr } from "./Database/Mongo/MongoManager";
 import { gLog } from "./Logic/Log";
 import { gEventTool } from "./Logic/EventTool";
 import { gRedisMgr } from "./Database/Redis/RedisManager";
+import * as minimist from "minimist";
 
 export class CgServer
 {
@@ -59,12 +60,31 @@ export class CgServer
         this._timezone=value
         process.env.TZ = "Asia/Shanghai"
     }
+    protected _argv:minimist.ParsedArgs={_:[]}
+    /**
+     *   $ node example/parse.js -x 3 -y 4 -n5 -abc --beep=boop foo bar baz
+     *   {
+     *       _: ['foo', 'bar', 'baz'],
+     *       x: 3,
+     *       y: 4,
+     *       n: 5,
+     *       a: true,
+     *       b: true,
+     *       c: true,
+     *       beep: 'boop'
+     *   }
+     */
+    get argv()
+    {
+        return this._argv
+    }
     constructor()
     {
         this.init()
     }
     init()
     {
+        this._argv = minimist(process.argv)
         process.on("uncaughtException",this.onUnCaughtException.bind(this))
         process.on("exit",this.onExit.bind(this))
         //ctrl+c
@@ -79,12 +99,24 @@ export class CgServer
         gEventTool.on("web_server_init_done",this.onStart.bind(this))
 
         let argv = process.argv||[]
+        if(this._argv.d)
+        {
+            this._debug=true
+        }
+        if(this._argv.cfgdir)
+        {
+            Config.rootDataDir=this._argv.cfgdir.toLocaleLowerCase()
+            if(!Config.rootDataDir.endsWith("/"))
+            {
+                Config.rootDataDir+="/"
+            }
+        }
+        //todo 下面代码保留是因为需要兼容以前的东西
         for(let i=0;i<argv.length;++i)
         {
             let arg = argv[i].toLowerCase()
             if(arg=="-d"||arg=="-debug")
             {
-                Config.debug=true
                 this._debug=true
             }
             if(arg=="-data")
