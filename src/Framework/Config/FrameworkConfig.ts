@@ -175,7 +175,7 @@ export class FrameworkConfig extends Config
         { 
             default: 
             { 
-                appenders: ['log_date'],
+                appenders: ['log_file'],
                 level:'ALL'
             },
             console: 

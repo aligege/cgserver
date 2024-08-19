@@ -40,7 +40,7 @@ export class Log
         colors.enable()
         log4js.configure(cfg)
 
-        this._logger = log4js.getLogger(cfg.categories.default.appenders[0]||"log_date")
+        this._logger = log4js.getLogger(cfg.categories.default.appenders[0]||"log_file")
         this._client_logger = log4js.getLogger(cfg.categories.client_log_file.appenders[0]||"client_log_file")
         this._errorLogger = log4js.getLogger(cfg.categories.error_log_file.appenders[0]||"error_log_file")
 

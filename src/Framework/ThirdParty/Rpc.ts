@@ -23,7 +23,7 @@ class Remote
         this._to_id=id
         this._cgmq=cgmq
     }
-    async call(func_name:string,...args):Promise<any|any[]>
+    async call(func_name:string,...args)
     {
         this._retmsg = await this._cgmq.callRemote(this._to_group,this._to_id,func_name,...args)
         let datas:any[]=this._retmsg.data

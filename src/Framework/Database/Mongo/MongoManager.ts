@@ -634,6 +634,16 @@ export class MongoExt
         }
         return false
     }
+    async bulkWrite(collection:string,operations: mongo.AnyBulkWriteOperation<mongo.BSON.Document>[],options?: mongo.BulkWriteOptions)
+    {
+        if(!this._mongoDb)
+        {
+            return
+        }
+        let bulk = this._mongoDb.collection(collection)
+        let bwr=bulk.bulkWrite(operations,options)
+        return bwr
+    }
 }
 
 export let gMongoMgr = new MongoManager()

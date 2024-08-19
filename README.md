@@ -1,3 +1,5 @@
+10.0.20
+1、增加bulkwrite接口
 10.0.9
 1、修复mongoservicemanager的接口bug
 10.0.8

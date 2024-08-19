@@ -164,4 +164,9 @@ export class MongoBaseService<T extends MongoBaseModel>
         let rs = await this.mongoDb.distinct(this._table,key,where)
         return rs
     }
+    async bulkWrite(operations: mongo.AnyBulkWriteOperation<mongo.BSON.Document>[],options?: mongo.BulkWriteOptions)
+    {
+        let bwr = await this.mongoDb.bulkWrite(this._table,operations,options)
+        return bwr
+    }
 }
