@@ -63,7 +63,15 @@ export class MongoBaseService<T extends MongoBaseModel>
         let rs=await this.mongoDb.findOne(this._table,{id:id})
         return rs.one as T
     }
+    /**
+     * @deprecated deprecated next version,use findOne instead
+     */
+    async get(where:{[key:string]:any},property:{[key:string]:any})
     async get(where:{[key:string]:any}=null,property:{[key:string]:any}=null)
+    {
+        return this.findOne(where,property)
+    }
+    async findOne(where:{[key:string]:any}=null,property:{[key:string]:any}=null)
     {
         let rs = await this.mongoDb.findOne(this._table,where,property)
         return rs.one as T
@@ -73,7 +81,15 @@ export class MongoBaseService<T extends MongoBaseModel>
         let rs = await this.mongoDb.countDocuments(this._table,where)
         return rs.count
     }
+    /**
+     * @deprecated deprecated next version,use findMany instead
+     */
+    async gets(where:{[key:string]:any},property:{[key:string]:any})
     async gets(where:{[key:string]:any}=null,property=null,sort=null,skip=0,limit=0)
+    {
+        return this.findMany(where,property,sort,skip,limit)
+    }
+    async findMany(where:{[key:string]:any}=null,property=null,sort=null,skip=0,limit=0)
     {
         let rs = await this.mongoDb.findMany(this._table,where,property,sort,skip,limit)
         return rs.list as T[]

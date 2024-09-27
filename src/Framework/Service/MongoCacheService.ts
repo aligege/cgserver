@@ -26,12 +26,12 @@ export class MongoCacheService extends MongoBaseService<MongoCacheModel>
                 return
             }
             this.createIndex({key:1})
-            this.createIndex( { "expireAt": 1 }, { expireAfterSeconds: 0 } )
+            this.createIndex( { expireAt: 1 }, { expireAfterSeconds: 0 } )
         })
     }
     async getData(key:string)
     {
-        let cm:MongoCacheModel = await this.get({key:key})
+        let cm:MongoCacheModel = await this.findOne({key:key})
         if(!cm)
         {
             return null
