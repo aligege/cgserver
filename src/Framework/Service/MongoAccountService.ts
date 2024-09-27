@@ -90,7 +90,7 @@ export class MongoAccountService<T extends MongoAccountModel> extends MongoBaseS
      */
     async getByThird(unionid:string,openid:string)
     {
-        let am:T = await this.get({unionid:unionid,openid:openid})
+        let am:T = await this.findOne({unionid:unionid,openid:openid})
         return am
     }
     /**
@@ -99,12 +99,12 @@ export class MongoAccountService<T extends MongoAccountModel> extends MongoBaseS
      */
     async getByUnionid(unionid:string)
     {
-        let am:T = await this.get({unionid:unionid})
+        let am:T = await this.findOne({unionid:unionid})
         return am
     }
     async getByPhone(phone:string)
     {
-        let am:T = await this.get({phone:phone+""})
+        let am:T = await this.findOne({phone:phone+""})
         return am
     }
     /**
@@ -284,7 +284,7 @@ export class MongoAccountService<T extends MongoAccountModel> extends MongoBaseS
         }
         else if(from==EAccountFrom.Phone)
         {
-            rs.account = await this.get({phone:unionid,password:openid})
+            rs.account = await this.findOne({phone:unionid,password:openid})
             if(!rs.account)
             {
                 rs.errcode=EErrorCode.Login_Failed
@@ -292,7 +292,7 @@ export class MongoAccountService<T extends MongoAccountModel> extends MongoBaseS
         }
         else if(from==EAccountFrom.Email)
         {
-            rs.account = await this.get({email:unionid,password:openid})
+            rs.account = await this.findOne({email:unionid,password:openid})
             if(!rs.account)
             {
                 rs.errcode=EErrorCode.Login_Failed
@@ -300,7 +300,7 @@ export class MongoAccountService<T extends MongoAccountModel> extends MongoBaseS
         }
         else if(from==EAccountFrom.Name||from==EAccountFrom.Guest)
         {
-            rs.account = await this.get({name:unionid,password:openid})
+            rs.account = await this.findOne({name:unionid,password:openid})
             if(!rs.account&&from==EAccountFrom.Name)
             {
                 rs.errcode=EErrorCode.Login_Failed

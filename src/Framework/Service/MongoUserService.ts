@@ -74,7 +74,7 @@ export class MongoUserService<T extends MongoUserModel> extends MongoBaseService
     }
     async getByAccountId(account_id:number)
     {
-        let pm:T = await this.get({account_id:account_id})
+        let pm:T = await this.findOne({account_id:account_id})
         return pm
     }
     async updateBaseInfoByAccount(account_id:number,nickname:string,sex:number,logo:string)
