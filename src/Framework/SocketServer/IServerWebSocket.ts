@@ -71,14 +71,14 @@ export class IServerWebSocket extends IWebSocket
         let url = "ws://" + this._host + ":" + this._port + "/"
         gLog.info("Trying to connect to server : " + url)
         let _ws = new ws.client()
-        _ws.on("connect",super.onConnect.bind(this))
+        _ws.on("connect",this.onConnect.bind(this))
         _ws.on("connectFailed",this.onClose.bind(this))
         _ws.connect(url,this._requestedProtocols,this._origin,this._headers,this._extraRequestOptions)
     }
     onOpen(e?)
     {
         super.onOpen(e)
-        gLog.info("success to connect to " + this._host + ":" + this._port)
+        gLog.info(this._socket_id+":success to connect to " + this._host + ":" + this._port)
     }
     onClose(reasonCode:number, description:string)
     {

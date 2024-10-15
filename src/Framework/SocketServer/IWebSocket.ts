@@ -107,7 +107,7 @@ export class IWebSocket
         }
         this._ws.on("message",this.onMessage.bind(this))
         this._ws.on("error",this.onError.bind(this))
-    this._ws.on("close",this.onClose.bind(this))
+        this._ws.on("close",this.onClose.bind(this))
         this.onOpen()
     }
     onMessage(message:ws.Message)
@@ -211,7 +211,7 @@ export class IWebSocket
     }
     onClose(reasonCode:number, description:string)
     {
-        gLog.info(this.tipKey+" onClose resonCode="+reasonCode+"  des="+description)
+        gLog.info(this.tipKey+" "+this._socket_id+":onClose resonCode="+reasonCode+"  des="+description)
     }
     filterSendMsg(msg:BaseMsg)
     {
