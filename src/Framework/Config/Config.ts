@@ -7,6 +7,7 @@ export class Config
     protected _file_name=""
     protected _suffix=""
     static rootDataDir="data/"
+    protected _origin_data:any=null
     constructor(filename)
     {
         this._file_name = filename
@@ -39,6 +40,7 @@ export class Config
         {
             this[key] = jsonData[key]
         }
+        this._origin_data=jsonData
         console.log("loaded cfg="+path)
         return true
     }
