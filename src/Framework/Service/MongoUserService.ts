@@ -52,7 +52,7 @@ export class MongoUserService<T extends MongoUserModel> extends MongoBaseService
         do
         {
             id=_.random(1000000,9999999)
-            let p = await this.get({id:1},{id:id})
+            let p = await this.findOne({id:id},{id:1})
             if(!p)
             {
                 break

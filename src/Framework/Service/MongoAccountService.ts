@@ -318,7 +318,7 @@ export class MongoAccountService<T extends MongoAccountModel> extends MongoBaseS
             case EAccountFrom.Phone:
             {
                 am.phone=key
-                let temp=await this.get({phone:key},{id:1})
+                let temp=await this.findOne({phone:key},{id:1})
                 if(temp)
                 {
                     rs.errcode=EErrorCode.Account_Phone_Exist
@@ -329,7 +329,7 @@ export class MongoAccountService<T extends MongoAccountModel> extends MongoBaseS
             case EAccountFrom.Email:
             {
                 am.email=key
-                let temp=await this.get({email:key},{id:1})
+                let temp=await this.findOne({email:key},{id:1})
                 if(temp)
                 {
                     rs.errcode=EErrorCode.Account_Email_Exist
@@ -340,7 +340,7 @@ export class MongoAccountService<T extends MongoAccountModel> extends MongoBaseS
             case EAccountFrom.Name:
             {
                 am.name=key
-                let temp=await this.get({name:key},{id:1})
+                let temp=await this.findOne({name:key},{id:1})
                 if(temp)
                 {
                     rs.errcode=EErrorCode.Account_Name_Exist

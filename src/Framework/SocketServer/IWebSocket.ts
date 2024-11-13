@@ -48,6 +48,10 @@ export class IWebSocket
         return this._tipKey
     }
     protected _ws:ws.connection = null
+    get ws()
+    {
+        return this._ws
+    }
     protected _req:ws.request = null
     protected _protoType:EProtoType = EProtoType.Json
     protected _protoFilter:IProtoFilter = null
@@ -240,8 +244,22 @@ export class IWebSocket
         let data = this._onEncode(msg)
         this._ws.send(data)
     }
-    close()
+    /**
+     * Close the connection. A close frame will be sent to the remote peer indicating
+     * that we wish to close the connection, and we will then wait for up to
+     * `config.closeTimeout` milliseconds for an acknowledgment from the remote peer
+     * before terminating the underlying socket connection.
+     */
+    close(reasonCode?: number, description?: string)
     {
-        this._ws.close()
+        this._ws.close(reasonCode,description)
+    }
+    /**
+     * Send a close frame to the remote peer and immediately close the socket without
+     * waiting for a response. This should generally be used only in error conditions.
+     */
+    drop(reasonCode?: number, description?: string, skipCloseFrame?: boolean)
+    {
+        this._ws.drop(reasonCode,description,skipCloseFrame)
     }
 }

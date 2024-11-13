@@ -1,6 +1,6 @@
 {
   "name": "cgserver",
-  "version": "10.0.25",
+  "version": "10.1.1",
   "author": "trojan",
   "type": "commonjs",
   "description": "free for all.Websocket or Http",
@@ -54,7 +54,7 @@
     "cors": "^2.8.5",
     "crypto-js": "^4.2.0",
     "ec-key": "0.0.4",
-    "express": "^4.18.2",
+    "express": "^4.21.1",
     "fast-xml-parser": "^4.4.1",
     "formidable": "^3.5.1",
     "fs": "^0.0.2",
@@ -64,7 +64,7 @@
     "log4js": "^6.9.1",
     "mime": "^3.0.0",
     "minimist": "^1.2.8",
-    "mongodb": "^6.7.0",
+    "mongodb": "^6.10.0",
     "mssql": "^11.0.1",
     "mysql2": "^3.10.2",
     "nodemailer": "^6.9.10",
@@ -79,6 +79,6 @@
     "underscore": "^1.13.6",
     "urlencode": "^2.0.0",
     "uuidv4": "^6.2.13",
-    "websocket": "^1.0.34"
+    "websocket": "^1.0.35"
   }
 }
