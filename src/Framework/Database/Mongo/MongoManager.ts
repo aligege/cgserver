@@ -181,7 +181,7 @@ export class MongoExt
         try{
             let where = this._convertWhere({_id: key })
             let rs = await core.safeCall(col.findOneAndUpdate,col,where, { $inc:{id:1} }, { upsert: true })
-            if(rs.id)
+            if(rs&&rs.id)
             {
                 return rs.id+1
             }
