@@ -157,11 +157,6 @@ export class Request
     }
     protected _init()
     {
-        let method=this._req.method.toLowerCase()
-        if(method!="get"&&method!="post")
-        {
-            return
-        }
         let path = this._req.url
         //服务器根目录路径写法，链接转换
         let _i = path.lastIndexOf("~")
