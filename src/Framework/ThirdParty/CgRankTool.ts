@@ -27,7 +27,7 @@ export class CgRankCommandItem
     id:string=""
     score:number=0
     inc:{[key:string]:number}={}
-    set:{[key:string]:number}={}
+    set:{[key:string]:any}={}
 }
 export class CgRankTool
 {
@@ -38,6 +38,29 @@ export class CgRankTool
         this._url=url
         this._password=password
         return true
+    }
+    async setTimeout(key:string,timeout:number)
+    {
+        let msg=
+        {
+            cmd:"setTimeout",
+            key:key,
+            timeout:timeout,
+            password:this._password
+        }
+        await gHttpTool.post({url:this._url,json:msg})
+        return
+    }
+    async getTimeout(key:string)
+    {
+        let msg=
+        {
+            cmd:"getTimeout",
+            key:key,
+            password:this._password
+        }
+        let rs = await gHttpTool.post({url:this._url,json:msg})
+        return rs.body as {timeout:number}
     }
     /**
      * 
