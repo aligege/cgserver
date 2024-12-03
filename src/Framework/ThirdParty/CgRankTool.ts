@@ -221,4 +221,4 @@ export class CgRankTool
     }
 }
 
-export let GCgRankTool=new CgRankTool()
+export let gCgRankTool=new CgRankTool()

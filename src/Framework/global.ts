@@ -23,7 +23,7 @@ import { gCtrMgr } from "./WebServer/Engine/ControllerManager"
 import { gCgServer } from "./cgserver"
 import { core } from "./Core/Core"
 import { gRedisMgr } from "./Database/Redis/RedisManager"
-
+import { gCgRankTool } from './ThirdParty/CgRankTool';
 /**
  * cg引擎的，全局对象
  */
@@ -51,6 +51,7 @@ export class global {
     static gAlipayTool = gAlipayTool
     static gAppleTool = gAppleTool
     static gProtoFactory = gProtoFactory
+    static gCgRankTool = gCgRankTool
     /**
      * web服务中mvc的控制器管理器
      */
