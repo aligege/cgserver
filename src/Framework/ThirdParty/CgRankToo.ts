@@ -29,12 +29,14 @@ export class CgRankCommandItem
     inc:{[key:string]:number}={}
     set:{[key:string]:number}={}
 }
-class CgRankTool
+export class CgRankTool
 {
     protected _url=""
-    init(url:string)
+    protected _password=""
+    init(url:string,password:string)
     {
         this._url=url
+        this._password=password
         return true
     }
     /**
@@ -47,7 +49,8 @@ class CgRankTool
         let msg=
         {
             cmd:"removeRank",
-            key:key
+            key:key,
+            password:this._password
         }
         let rs = await gHttpTool.post({url:this._url,json:msg})
         return rs.body
@@ -56,7 +59,8 @@ class CgRankTool
     {
         let msg=
         {
-            cmd:"saveAllRank"
+            cmd:"saveAllRank",
+            password:this._password
         }
         let rs = await gHttpTool.post({url:this._url,json:msg})
         return rs.body
@@ -67,7 +71,8 @@ class CgRankTool
         {
             cmd:"getRankItem",
             key:key,
-            id:id
+            id:id,
+            password:this._password
         }
         let rs = await gHttpTool.post({url:this._url,json:msg})
         return rs.body as {rank:CgRankRankItem}
@@ -78,7 +83,8 @@ class CgRankTool
         {
             cmd:"getRankItems",
             key:key,
-            ids:ids
+            ids:ids,
+            password:this._password
         }
         let rs = await gHttpTool.post({url:this._url,json:msg})
         return rs.body as {ranks:{[id:string]:CgRankRankItem}}
@@ -96,7 +102,8 @@ class CgRankTool
             cmd:"getRankList",
             key:key,
             start:start,
-            count:count
+            count:count,
+            password:this._password
         }
         let rs = await gHttpTool.post({url:this._url,json:msg})
         return rs.body as {ranks:CgRankRankItem[]}
@@ -106,7 +113,8 @@ class CgRankTool
         let msg=
         {
             cmd:"getRankCount",
-            key:key
+            key:key,
+            password:this._password
         }
         let rs = await gHttpTool.post({url:this._url,json:msg})
         return rs.body as {count:number}
@@ -118,7 +126,8 @@ class CgRankTool
             cmd:"getRevRankList",
             key:key,
             start:start,
-            count:count
+            count:count,
+            password:this._password
         }
         let rs = await gHttpTool.post({url:this._url,json:msg})
         return rs.body as {ranks:CgRankRankItem[]}
@@ -132,7 +141,8 @@ class CgRankTool
             id:id,
             score:score,
             other:other,
-            isreplace:isreplace
+            isreplace:isreplace,
+            password:this._password
         }
         let rs = await gHttpTool.post({url:this._url,json:msg})
         return rs.body as {rank:CgRankRankItem}
@@ -144,7 +154,8 @@ class CgRankTool
             cmd:"addsToRank",
             key:key,
             datas:datas,
-            isreplace:isreplace
+            isreplace:isreplace,
+            password:this._password
         }
         let rs = await gHttpTool.post({url:this._url,json:msg})
         return rs.body as {ranks:{[id:string]:CgRankRankItem}}
@@ -155,7 +166,8 @@ class CgRankTool
         {
             cmd:"removeFromRank",
             key:key,
-            id:id
+            id:id,
+            password:this._password
         }
         let rs = await gHttpTool.post({url:this._url,json:msg})
         return rs.body as {rank:CgRankRankItem}
@@ -166,7 +178,8 @@ class CgRankTool
         {
             cmd:"updateInRank",
             key:key,
-            command:command
+            command:command,
+            password:this._password
         }
         let rs = await gHttpTool.post({url:this._url,json:msg})
         return rs.body as {rank:CgRankRankItem}
@@ -177,7 +190,8 @@ class CgRankTool
         {
             cmd:"updatesInRank",
             key:key,
-            commands:commands
+            commands:commands,
+            password:this._password
         }
         let rs = await gHttpTool.post({url:this._url,json:msg})
         return rs.body as {ranks:{[id:string]:CgRankRankItem}}
@@ -188,7 +202,8 @@ class CgRankTool
         {
             cmd:"executeCommand",
             key:key,
-            commands:commands
+            commands:commands,
+            password:this._password
         }
         let rs = await gHttpTool.post({url:this._url,json:msg})
         return rs.body as {ranks:{[id:string]:CgRankRankItem}}
@@ -198,7 +213,8 @@ class CgRankTool
         let msg=
         {
             cmd:call,
-            args:args
+            args:args,
+            password:this._password
         }
         let rs = await gHttpTool.post({url:this._url,json:msg})
         return rs.body as {result:any}

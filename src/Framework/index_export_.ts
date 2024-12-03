@@ -1,4 +1,4 @@
-export { GCgRankTool,CgRankCommandItem,CgRankRankItem,CgRankRankData } from './ThirdParty/CgRankToo';
+export { GCgRankTool,CgRankTool,CgRankCommandItem,CgRankRankItem,CgRankRankData } from './ThirdParty/CgRankToo';
 
 export { MongoServiceManager } from './Database/Mongo/MongoServiceManager';
 
