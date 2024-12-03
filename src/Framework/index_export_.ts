@@ -1,3 +1,5 @@
+export { GCgRankTool,CgRankCommandItem,CgRankRankItem,CgRankRankData } from './ThirdParty/CgRankToo';
+
 export { MongoServiceManager } from './Database/Mongo/MongoServiceManager';
 
 export { AiObject } from "./AI/AiObject";

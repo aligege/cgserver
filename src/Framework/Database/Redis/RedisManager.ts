@@ -40,6 +40,7 @@ export class RedisManager
             })
             this._redis.on("end", this.onEnd.bind(this))
             this._redis.on("error", this.onError.bind(this))
+            this._redis.connect()
         })
         let ret = await p
         for(let key in this._redis)
