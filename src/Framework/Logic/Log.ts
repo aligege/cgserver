@@ -22,7 +22,7 @@ export class Log
     //the log from client
     protected _client_logger:log4js.Logger = null
     //error and warn
-    protected _errorLogger:log4js.Logger = null
+    protected _error_logger:log4js.Logger = null
     protected _inited=false
     /**
      * 该level只是用来控制控制台的显示的
@@ -30,21 +30,33 @@ export class Log
      */
     
     protected _console_level=0
-    init(cfg:log4js.Configuration,console_level=0)
+    init(cfg?:log4js.Configuration,console_level=0)
     {
         if(this._inited)
         {
             return
         }
         this._inited=true
+        this._console_level=console_level
+        if(!cfg)
+        {
+            return
+        }
         colors.enable()
         log4js.configure(cfg)
 
-        this._logger = log4js.getLogger(cfg.categories.default.appenders[0]||"log_file")
-        this._client_logger = log4js.getLogger(cfg.categories.client_log_file.appenders[0]||"client_log_file")
-        this._errorLogger = log4js.getLogger(cfg.categories.error_log_file.appenders[0]||"error_log_file")
-
-        this._console_level=console_level
+        if(cfg.categories.logger&&cfg.categories.logger.appenders.length>0)
+        {
+            this._logger = log4js.getLogger(cfg.categories.logger.appenders[0])
+        }
+        if(cfg.categories.client_logger&&cfg.categories.client_logger.appenders.length>0)
+        {
+            this._client_logger = log4js.getLogger(cfg.categories.client_logger.appenders[0])
+        }
+        if(cfg.categories.error_logger&&cfg.categories.error_logger.appenders.length>0)
+        {
+            this._error_logger = log4js.getLogger(cfg.categories.error_logger.appenders[0])
+        }
     }
     protected _convertMsg(message?:any)
     {
@@ -64,7 +76,7 @@ export class Log
     error(message?: any)
     {
         message=this._convertMsg(message)
-        this._errorLogger?.error(message)
+        this._error_logger?.error(message)
         if(this._console_level>=0)
         {
             let time_str = this._getTimeStr()
@@ -84,7 +96,7 @@ export class Log
     warn(message?: any)
     {
         message=this._convertMsg(message)
-        this._errorLogger?.warn(message)
+        this._error_logger?.warn(message)
         if(this._console_level>=0)
         {
             let time_str = this._getTimeStr()

@@ -22,13 +22,28 @@ class CgMqServerWebsocket extends IRpcServerWebSocket
         let jsonData = await this.callRemote(msg)
         return jsonData
     }
+    async listen(data:string[])
+    {
+        let msg = this.getNewMsg("listen")
+        msg.data = data
+        let jsonData = await this.callRemote(msg)
+        return jsonData
+    }
+    async unlisten(data:string[])
+    {
+        let msg = this.getNewMsg("unlisten")
+        msg.data = data
+        let jsonData = await this.callRemote(msg)
+        return jsonData
+    }
     //把消息发送给rpc服务器，目的是调用远程函数
-    async push(to_group:string,data:any,to_id="")
+    async push(to_group:string,data:any,to_id="",listen="")
     {
         let msg = this.getNewMsg("msg")
         msg.to_group = to_group
         msg.to_id = to_id
         msg.data = data
+        msg.listen = listen
         let ret_rpcmsg = await this.callRemote(msg)
         return ret_rpcmsg
     }
@@ -121,7 +136,7 @@ export class CgMq
             }
         })
     }
-    async callRemote(group:string,to_id:string,func_name:string,...args)
+    async callRemote(group:string,to_id:string,listen:string,func_name:string,...args)
     {
         let time=Date.now()
         let data = 
@@ -129,10 +144,10 @@ export class CgMq
             cmd:func_name,
             args:args
         }
-        let ret_rpcmsg = await this._ws.push(group,data,to_id)
+        let ret_rpcmsg = await this._ws.push(group,data,to_id,listen)
         if(this._ws.debug_msg)
         {
-            gLog.info("["+(Date.now()-time)+"ms] callRemote:"+group+"-"+func_name)
+            gLog.info("["+(Date.now()-time)+"ms] callRemote:"+group+"-"+func_name+"-"+listen)
         }
         return ret_rpcmsg
     }

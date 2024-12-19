@@ -21,6 +21,10 @@ export class RpcMsg extends BaseMsg
      */
     to_id=""
     /**
+     * 监听的对象，比如，发送给push服务器的，监听了10086的服务器listem="10086",listem,也可以理解为子group
+     */
+    listen=""
+    /**
      * 消息携带的数据
      */
     data:any=null

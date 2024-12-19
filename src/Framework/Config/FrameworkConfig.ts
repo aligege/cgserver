@@ -183,31 +183,21 @@ export class FrameworkConfig extends Config
                 appenders: ['console'],
                 level:'ALL'
             },
-            log_file: 
+            logger: 
             { 
                 appenders: ['log_file'],
                 level:'ALL'
             },
-            log_date: 
-            { 
-                appenders: ['log_date'],
-                level:'ALL'
-            },
-            client_log_file: 
+            client_logger: 
             { 
                 appenders: ['client_log_file'],
                 level:'ALL'
             },
-            client_log_date: 
-            { 
-                appenders: ['client_log_date'],
-                level:'ALL'
-            },
-            error_log_file: 
+            error_logger: 
             { 
                 appenders: ['error_log_file'],
                 level:'ALL'
-            },
+            }
         }
     }
     db=new DbConfig()

@@ -14,6 +14,15 @@ export class IRpcClientWebSocket extends IClientWebSocket implements IRpc
     protected _id=""
     //超时时间
     protected _timeout=3000
+    protected _listens:{[key:string]:boolean}={}
+    isListenning(listen:string)
+    {
+        if(!listen)
+        {
+            return true
+        }
+        return !!this._listens[listen]
+    }
     protected _genId(pre="")
     {
         return pre+"_"+core.getUuid()
@@ -69,6 +78,76 @@ export class IRpcClientWebSocket extends IClientWebSocket implements IRpc
             gEventTool.once(msg.__rpcid,func)
             super.send(msg)
         })
+    }
+    receive_init(req_msg:RpcMsg)
+    {
+        if(req_msg.__rpcid)
+        {
+            req_msg.__return=true
+        }
+        if(!req_msg.from_group)
+        {
+            let ret_msg = this.toRetMsg(req_msg,req_msg.data,{id:10004,des:"初始化消息必须带有identity"})
+            this.send(ret_msg)
+            return
+        }
+        this._group=req_msg.from_group
+        this._id=req_msg.from_id
+
+        let ret_msg = this.toRetMsg(req_msg,null)
+        this.send(ret_msg)
+    }
+    receive_listen(req_msg:RpcMsg)
+    {
+        if(req_msg.__rpcid)
+        {
+            req_msg.__return=true
+        }
+        let data:string[] = req_msg.data
+        if(!data||!core.isArray(data))
+        {
+            let ret_msg = this.toRetMsg(req_msg,req_msg.data,{id:10005,des:"listen data not correct must be string[]"})
+            this.send(ret_msg)
+            return
+        }
+        for(let i=0;i<data.length;i++)
+        {
+            let listen = data[i]
+            if(!listen)
+            {
+                continue
+            }
+            this._listens[listen]=true
+        }
+
+        let ret_msg = this.toRetMsg(req_msg,null)
+        this.send(ret_msg)
+    }
+    receive_unlisten(req_msg:RpcMsg)
+    {
+        if(req_msg.__rpcid)
+        {
+            req_msg.__return=true
+        }
+        let data:string[] = req_msg.data
+        if(!data||!core.isArray(data))
+        {
+            let ret_msg = this.toRetMsg(req_msg,req_msg.data,{id:10005,des:"listen data not correct must be string[]"})
+            this.send(ret_msg)
+            return
+        }
+        for(let i=0;i<data.length;i++)
+        {
+            let listen = data[i]
+            if(!listen)
+            {
+                continue
+            }
+            this._listens[listen]=undefined
+            delete this._listens[listen]
+        }
+        let ret_msg = this.toRetMsg(req_msg,null)
+        this.send(ret_msg)
     }
     receive_other_all(msg:RpcMsg)
     {

@@ -17,15 +17,17 @@ class Remote
     }
     protected _to_group=""
     protected _to_id=""
-    constructor(group:string,id:string,cgmq:CgMq)
+    protected _listen=""
+    constructor(group:string,id:string,cgmq:CgMq,listen:string)
     {
         this._to_group=group
         this._to_id=id
+        this._listen=listen
         this._cgmq=cgmq
     }
     async call(func_name:string,...args)
     {
-        this._retmsg = await this._cgmq.callRemote(this._to_group,this._to_id,func_name,...args)
+        this._retmsg = await this._cgmq.callRemote(this._to_group,this._to_id,this._listen,func_name,...args)
         let datas:any[]=this._retmsg.data
         let ret={rets:datas,ret:null}
         if(datas&&datas.length>0)
@@ -49,9 +51,9 @@ export class Rpc
         let ret = await this._cgmq.init(cfg,this.onMsg.bind(this))
         return ret
     }
-    getRemote(group:string,id:string="")
+    getRemote(group:string,id="",listen="")
     {
-        return new Remote(group,id,this._cgmq)
+        return new Remote(group,id,this._cgmq,listen)
     }
     async onMsg(msg:RpcMsg)
     {
