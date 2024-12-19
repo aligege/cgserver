@@ -160,4 +160,12 @@ export class CgMq
         }
         return
     }
+    async listen(data:string[])
+    {
+        return await this._ws.listen(data)
+    }
+    async unlisten(data:string[])
+    {
+        return await this._ws.unlisten(data)
+    }
 }

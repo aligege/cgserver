@@ -51,9 +51,9 @@ export class Rpc
         let ret = await this._cgmq.init(cfg,this.onMsg.bind(this))
         return ret
     }
-    getRemote(group:string,id="",listen="")
+    getRemote(group:string,id="",listener="")
     {
-        return new Remote(group,id,this._cgmq,listen)
+        return new Remote(group,id,this._cgmq,listener)
     }
     async onMsg(msg:RpcMsg)
     {
@@ -70,5 +70,15 @@ export class Rpc
         }
         let data = await core.safeCall(func,this,...msg.data?.args,msg)
         return data
+    }
+    async listen(listeners:string[])
+    {
+        let ret = await this._cgmq.listen(listeners)
+        return ret
+    }
+    async unlisten(listeners:string[])
+    {
+        let ret = await this._cgmq.unlisten(listeners)
+        return ret
     }
 }
