@@ -115,18 +115,14 @@ class AlipayConfig
 }
 export class FrameworkConfig extends Config
 {
-    /*
-    *-1不输出到console，0，仅错误信息输出到console，1，都输出到console
-    */
-    console_level=0
     log=
     {
         appenders:  
         {
             console:
             {
-                "type":"console",
-                "category":"console"
+                type:"console",
+                category:"console"
             },
             log_file:
             {  
@@ -175,27 +171,17 @@ export class FrameworkConfig extends Config
         { 
             default: 
             { 
-                appenders: ['log_file'],
-                level:'ALL'
-            },
-            console: 
-            { 
-                appenders: ['console'],
-                level:'ALL'
-            },
-            logger: 
-            { 
-                appenders: ['log_file'],
+                appenders: ['log_file','console'],
                 level:'ALL'
             },
             client_logger: 
             { 
-                appenders: ['client_log_file'],
+                appenders: ['client_log_file','console'],
                 level:'ALL'
             },
             error_logger: 
             { 
-                appenders: ['error_log_file'],
+                appenders: ['error_log_file','console'],
                 level:'ALL'
             }
         }
@@ -219,7 +205,7 @@ export class FrameworkConfig extends Config
     init()
     {
         let ret = super.init()
-        gLog.init(this.log,this.console_level||0)
+        gLog.init(this.log)
         return ret
     }
 }
