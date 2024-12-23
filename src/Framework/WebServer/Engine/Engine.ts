@@ -13,6 +13,10 @@ import { gCtrMgr } from './ControllerManager';
 export class Engine
 {
     protected _app = Express()
+    get app()
+    {
+        return this._app
+    }
     protected _cfg:WebServerConfig=null
     get cfg()
     {
