@@ -7,6 +7,11 @@ import { gLog } from "../Logic/Log";
 class CgMqServerWebsocket extends IRpcServerWebSocket
 {
     protected _cgmq:CgMq=null
+    protected _listens:{[listen:string]:boolean}={}
+    get listens()
+    {
+        return this._listens
+    }
     constructor(cgmq:CgMq)
     {
         super(cgmq.cfg.group,cgmq.cfg.id,cgmq.cfg.timeout)
@@ -14,7 +19,9 @@ class CgMqServerWebsocket extends IRpcServerWebSocket
         this._debug_msg=true
     }
     onOpen(e?: any): void {
+        super.onOpen(e)
         this.init()
+        this.listen(Object.keys(this._listens))
     }
     async init()
     {
@@ -24,6 +31,15 @@ class CgMqServerWebsocket extends IRpcServerWebSocket
     }
     async listen(data:string[])
     {
+        for(let i=0;i<data.length;i++)
+        {
+            let listen = data[i]
+            if(!listen)
+            {
+                continue
+            }
+            this._listens[listen]=true
+        }
         let msg = this.getNewMsg("listen")
         msg.data = data
         let jsonData = await this.callRemote(msg)
@@ -31,6 +47,15 @@ class CgMqServerWebsocket extends IRpcServerWebSocket
     }
     async unlisten(data:string[])
     {
+        for(let i=0;i<data.length;i++)
+        {
+            let listen = data[i]
+            if(!listen)
+            {
+                continue
+            }
+            delete this._listens[listen]
+        }
         let msg = this.getNewMsg("unlisten")
         msg.data = data
         let jsonData = await this.callRemote(msg)
@@ -75,6 +100,18 @@ export class RpcConfig
 export class CgMq
 {
     protected _ws:CgMqServerWebsocket=null
+    get ws()
+    {
+        return this._ws
+    }
+    get listens()
+    {
+        if(!this._ws)
+        {
+            return {}
+        }
+        return this._ws.listens
+    }
     protected _inited=false
     protected _cfg:RpcConfig=null
     protected _onmsg:(msg:RpcMsg)=>any=null
@@ -114,7 +151,7 @@ export class CgMq
         {
             this._ws=new CgMqServerWebsocket(this)
         }
-        return new Promise(async (resolve,reject)=>
+        return new Promise<boolean>(async (resolve,reject)=>
         {
             this._ws.connect(cfg.host,cfg.port)
             let pretime = Date.now()
