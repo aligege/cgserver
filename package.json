@@ -48,6 +48,7 @@
     "@types/websocket": "^1.0.10",
     "alipay_sdk2": "^1.1.6",
     "alipay-sdk": "^3.6.1",
+    "azgaar-fmg-parser": "^1.2.2",
     "colors": "^1.4.0",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",

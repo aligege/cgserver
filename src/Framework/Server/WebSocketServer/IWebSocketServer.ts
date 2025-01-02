@@ -3,14 +3,14 @@ import * as ws from 'websocket';
 import * as fs from "fs";
 import * as http from "http";
 import * as https from "https";
-import { IServerConfig } from '../Config/IServerConfig';
+import { IServerConfig } from '../../Config/IServerConfig';
 import { BaseMsg } from './IWebSocket';
-import { Config } from '../Config/Config';
-import { gCgServer } from '../cgserver';
-import { gLog } from '../Logic/Log';
-import { gEventTool } from '../Logic/EventTool';
+import { Config } from '../../Config/Config';
+import { gCgServer } from '../../cgserver';
+import { gLog } from '../../Logic/Log';
+import { gEventTool } from '../../Logic/EventTool';
 
-export class ISocketServer
+export class IWebSocketServer
 {
     protected _cfg:IServerConfig=null
     //方便提示

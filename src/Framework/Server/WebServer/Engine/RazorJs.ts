@@ -1,6 +1,6 @@
 ﻿'use strict';
 
-import { gLog } from "../../Logic/Log";
+import { gLog } from "../../../Logic/Log";
 
 var  _suffix = ".cshtml"
 var  _MATCH_HTML = /[&<>\'"]/g

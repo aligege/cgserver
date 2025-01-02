@@ -1,8 +1,8 @@
 import { IWebSocket } from './IWebSocket';
 import * as ws from 'websocket';
-import { EProtoType } from './ProtoFilter/IProtoFilter';
+import { EProtoType } from '../ProtoFilter/IProtoFilter';
 import * as http from "http";
-import { gLog } from '../Logic/Log';
+import { gLog } from '../../Logic/Log';
 /**
  * 连接到服务器的websocket
  * 默认自动重连

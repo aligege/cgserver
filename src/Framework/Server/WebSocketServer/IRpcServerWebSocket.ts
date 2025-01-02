@@ -1,8 +1,8 @@
 import _ = require("underscore");
 import { IServerWebSocket } from "./IServerWebSocket";
 import { IRpc, RpcMsg } from "./IRpc";
-import { gLog } from "../Logic/Log";
-import { gEventTool } from "../Logic/EventTool";
+import { gLog } from "../../Logic/Log";
+import { gEventTool } from "../../Logic/EventTool";
 
 export class IRpcServerWebSocket extends IServerWebSocket implements IRpc
 {

@@ -1,10 +1,10 @@
-import { IProtoFilter,EProtoType } from "./ProtoFilter/IProtoFilter";
+import { IProtoFilter,EProtoType } from "../ProtoFilter/IProtoFilter";
 import * as ws from 'websocket';
-import { core } from '../Core/Core';
+import { core } from '../../Core/Core';
 import * as _ from "underscore";
-import { gProtoFactory } from "./ProtoFilter/ProtoFactory";
-import { gSyncQueueTool } from "../Logic/SyncQueueTool";
-import { gLog } from "../Logic/Log";
+import { gProtoFactory } from "../ProtoFilter/ProtoFactory";
+import { gSyncQueueTool } from "../../Logic/SyncQueueTool";
+import { gLog } from "../../Logic/Log";
 
 export class BaseMsg
 {

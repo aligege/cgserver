@@ -1,11 +1,11 @@
 import { Engine } from './Engine/Engine';
-import { WebServerConfig } from '../Config/FrameworkConfig';
+import { WebServerConfig } from '../../Config/FrameworkConfig';
 import { RazorJs } from './Engine/RazorJs';
-import { gCgServer } from '../cgserver';
-import { gEventTool } from '../Logic/EventTool';
-import { gLog } from '../Logic/Log';
-import { DbConfig } from '../index_export_';
-import { gServerCfg } from '../Config/IServerConfig';
+import { gCgServer } from '../../cgserver';
+import { gEventTool } from '../../Logic/EventTool';
+import { gLog } from '../../Logic/Log';
+import { DbConfig } from '../../index_export_';
+import { gServerCfg } from '../../Config/IServerConfig';
 
 //实现对controller的手动注册
 export class IWebServer

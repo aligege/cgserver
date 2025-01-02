@@ -1,6 +1,6 @@
 import { core } from "../Core/Core"
 import { gLog } from "../Logic/Log"
-import { RpcMsg } from "../SocketServer/IRpc"
+import { RpcMsg } from "../Server/WebSocketServer/IRpc"
 import { CgMq, RpcConfig } from "./CgMq"
 
 class Remote

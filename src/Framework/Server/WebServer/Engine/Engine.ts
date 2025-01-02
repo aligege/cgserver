@@ -3,12 +3,12 @@ import { Request } from './Request';
 import { RazorJs } from './RazorJs';
 import * as http from "http";
 import * as https from "https";
-import { WebServerConfig } from '../../Config/FrameworkConfig';
+import { WebServerConfig } from '../../../Config/FrameworkConfig';
 import * as cors from "cors";
 import * as Express from 'express';
 import cookieParser = require('cookie-parser');
-import { Config } from '../../Config/Config';
-import { gLog } from '../../Logic/Log';
+import { Config } from '../../../Config/Config';
+import { gLog } from '../../../Logic/Log';
 import { gCtrMgr } from './ControllerManager';
 export class Engine
 {

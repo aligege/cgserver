@@ -1,8 +1,8 @@
 import * as Express from 'express';
 import { URL } from 'url';
-import { WebServerConfig } from "../../Config/FrameworkConfig";
-import { core } from "../../Core/Core";
-import { gLog } from '../../Logic/Log';
+import { WebServerConfig } from "../../../Config/FrameworkConfig";
+import { core } from "../../../Core/Core";
+import { gLog } from '../../../Logic/Log';
 
 export class Request
 {

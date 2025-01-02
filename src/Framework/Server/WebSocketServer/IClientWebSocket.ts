@@ -1,7 +1,7 @@
-import { gLog } from '../Logic/Log';
-import { ISocketServer } from './ISocketServer';
+import { gLog } from '../../Logic/Log';
+import { IWebSocketServer } from './IWebSocketServer';
 import { IWebSocket } from './IWebSocket';
-import { EProtoType } from './ProtoFilter/IProtoFilter';
+import { EProtoType } from '../ProtoFilter/IProtoFilter';
 import * as ws from 'websocket';
 /**
  * 服务器接收到的客户端的连接
@@ -9,12 +9,12 @@ import * as ws from 'websocket';
  */
 export class IClientWebSocket extends IWebSocket
 {
-    protected _server:ISocketServer=null
+    protected _server:IWebSocketServer=null
     get server()
     {
         return this._server
     }
-    constructor(server:ISocketServer,protoType=EProtoType.Json,protoPath="")
+    constructor(server:IWebSocketServer,protoType=EProtoType.Json,protoPath="")
     {
         super(protoType,protoPath)    
         this._server = server

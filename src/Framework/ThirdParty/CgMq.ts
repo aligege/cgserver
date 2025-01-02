@@ -1,7 +1,7 @@
 import { core } from "../Core/Core";
-import { IRpcServerWebSocket } from "../SocketServer/IRpcServerWebSocket";
+import { IRpcServerWebSocket } from "../Server/WebSocketServer/IRpcServerWebSocket";
 import * as _ from "underscore";
-import { RpcMsg } from "../SocketServer/IRpc";
+import { RpcMsg } from "../Server/WebSocketServer/IRpc";
 import { gLog } from "../Logic/Log";
 
 class CgMqServerWebsocket extends IRpcServerWebSocket

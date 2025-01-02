@@ -1,4 +1,4 @@
-﻿import { Engine } from './../Engine/Engine';
+﻿import { Engine } from '../Engine/Engine';
 import { Request } from '../Engine/Request';
 import { Response } from '../Engine/Response';
 

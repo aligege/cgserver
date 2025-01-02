@@ -1,7 +1,7 @@
 import { core } from "./Core/Core";
 import { Config } from "./Config/Config";
-import { IWebServer } from "./WebServer/IWebServer";
-import { ISocketServer } from "./SocketServer/ISocketServer";
+import { IWebServer } from "./Server/WebServer/IWebServer";
+import { IWebSocketServer } from "./Server/WebSocketServer/IWebSocketServer";
 import { DbConfig } from "./Config/DbConfig";
 import { gMSSqlMgr } from "./Database/MSSql/MSSqlManager";
 import { gMysqlMgr } from "./Database/Mysql/MysqlManager";
@@ -18,7 +18,7 @@ export class CgServer
     {
         return this._webservers
     }
-    protected _socketservers:ISocketServer[]=[]
+    protected _socketservers:IWebSocketServer[]=[]
     get socketServers()
     {
         return this._socketservers
@@ -200,7 +200,7 @@ export class CgServer
     {
         this._webservers.push(server)
     }
-    addSocketServer(server:ISocketServer)
+    addSocketServer(server:IWebSocketServer)
     {
         this._socketservers.push(server)
     }

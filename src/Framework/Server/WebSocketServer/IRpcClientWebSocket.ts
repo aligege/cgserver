@@ -1,9 +1,9 @@
 import _ = require("underscore");
 import { IRpc, RpcMsg } from "./IRpc";
 import { IClientWebSocket } from "./IClientWebSocket";
-import { core } from "../Core/Core";
-import { gLog } from "../Logic/Log";
-import { gEventTool } from "../Logic/EventTool";
+import { core } from "../../Core/Core";
+import { gLog } from "../../Logic/Log";
+import { gEventTool } from "../../Logic/EventTool";
 
 export class IRpcClientWebSocket extends IClientWebSocket implements IRpc
 {
@@ -41,7 +41,7 @@ export class IRpcClientWebSocket extends IClientWebSocket implements IRpc
         ret_msg.__return=true
         ret_msg.__rpcid=req_msg.__rpcid
         ret_msg.data=data
-        ret_msg.from_group=this._group
+        ret_msg.from_group=req_msg.to_group
         ret_msg.from_id=this._id
         ret_msg.to_group=req_msg.from_group
         ret_msg.to_id=req_msg.from_id
