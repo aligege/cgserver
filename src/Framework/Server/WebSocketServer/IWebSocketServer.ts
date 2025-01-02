@@ -68,7 +68,7 @@ export class IWebSocketServer
     }
     async run()
     {
-        gCgServer.addSocketServer(this)
+        gCgServer.addWebSocketServer(this)
         if(this._cfg.db)
         {
             await gCgServer.initDb(this._cfg.db)

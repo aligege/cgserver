@@ -10,6 +10,7 @@ import { gLog } from "./Logic/Log";
 import { gEventTool } from "./Logic/EventTool";
 import { gRedisMgr } from "./Database/Redis/RedisManager";
 import * as minimist from "minimist";
+import { ISocketServer } from "./Server/SocketServer/ISocketServer";
 
 export class CgServer
 {
@@ -18,10 +19,15 @@ export class CgServer
     {
         return this._webservers
     }
-    protected _socketservers:IWebSocketServer[]=[]
+    protected _websocket_servers:IWebSocketServer[]=[]
+    get websocketServers()
+    {
+        return this._websocket_servers
+    }
+    protected _socket_servers:ISocketServer[]=[]
     get socketServers()
     {
-        return this._socketservers
+        return this._socket_servers
     }
     protected _events:{[name:string]:Function[]}={}
     protected _debug=false
@@ -138,7 +144,7 @@ export class CgServer
     onStart()
     {
         ++this._done
-        let total = this._webservers.length+this._socketservers.length
+        let total = this._webservers.length+this._websocket_servers.length+this._socket_servers.length
         if(this._done!=total)
         {
             return
@@ -200,9 +206,13 @@ export class CgServer
     {
         this._webservers.push(server)
     }
-    addSocketServer(server:IWebSocketServer)
+    addWebSocketServer(server:IWebSocketServer)
     {
-        this._socketservers.push(server)
+        this._websocket_servers.push(server)
+    }
+    addSocketServer(server:ISocketServer)
+    {
+        this._socket_servers.push(server)
     }
     async initDb(dbcfg:DbConfig)
     {
@@ -226,9 +236,13 @@ export class CgServer
         {
             this._webservers[i].pause()
         }
-        for(let i=0;i<this._socketservers.length;++i)
+        for(let i=0;i<this._websocket_servers.length;++i)
         {
-            this._socketservers[i].pause()
+            this._websocket_servers[i].pause()
+        }
+        for(let i=0;i<this._socket_servers.length;++i)
+        {
+            this._socket_servers[i].pause()
         }
     }
     resume()
@@ -237,9 +251,13 @@ export class CgServer
         {
             this._webservers[i].resume()
         }
-        for(let i=0;i<this._socketservers.length;++i)
+        for(let i=0;i<this._websocket_servers.length;++i)
         {
-            this._socketservers[i].resume()
+            this._websocket_servers[i].resume()
+        }
+        for(let i=0;i<this._socket_servers.length;++i)
+        {
+            this._socket_servers[i].resume()
         }
     }
 }

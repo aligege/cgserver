@@ -49,7 +49,7 @@ export { IProtoFilter } from './Server/ProtoFilter/IProtoFilter';
 export { JsonProtoFilter } from './Server/ProtoFilter/JsonProtoFilter';
 export { IServerWebSocket } from './Server/WebSocketServer/IServerWebSocket';
 export { IClientWebSocket } from './Server/WebSocketServer/IClientWebSocket';
-export { IWebSocketServer as ISocketServer } from './Server/WebSocketServer/IWebSocketServer';
+export { IWebSocketServer } from './Server/WebSocketServer/IWebSocketServer';
 export { IWebSocket,BaseMsg } from './Server/WebSocketServer/IWebSocket';
 export { AlipayResult,AlipayCallBack } from './ThirdParty/AlipayTool';
 export { IWebServer } from './Server/WebServer/IWebServer';
@@ -71,6 +71,15 @@ export { Response } from './Server/WebServer/Engine/Response';
 export { WebServerConfig } from './Config/FrameworkConfig';
 export { EAccountState } from './Service/ini';
 
+//////////socketserver相关
+export { IClientSocket } from './Server/SocketServer/IClientSocket';
+export { IServerSocket } from './Server/SocketServer/IServerSocket';
+export { ISocket } from './Server/SocketServer/ISocket';
+export { ISocketServer } from './Server/SocketServer/ISocketServer';
+export { PacketParser } from './Server/SocketServer/PacketParser';
+
+
+
 export { RpcMsg as RpcBaseMsg } from './Server/WebSocketServer/IRpc';
 export { Rpc } from './ThirdParty/Rpc';
 export { CgMq,RpcConfig } from './ThirdParty/CgMq';
@@ -81,3 +90,6 @@ export { SyncCall,SyncCall2 } from './Decorator/SyncCall';
 export { SyncCallServer,SyncCallServer2 } from './Decorator/SyncCallServer';
 
 export { global } from "./global";
+
+
+
