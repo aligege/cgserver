@@ -1,11 +1,11 @@
 import { core } from "../Core/Core"
 import { gLog } from "../Logic/Log"
-import { RpcMsg } from "../Server/WebSocketServer/IRpc"
-import { CgMq, RpcConfig } from "./CgMq"
+import { CgMq, RpcConfig } from "../Server/RpcWebSocketServer/CgMq"
+import { RpcMsg } from "../Server/RpcWebSocketServer/IRpc"
 
 class Remote
 {
-    protected _retmsg:RpcMsg=null
+    protected _retmsg:RpcMsg|null=null
     get retMsg()
     {
         return this._retmsg
@@ -18,17 +18,23 @@ class Remote
     protected _to_group=""
     protected _to_id=""
     protected _listen=""
-    constructor(group:string,id:string,cgmq:CgMq,listen:string)
+    protected _is_mq:boolean=false
+    constructor(group:string,id:string,cgmq:CgMq,listen:string,is_mq:boolean=false)
     {
         this._to_group=group
         this._to_id=id
         this._listen=listen
+        this._is_mq=is_mq
         this._cgmq=cgmq
     }
     async call(func_name:string,...args)
     {
-        this._retmsg = await this._cgmq.callRemote(this._to_group,this._to_id,this._listen,func_name,...args)
-        let datas:any[]=this._retmsg.data
+        this._retmsg = await this._cgmq.callRemote(this._to_group,this._to_id,this._listen,func_name,this._is_mq,...args)
+        let datas:any[]=[]
+        if(this._retmsg)
+        {
+            datas=this._retmsg.data
+        }
         let ret={rets:datas,ret:null}
         if(datas&&datas.length>0)
         {
@@ -51,9 +57,14 @@ export class Rpc
         let ret = await this._cgmq.init(cfg,this.onMsg.bind(this))
         return ret
     }
-    getRemote(group:string,id="",listener="")
+    getRemote(group:string,id="",listener="",is_mq:boolean=false)
     {
-        return new Remote(group,id,this._cgmq,listener)
+        return new Remote(group,id,this._cgmq,listener,is_mq)
+    }
+    //mq消息不需要回复
+    getRemoteMq(group:string,id="",listener="")
+    {
+        return this.getRemote(group,id,listener,true)
     }
     async onMsg(msg:RpcMsg)
     {

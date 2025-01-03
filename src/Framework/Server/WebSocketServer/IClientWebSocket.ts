@@ -1,8 +1,8 @@
 import { gLog } from '../../Logic/Log';
 import { EProtoType } from '../ProtoFilter/IProtoFilter';
 import * as ws from 'websocket';
-import { IWebSocket } from '../WebSocketServer/IWebSocket';
-import { IWebSocketServer } from '../WebSocketServer/IWebSocketServer';
+import { IWebSocket } from './IWebSocket';
+import { IWebSocketServer } from './IWebSocketServer';
 /**
  * 服务器接收到的客户端的连接
  * 客户端的session对象

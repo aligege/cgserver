@@ -1,8 +1,8 @@
 import _ = require("underscore");
-import { IServerWebSocket } from "./IServerWebSocket";
 import { IRpc, RpcMsg } from "./IRpc";
 import { gLog } from "../../Logic/Log";
 import { gEventTool } from "../../Logic/EventTool";
+import { IServerWebSocket } from "../WebSocketServer/IServerWebSocket";
 
 export class IRpcServerWebSocket extends IServerWebSocket implements IRpc
 {
@@ -25,31 +25,42 @@ export class IRpcServerWebSocket extends IServerWebSocket implements IRpc
         return pre+"_"+Date.now()%10000000000+"_"+_.uniqueId()+_.random(9999999)
     }
     getNewMsg(cmd: string, errcode?: { id: number; des: string; }) {
-        let msg = super.getNewMsg(cmd,errcode) as RpcMsg
+        let msg = new RpcMsg(cmd,errcode)
         msg.__rpcid=this._genId(cmd)
+        msg.__return=false
+        msg.__is_mq=false
         msg.from_group=this._group
         msg.from_id=this._id
+        msg.to_group=this._group
+        msg.to_id=this._id
         return msg
     }
     toRetMsg(req_msg:RpcMsg,data:any,errcode?: { id: number; des: string; })
     {
         let ret_msg = this.getNewMsg(req_msg.cmd,errcode)
         //唯一标识必须保持一致
-        ret_msg.__return=true
         ret_msg.__rpcid=req_msg.__rpcid
-        ret_msg.data=data
+        ret_msg.__return=true
+        ret_msg.__is_mq=req_msg.__is_mq
         ret_msg.from_group=this._group
         ret_msg.from_id=this._id
         ret_msg.to_group=req_msg.from_group
         ret_msg.to_id=req_msg.from_id
+        ret_msg.data=data
         return ret_msg
     }
-    async callRemote(msg: RpcMsg)
+    async callRemote(msg: RpcMsg):Promise<RpcMsg|null>
     {
         if(!msg)
         {
             gLog.error("send null msg!")
-            return
+            return null
+        }
+        if(msg.__is_mq)
+        {
+            //mq消息不需要回复
+            this.send(msg)
+            return null
         }
         return new Promise<RpcMsg>((resolve,reject)=>
         {

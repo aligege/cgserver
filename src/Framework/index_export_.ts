@@ -82,7 +82,7 @@ export { PacketParser } from './Server/SocketServer/PacketParser';
 
 export { RpcMsg as RpcBaseMsg } from './Server/WebSocketServer/IRpc';
 export { Rpc } from './ThirdParty/Rpc';
-export { CgMq,RpcConfig } from './ThirdParty/CgMq';
+export { CgMq,RpcConfig } from './Server/RpcWebSocketServer/CgMq';
 export { IRpcServerWebSocket} from './Server/WebSocketServer/IRpcServerWebSocket';
 export { IRpcClientWebSocket} from './Server/WebSocketServer/IRpcClientWebSocket';
 

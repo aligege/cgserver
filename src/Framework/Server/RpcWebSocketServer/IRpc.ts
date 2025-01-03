@@ -1,9 +1,11 @@
-import { BaseMsg } from "./IWebSocket";
+import { BaseMsg } from "../WebSocketServer/IWebSocket"
 
 export class RpcMsg extends BaseMsg
 {
     __rpcid=""
     __return=false
+    //mq消息不需要回复
+    __is_mq=false
     /**
       * 发送者分组
       */
@@ -21,7 +23,7 @@ export class RpcMsg extends BaseMsg
      */
     to_id=""
     /**
-     * 监听的对象，比如，发送给push服务器的，监听了10086的服务器listem="10086",listem,也可以理解为子group
+     * 监听的对象，比如，发送给push服务器的，监听了10086的服务器listen="10086",listen,也可以理解为子group
      */
     listen=""
     /**

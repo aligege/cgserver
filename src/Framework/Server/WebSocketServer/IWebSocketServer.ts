@@ -1,5 +1,4 @@
-﻿import { IClientWebSocket } from './IClientWebSocket';
-import * as ws from 'websocket';
+﻿import * as ws from 'websocket';
 import * as fs from "fs";
 import * as http from "http";
 import * as https from "https";
@@ -9,6 +8,7 @@ import { Config } from '../../Config/Config';
 import { gCgServer } from '../../cgserver';
 import { gLog } from '../../Logic/Log';
 import { gEventTool } from '../../Logic/EventTool';
+import { IClientWebSocket } from './IClientWebSocket';
 
 export class IWebSocketServer
 {
@@ -36,6 +36,10 @@ export class IWebSocketServer
     }
     //来自于用户的链接
     protected _ws_clients:{[socketid:number]:IClientWebSocket}={}
+    get wsClients()
+    {
+        return this._ws_clients
+    }
     get listenPort()
     {
         return this._cfg.port

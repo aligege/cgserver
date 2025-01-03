@@ -1,8 +1,8 @@
-import { core } from "../Core/Core";
-import { IRpcServerWebSocket } from "../Server/WebSocketServer/IRpcServerWebSocket";
+import { core } from "../../Core/Core";
 import * as _ from "underscore";
-import { RpcMsg } from "../Server/WebSocketServer/IRpc";
-import { gLog } from "../Logic/Log";
+import { gLog } from "../../Logic/Log";
+import { IRpcServerWebSocket } from "./IRpcServerWebSocket";
+import { RpcMsg } from "./IRpc";
 
 class CgMqServerWebsocket extends IRpcServerWebSocket
 {
@@ -62,13 +62,14 @@ class CgMqServerWebsocket extends IRpcServerWebSocket
         return jsonData
     }
     //把消息发送给rpc服务器，目的是调用远程函数
-    async push(to_group:string,data:any,to_id="",listen="")
+    async push(to_group:string,data:any,to_id="",listen="",is_mq:boolean=false):Promise<RpcMsg|null>
     {
         let msg = this.getNewMsg("msg")
         msg.to_group = to_group
         msg.to_id = to_id
         msg.data = data
         msg.listen = listen
+        msg.__is_mq=is_mq
         let ret_rpcmsg = await this.callRemote(msg)
         return ret_rpcmsg
     }
@@ -76,6 +77,11 @@ class CgMqServerWebsocket extends IRpcServerWebSocket
     async receive_msg(req_msg:RpcMsg)
     {
         let data = await this._cgmq.onMsg(req_msg)
+        if(req_msg.__is_mq)
+        {
+            //mq消息不需要回复
+            return
+        }
         let ret_msg = this.toRetMsg(req_msg,data)
         this.send(ret_msg)
     }
@@ -173,7 +179,7 @@ export class CgMq
             }
         })
     }
-    async callRemote(group:string,to_id:string,listen:string,func_name:string,...args)
+    async callRemote(group:string,to_id:string,listen:string,func_name:string,is_mq:boolean=false,...args):Promise<RpcMsg|null>
     {
         let time=Date.now()
         let data = 
@@ -181,7 +187,7 @@ export class CgMq
             cmd:func_name,
             args:args
         }
-        let ret_rpcmsg = await this._ws.push(group,data,to_id,listen)
+        let ret_rpcmsg = await this._ws.push(group,data,to_id,listen,is_mq)
         if(this._ws.debug_msg)
         {
             gLog.info("["+(Date.now()-time)+"ms] callRemote:"+group+"-"+func_name+"-"+listen)
