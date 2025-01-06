@@ -80,11 +80,11 @@ export { PacketParser } from './Server/SocketServer/PacketParser';
 
 
 
-export { RpcMsg as RpcBaseMsg } from './Server/WebSocketServer/IRpc';
+export { RpcMsg as RpcBaseMsg } from './Server/RpcWebSocketServer/IRpc';
 export { Rpc } from './ThirdParty/Rpc';
 export { CgMq,RpcConfig } from './Server/RpcWebSocketServer/CgMq';
-export { IRpcServerWebSocket} from './Server/WebSocketServer/IRpcServerWebSocket';
-export { IRpcClientWebSocket} from './Server/WebSocketServer/IRpcClientWebSocket';
+export { IRpcServerWebSocket} from './Server/RpcWebSocketServer/IRpcServerWebSocket';
+export { IRpcClientWebSocket} from './Server/RpcWebSocketServer/IRpcClientWebSocket';
 
 export { SyncCall,SyncCall2 } from './Decorator/SyncCall';
 export { SyncCallServer,SyncCallServer2 } from './Decorator/SyncCallServer';

@@ -1,6 +1,6 @@
 export class PacketParser {
-    private buffer: Buffer
-    private offset: number
+    protected buffer: Buffer
+    protected offset: number
     
     constructor() {
         this.buffer = Buffer.alloc(0)

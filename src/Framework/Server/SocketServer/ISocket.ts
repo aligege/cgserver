@@ -124,7 +124,7 @@ export class ISocket
             this._packetParser.push(message)
             let packet = this._packetParser.parse()
             while (packet) {
-                this._onMessage(packet)
+                this.onMessage(packet)
                 packet = this._packetParser.parse()
             }
         }
@@ -133,11 +133,11 @@ export class ISocket
             gLog.error(this.tipKey+' Received Message Handle Error: ' + e)
         }
     }
-    onMessage(message: Buffer)
+    onMessage(packet:Buffer)
     {
         try
         {
-            let msg = this._onDecode(message)
+            let msg = this._onDecode(packet)
             if(this._is_sync_msg)
             {
                 gSyncQueueTool.add(this._socket_id+"",this._onMessage,this,msg)

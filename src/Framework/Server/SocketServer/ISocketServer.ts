@@ -24,13 +24,13 @@ export class ISocketServer
         return this._cfg.serverName
     }
     //监听websocket
-    private _listening_socket:net.Server= null
-    get listeningSocket()
+    private _server:net.Server= null
+    get server()
     {
-        return this._listening_socket
+        return this._server
     }
     //来自于用户的链接
-    protected _ws_clients:{[socketid:number]:IClientSocket}={}
+    protected _clients:{[socketid:number]:IClientSocket}={}
     get listenPort()
     {
         return this._cfg.port
@@ -54,8 +54,8 @@ export class ISocketServer
     }
     removeServerSocketBySocketId(socketId:number)
     {
-        this._ws_clients[socketId] = null
-        delete this._ws_clients[socketId]
+        this._clients[socketId] = null
+        delete this._clients[socketId]
     }
     async run()
     {
@@ -74,9 +74,9 @@ export class ISocketServer
             return
         }
         this._is_runging=false
-        for(let key in this._ws_clients)
+        for(let key in this._clients)
         {
-            this._ws_clients[key].close()
+            this._clients[key].close()
         }
         gLog.info("socketserver paused:"+this._cfg.port)
     }
@@ -96,14 +96,14 @@ export class ISocketServer
     */
     addClient(ws_client:IClientSocket)
     {
-        this._ws_clients[ws_client.socketId] = ws_client
+        this._clients[ws_client.socketId] = ws_client
     }
     initSocket(wss?)
     {
-        let server = net.createServer()
-        server.listen(this._cfg.port, this.onListenning.bind(this))
-        server.on("connection",this.onConnection.bind(this))
-        this._listening_socket.on('close', this.onClose.bind(this))
+        this._server = net.createServer()
+        this._server.listen(this._cfg.port, this.onListenning.bind(this))
+        this._server.on("connection",this.onConnection.bind(this))
+        this._server.on('close', this.onClose.bind(this))
     }
     onClose()
     {
@@ -153,9 +153,9 @@ export class ISocketServer
      */
     broadCast(msg:BaseMsg)
     {
-        for(var key in this._ws_clients)
+        for(var key in this._clients)
         {
-            let ws = this._ws_clients[key] as IClientSocket
+            let ws = this._clients[key] as IClientSocket
             ws.send(msg)
         }
     }
@@ -165,9 +165,9 @@ export class ISocketServer
      */
     getAnyWebSocket()
     {
-        for(var key in this._ws_clients)
+        for(var key in this._clients)
         {
-            return this._ws_clients[key] as IClientSocket
+            return this._clients[key] as IClientSocket
         }
         return null
     }
