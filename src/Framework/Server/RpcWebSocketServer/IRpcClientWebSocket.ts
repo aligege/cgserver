@@ -187,7 +187,7 @@ export class IRpcClientWebSocket extends IClientWebSocket implements IRpc
         super(server)
         this._debug_msg=true
         this._group=""
-        this._id=global.gCgServer.customprocessid
+        this._id=core.getUuid()
     }
     getWsByGroup(group:string,listen:string)
     {

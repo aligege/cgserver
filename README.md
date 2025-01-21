@@ -1,3 +1,6 @@
+
+12.0.6
+1、修复IRpcClientWebSocket初始化bug
 12.0.0
 1、增加socketserver
 11.2.5
