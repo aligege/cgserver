@@ -1,6 +1,6 @@
 {
   "name": "cgserver",
-  "version": "12.0.4",
+  "version": "12.0.5",
   "author": "trojan",
   "type": "commonjs",
   "description": "free for all.Websocket or Http",
@@ -70,6 +70,7 @@
     "nodemailer": "^6.9.10",
     "process": "^0.11.10",
     "protobufjs": "^7.2.6",
+    "publish": "^0.6.0",
     "qiniu": "^7.11.0",
     "readline2": "^1.0.1",
     "redis": "^4.7.0",

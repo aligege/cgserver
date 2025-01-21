@@ -44,7 +44,7 @@ export class MongoCacheService extends MongoBaseService<MongoCacheModel>
         mcm.key=key
         mcm.data=data
         mcm.expireAt=expireAt
-        let rs = await this.updateOne({key:mcm.key},mcm,true)
+        let rs = await this.updateOne({key:mcm.key},mcm,{upsert:true})
         if(rs.rs.upsertedCount<=0)
         {
             return null

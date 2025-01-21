@@ -203,7 +203,7 @@ export class IWebSocketServer
         }
         catch(e)
         {
-            gLog.error(' protocol reject')
+            gLog.error(e)
         }
     }
     createWebSocketObjectByProtocol(server_name:string,_ws:ws.connection,req:ws.request):IClientWebSocket

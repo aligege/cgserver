@@ -83,14 +83,14 @@ export class MongoBaseService<T extends MongoBaseModel>
         let rs = await this.mongoDb.simpleAggregate(this._table,where,property,null,num)
         return rs.list as T[]
     }
-    async updateOne(where:{[key:string]:any},model:any,upsert=false)
+    async updateOne(where:{[key:string]:any},model:any,options?:mongo.UpdateOptions)
     {
-        let rs = await this.mongoDb.updateOne(this._table,where,model,upsert)
+        let rs = await this.mongoDb.updateOne(this._table,where,model,options)
         return rs
     }
-    async updateMany(where:{[key:string]:any},model:any=null,upsert=false)
+    async updateMany(where:{[key:string]:any},model:any=null,options?:mongo.UpdateOptions)
     {
-        let rs = await this.mongoDb.updateMany(this._table,where,model,upsert)
+        let rs = await this.mongoDb.updateMany(this._table,where,model,options)
         return rs
     }
     async insert(model:T)

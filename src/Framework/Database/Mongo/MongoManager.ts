@@ -440,7 +440,7 @@ export class MongoExt
         rs.rs=in_rs
         return rs
     }
-    async updateOne(collection:string,where:{[key:string]:any},model:any,upsert=false)
+    async updateOne(collection:string,where:{[key:string]:any},model:any,options?:mongo.UpdateOptions)
     {
         let _id = model["_id"]
         delete model["_id"]
@@ -479,11 +479,11 @@ export class MongoExt
                 updatemodel=model
             }
             let col = this._mongoDb.collection(collection)
-            up_rs = await col.updateOne(where, updatemodel,{upsert:upsert})
+            up_rs = await col.updateOne(where, updatemodel,options)
         }
         catch(e)
         {
-            gLog.error({collection,model,where,upsert})
+            gLog.error({collection,model,where,options})
             gLog.error(e.stack)
             rs.errcode=EErrorCode.Mongo_Error
         }
@@ -495,7 +495,7 @@ export class MongoExt
         }
         return rs
     }
-    async updateMany(collection:string,where:{[key:string]:any},model:any,upsert=false)
+    async updateMany(collection:string,where:{[key:string]:any},model:any,options?:mongo.UpdateOptions)
     {
         this._convertWhere(where)
         let rs = {errcode:<{id:number,des:string}>null,rs:<mongo.Document | mongo.UpdateResult>null}
@@ -517,11 +517,11 @@ export class MongoExt
                 updateModel=model
             }
             let col = this._mongoDb.collection(collection)
-            up_rs = await col.updateMany(where, updateModel,{upsert:upsert})
+            up_rs = await col.updateMany(where, updateModel,options)
         }
         catch(e)
         {
-            gLog.error({collection,model,where,upsert})
+            gLog.error({collection,model,where,options})
             gLog.error(e.stack)
             rs.errcode=EErrorCode.Mongo_Error
         }

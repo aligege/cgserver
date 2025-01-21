@@ -176,7 +176,7 @@ export class MongoBaseUserController<T extends MongoUserModel> extends BaseContr
             cm.key=this._session_id
             cm.data=user.id
             cm.expireAt=Date.now()+time*1000
-            gMongoCacheSer.updateOne({key:cm.key},cm,true)
+            gMongoCacheSer.updateOne({key:cm.key},cm,{upsert:true})
         }
         this._self_user = user
     }
