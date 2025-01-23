@@ -1,7 +1,7 @@
 import { core } from "../../Core/Core";
 import * as _ from "underscore";
-import { gLog } from "../../Logic/Log";
 import { IRpcServerWebSocket } from "./IRpcServerWebSocket";
+import { gLog } from "../../Logic/Log";
 import { RpcMsg } from "./IRpc";
 
 class CgMqServerWebsocket extends IRpcServerWebSocket
@@ -169,7 +169,7 @@ export class CgMq
                     break
                 }
                 let now = Date.now()
-                if(now-pretime>=3*1000)
+                if(now-pretime>=this._cfg.timeout)
                 {
                     this._ws.close()
                     resolve(false)

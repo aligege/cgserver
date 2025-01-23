@@ -78,6 +78,7 @@ export class IRpcServerWebSocket extends IServerWebSocket implements IRpc
             {
                 gEventTool.off(msg.__rpcid,func)
                 let error_msg=this.getNewMsg(msg.cmd,{id:10086,des:"timeout"})
+                error_msg.__return=true
                 resolve(error_msg)
             },this._timeout)
             gEventTool.once(msg.__rpcid,func)

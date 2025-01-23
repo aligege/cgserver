@@ -228,8 +228,7 @@ export class IRpcClientWebSocket extends IClientWebSocket implements IRpc
     {
         if(!req_msg.__rpcid)
         {
-            let retMsg = this.getNewMsg("msg",{id:10001,des:"非法rpc消息"})
-            this.send(retMsg)
+            //直接丢掉
             return
         }
         if(!req_msg.to_group)
@@ -252,6 +251,7 @@ export class IRpcClientWebSocket extends IClientWebSocket implements IRpc
         if(wses.length==0)
         {
             req_msg.errcode={id:10004,des:"一个接收者都没找到"}
+            req_msg.__return=true
             this.send(req_msg)
             return
         }
