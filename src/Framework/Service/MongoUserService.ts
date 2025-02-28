@@ -47,6 +47,7 @@ export class MongoUserService<T extends MongoUserModel> extends MongoBaseService
         um.state = 0
         um.role_group = group
         um.role = 0
+        um.create_time = Date.now()
         //随机userid
         let id = 0
         do
