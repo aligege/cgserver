@@ -2,7 +2,6 @@ import { gLog } from '../../Logic/Log';
 import { ISocketServer } from './ISocketServer';
 import { ISocket } from './ISocket';
 import { EProtoType } from '../ProtoFilter/IProtoFilter';
-import * as ws from 'websocket';
 /**
  * 服务器接收到的客户端的连接
  * 客户端的session对象

@@ -1,8 +1,7 @@
 import { ISocket } from './ISocket';
-import * as ws from 'websocket';
 import { EProtoType } from '../ProtoFilter/IProtoFilter';
-import * as http from "http";
 import { gLog } from '../../Logic/Log';
+import * as net from "net";
 /**
  * 连接到服务器的websocket
  * 默认自动重连
@@ -25,55 +24,34 @@ export class IServerSocket extends ISocket
     {
         return this._port
     }
-    protected _requestedProtocols: string | string[]=null
-    get requestedProtocols()
-    {
-        return this._requestedProtocols
-    }
-    protected _origin: string=null
-    get origin()
-    {
-        return this._origin
-    }
-    protected _headers: http.OutgoingHttpHeaders=null
-    get headers()
-    {
-        return this._headers
-    }
-    protected _extraRequestOptions: http.RequestOptions=null
-    get extraRequestOptions()
-    {
-        return this._extraRequestOptions
-    }
-
     protected _need_close:boolean=false
     constructor(protoType=EProtoType.Json,protoPath="")
     {
         super(protoType,protoPath)
     }
     connect(domain:string,
-        port:number,
-        requestedProtocols: string | string[]=null,
-        origin: string=null,
-        headers: http.OutgoingHttpHeaders=null,
-        extraRequestOptions: http.RequestOptions=null)
+        port:number)
     {
         this._host = domain || this._host
         this._port = port || this._port
-        this._requestedProtocols = requestedProtocols || this._requestedProtocols
-        this._origin = origin || this._origin
-        this._headers = headers || this._headers
-        this._extraRequestOptions = extraRequestOptions || this._extraRequestOptions
         this._connect()
     }
     protected _connect()
     {
-        let url = "ws://" + this._host + ":" + this._port + "/"
-        gLog.info("Trying to connect to server : " + url)
-        let _ws = new ws.client()
-        _ws.on("connect",this.onConnect.bind(this))
-        _ws.on("connectFailed",this.onClose.bind(this))
-        _ws.connect(url,this._requestedProtocols,this._origin,this._headers,this._extraRequestOptions)
+        if(this._socket)
+        {
+            this._socket.destroy()
+            this._socket = null
+        }
+        this._need_close = false
+        let url = `${this._host}:${this._port}`
+        gLog.info(this._socket_id+":try to connect to " + url)
+        this._socket = new net.Socket()
+        this._socket.connect(this._port,this._host)
+        this._socket.on("connect",()=>
+        {
+            this.onConnect(this._socket)
+        })
     }
     onOpen(e?)
     {
