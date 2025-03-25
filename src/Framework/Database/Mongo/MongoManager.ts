@@ -215,7 +215,7 @@ export class MongoExt
     }
     toObjectId(id:string)
     {
-        return new mongo.ObjectId(id)
+        return new mongo.BSON.ObjectId(id)
     }
     /**
      * 获取单条消息
