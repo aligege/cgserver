@@ -9,7 +9,7 @@ import { gMongoMgr } from "./Database/Mongo/MongoManager";
 import { gLog } from "./Logic/Log";
 import { gEventTool } from "./Logic/EventTool";
 import { gRedisMgr } from "./Database/Redis/RedisManager";
-import * as minimist from "minimist";
+import minimist from "minimist";
 import { ISocketServer } from "./Server/SocketServer/ISocketServer";
 
 export class CgServer

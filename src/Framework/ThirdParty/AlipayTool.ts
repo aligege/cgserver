@@ -1,226 +1,184 @@
-import AlipaySdk from 'alipay-sdk';
-import * as aliUtil from 'alipay-sdk/lib/util';
-
-import { AliPayUtil, RsaSignParam } from "alipay_sdk2/AliPayUtil";
-import * as fs from "fs";
-import AlipayFormData from 'alipay-sdk/lib/form';
-import { Config } from '../Config/Config';
-import { gServerCfg } from '../Config/IServerConfig';
+import { AlipaySdk, AlipaySdkCommonResult, AlipaySdkConfig } from 'alipay-sdk';
 import { gLog } from '../Logic/Log';
 
-export class AlipayResult
-{
-    alipay_trade_app_pay_response={
-        code:"10000",
-        msg:"Success",
-        app_id:"2021003143637369",
-        auth_app_id:"2021003143637369",
-        charset:"utf-8",
-        timestamp:"2022-08-10 16:38:04",
-        out_trade_no:"62f36e657a355ecc1cb8eec2",
-        total_amount:"0.05",
-        trade_no:"2022081022001489431433911625",
-        seller_id:"2088441785429273"
-    }
-    sign="d/Guf6QYnuk9fFlRS1EUFTY+n3/jQKp7IwQENG4WXO+qxMGglPXa3RhUHaJELTMwC4tcKhz8Z8GCiiI1Y7G84kAql1jyoekaOMWvdPRDOjkAqouP3oh5v9r23BziJUxgv/kanBRfOoTKvIT7R0L5DyfxMpEoHdssPHAtENMiniCVZlRUkAhHxjmgMrP0rzMtBvqctC5Me6UiV1yBdGWecLk9RNwMTZF8QSXKVpWXmhmimdjjFjGMcE6r7LoV9YW1Bsvjoq2kdRMX7CJZufGk1Y5Qz8Cv+E9QxTnDJMtA0XyYzte53/dSw0W3Z4Gbosn/kV4QDBRzN39NwwuoFwGuVg=="
-    sign_type="RSA2"
+export interface AlipayExtendParams {
+    sys_service_provider_id?: string; // 系统服务商ID
+    hb_fq_num?: string; // 花呗分期数
+    hb_fq_seller_percent?: string; // 花呗分期卖家的承担收费比例
+    industry_reflux_info?: string; // 行业数据回流信息
+    card_type?: string; // 卡类型
+    royalty_freeze?: string; // 分账冻结金额
 }
-export class AlipayCallBack
-{
-    gmt_create="2022-08-10 16=38=03"
-    charset="utf-8"
-    seller_email="zdpuke@163.com"
-    subject="一把砖石"
-    sign="gytkeBGeea9V05lI6Qvvut8CZnXtXJmbb0dMDd76a6fgN2k2IO0HH4wkJylMQG3EXYJQctysURDtIB0dhqaZbDVtePsM3iQVeI2jwT3YS3XGS4xi13k8foag9vCcSgojKjxJS3ihfzuyK/Pc+KDTOQftoWP2s1dPUpJNGLcZp4sUFysl0Iyzf+2vXh4OJUPQ3DvCqePnDUawq1+AUUj63WHWvdsGCP70+eTsbKxJxWBhHfMVrwkOmUI0zivcHpHLVHbfTFvaM5LAa/ivSU8jiDHqgHYFZqqzTyZ1DLxEy0Ypo3sKBs5eK/UhdsNf5tjse7PxYJwMU2ziIo9gnqv6fQ=="
-    buyer_id=2088202482689432
-    invoice_amount="0.05"
-    notify_id=2.022081000222164e+33
-    fund_bill_list=[{amount:"0.05",fundChannel:"PCREDIT"}]
-    notify_type="trade_status_sync"
-    trade_status="TRADE_SUCCESS"
-    receipt_amount="0.05"
-    app_id=2021003143637369
-    buyer_pay_amount="0.05"
-    sign_type="RSA2"
-    seller_id=2088441785429273
-    gmt_payment="2022-08-10 16:38:03"
-    notify_time="2022-08-10 16:38:04"
-    version=1
-    out_trade_no="62f36e657a355ecc1cb8eec2"
-    total_amount="0.05"
-    trade_no=2.0220810220014894e+27
-    auth_app_id=2021003143637369
-    buyer_logon_id="138****3531"
-    point_amount=0
+export interface AlipayGoodsDetail {
+    goods_id: string; // 商品ID
+    goods_name: string; // 商品名称
+    quantity: number; // 商品数量
+    price: number; // 商品单价
+    alipay_goods_id?: string; // 支付宝商品ID
+    goods_category?: string; // 商品类目
+    category_tree?: string; // 商品类目树
+    show_url?: string; // 商品的展示地址
+    time_expire?: string; // 商品超时时间
+    extend_params?: AlipayExtendParams; // 扩展参数
+}
+export interface AlipayExtUserInfo {
+    cert_no?: string; // 证件号码
+    min_age?: string; // 最小年龄
+    name?: string; // 用户姓名
+    mobile?: string; // 手机号码
+    cert_type?: string; // 证件类型
+    need_check_info?: string; // 是否需要校验信息
+    identity_hash?: string; // 用户信息校验值
+}
+export interface AlipayAppPayParams {
+    out_trade_no: string;      // 商户订单号
+    total_amount: string;      // 订单总金额
+    subject: string;          // 订单标题
+    notify_url?: string;      // 异步通知地址
+    product_code?: string;     // 产品码
+    good_detail?: AlipayGoodsDetail[];      // 商品明细
+    time_expire?: string; // 订单超时时间
+    extend_params?: AlipayExtendParams; // 扩展参数
+    passback_params?: string; // 回跳参数
+    merchant_order_no?: string; // 商户订单号
+    ext_user_info?: AlipayExtUserInfo; // 用户信息
+    query_options?: string[]; // 查询选项
 }
 
+export enum EAlipayExecType
+{
+    exec,
+    sdkExec,
+    pageExec
+}
 export class AlipayTool
 {
     protected _alipaySdk:AlipaySdk=null
-    protected _aliPay:AliPayUtil=null
-
-    protected _cfg={
-        app_id: "",
-        app_key:"",
-        gateway:"",
-        //RSA1 RSA2
-        signType: <'RSA2'|'RSA'>'RSA2',
-        /** 指定private key类型, 默认： PKCS1, PKCS8: PRIVATE KEY, PKCS1: RSA PRIVATE KEY */
-        keyType: <'PKCS1'|'PKCS8'>'PKCS1',
-        alipay_root_cert_sn:"",
-        alipay_cert_sn:"",
-        app_cert_sn:"",
-        notify_url:""
-    }
-    init()
+    get alipaySdk()
     {
-        if(!gServerCfg.alipay
-            ||!gServerCfg.alipay.open)
+        return this._alipaySdk
+    }
+    async init(cfg:AlipaySdkConfig&{open:boolean})
+    {
+        if(!cfg
+            ||!cfg.open)
         {
             return false
         }
-        let suffix=""
-        if(gServerCfg.alipay.dev)
+        let ret = true
+        // 实例化客户端
+        this._alipaySdk = new AlipaySdk(cfg);
+        const result = await this._alipaySdk.curl('POST', '/v3/alipay/user/deloauth/detail/query', {
+            body: {
+              date: '20230102',
+              offset: 20,
+              limit: 1,
+            },
+        });
+        if(result&&result.responseHttpStatus==200)
         {
-            suffix="_dev"
-        }
-        this._cfg={
-            app_id: gServerCfg.alipay["app_id"+suffix],
-            app_key: gServerCfg.alipay["app_key"+suffix],
-            gateway: gServerCfg.alipay["gateway"+suffix],
-            //RSA1 RSA2
-            signType: gServerCfg.alipay["signType"+suffix],
-            /** 指定private key类型, 默认： PKCS1, PKCS8: PRIVATE KEY, PKCS1: RSA PRIVATE KEY */
-            keyType: gServerCfg.alipay["signType"+suffix],
-            alipay_root_cert_sn: gServerCfg.alipay["alipay_root_cert_sn"+suffix],
-            alipay_cert_sn: gServerCfg.alipay["alipay_cert_sn"+suffix],
-            app_cert_sn: gServerCfg.alipay["app_cert_sn"+suffix],
-            notify_url: gServerCfg.alipay["notify_url"+suffix]
-        }
-        if(this._cfg.alipay_cert_sn)
-        {
-            this._aliPay = new AliPayUtil( this._cfg.alipay_cert_sn, this._cfg.app_key )
+            gLog.info(result)
+            gLog.info("alipay init success!")
         }
         else
         {
-            let app_key=""
-            if(this._cfg.app_key.indexOf(".pem")>0)
-            {
-                app_key=fs.readFileSync(Config.rootDataDir+this._cfg.app_key, 'ascii')
-            }
-            else
-            {
-                app_key=this._cfg.app_key
-            }
-            this._alipaySdk = new AlipaySdk({
-                appId: this._cfg.app_id,
-                privateKey: app_key,
-                gateway:this._cfg.gateway,
-                signType:this._cfg.signType,
-                keyType:this._cfg.keyType
-            })
+            gLog.error(result)
+            gLog.error("alipay init failed!")
+            ret = false
         }
-        gLog.info("alipay init success!")
+        return ret
     }
-    /**
-     *  charset:"utf-8",method:"alipay.trade.app.pay",sign_type:"RSA2,version:"1.0"
-     * @param out_trade_no 
-     * @param total_amount 
-     * @param subject 
-     * @param body 
-     * @param timeout_express 
-     * @param product_code 
-     * @returns 
-     */
-    protected _buildOrderParams(out_trade_no:string,total_amount:number,subject="1",body="我是测试数据",timeout_express="30m",product_code="QUICK_MSECURITY_PAY")
-    {
-        let order_params = {
-            notifyUrl:this._cfg.notify_url,
-            bizContent:{
-                timeout_express:timeout_express,
-                product_code:product_code,
-                total_amount:total_amount,
-                subject:encodeURIComponent(subject),
-                body:encodeURIComponent(body),
-                out_trade_no:out_trade_no
-            }
-        }
-        return order_params
-    }
-    protected _sign(order_params:any)
-    {
-        let sign=aliUtil.sign("alipay.trade.app.pay",order_params,this._alipaySdk.config)
-        return sign
-    }
-    getOrderInfo(out_trade_no:string,total_amount:number,subject="1",body="我是测试数据")
-    {
-        let order_params = this._buildOrderParams(out_trade_no,total_amount,subject,body)
-        let sign = this._sign(order_params)
-        let {url,execParams}=this._alipaySdk["formatUrl"]("",sign)
-        const order_info = (url + '&biz_content=' + encodeURIComponent(execParams.biz_content)).substring(1)
-        return order_info
-    }
-    /**
-     * 
-     * @param title 
-     * @param order_id 
-     * @param money 
-     */
-    doPay(title:string, order_id:string, money:number)
-    {
-        const param:RsaSignParam = {
-            app_id:this._cfg.app_id,
-            notify_url:this._cfg.notify_url,
-            app_cert_sn:this._cfg.app_cert_sn,
-            alipay_root_cert_sn:this._cfg.alipay_root_cert_sn,
-            subject:title,
-            trade_no: order_id,
-            total_amount: money,
-        };
 
-        var str=this._aliPay.getPayCode( param )
-        return str
-    }
-    rsaCheck(payInfo:any)
-    {
-        return this._aliPay.rsaCheck(payInfo)
-    }
     /**
-     * 
-     * @param method get|post
-     * @param notifyUrl 通知回调
-     * @param returnUrl
-     * @param outTradeNo 
-     * @param money 价格
-     * @param subject 标题
-     * @param body 内容介绍
+     * 创建支付宝APP支付订单
+     * @param params 支付参数
+     * @returns 支付订单信息
      */
-    async getAlipayPage(method:"get" | "post",notifyUrl:string,returnUrl:string,outTradeNo:string,money:number,subject:string,body:string)
+    async trade_app_pay(params: AlipayAppPayParams,execType:EAlipayExecType=EAlipayExecType.exec):Promise<string|null|AlipaySdkCommonResult>
     {
-        if(!this._alipaySdk)
+        return await this.exec('alipay.trade.app.pay',params,execType)
+    }
+
+    /**
+     * 验证支付宝支付回调
+     * @param notifyData 回调数据
+     * @returns 验证结果
+     */
+    async verifyNotify(notifyData: any): Promise<boolean> {
+        try {
+            if (!this._alipaySdk) {
+                return false;
+            }
+
+            // 验证签名
+            const signValid = await this._alipaySdk.checkNotifySign(notifyData);
+            if (!signValid) {
+                gLog.error({tip:'支付宝回调签名验证失败'});
+                return false;
+            }
+
+            // 验证交易状态
+            if (notifyData.trade_status !== 'TRADE_SUCCESS' && notifyData.trade_status !== 'TRADE_FINISHED') {
+                gLog.error({tip:'支付宝回调交易状态异常:',status:notifyData.trade_status});
+                return false;
+            }
+
+            return true;
+        } catch (error) {
+            gLog.error({tip:'验证支付宝回调失败:',error});
+            return false;
+        }
+    }
+    async exec(method:string,params:any,execType:EAlipayExecType=EAlipayExecType.exec):Promise<string|null|AlipaySdkCommonResult>
+    {
+        try
         {
-            gLog.error("并未配置alipay或者初始化失败")
-            return
+            if (!this._alipaySdk) {
+                return null
+            }
+            let result = null
+            switch(execType)
+            {
+                case EAlipayExecType.exec:
+                    result = await this._alipaySdk.exec(
+                        method,
+                        params
+                    )
+                    break;
+                case EAlipayExecType.sdkExec:
+                    result = await this._alipaySdk.sdkExec(
+                        method,
+                        params
+                    )
+                    break;
+                case EAlipayExecType.pageExec:
+                    result = await this._alipaySdk.pageExec(
+                        method,
+                        params
+                    )
+                    break;
+            }
+            return result
         }
-        const formData = new AlipayFormData();
-        // 调用 setMethod 并传入 get，会返回可以跳转到支付页面的 url
-        formData.setMethod(method)
-        formData.addField("return_url",returnUrl)
-        formData.addField('notifyUrl', notifyUrl)
-        formData.addField('bizContent', {
-            outTradeNo: outTradeNo,
-            productCode: "FAST_INSTANT_TRADE_PAY",
-            totalAmount: money,
-            subject: subject,
-            body: body,
-        });
+        catch (error) 
+        {
+            gLog.error({tip:'执行支付宝请求失败:',method,params, error:error});
+            return null;
+        }
+    }
 
-        let url_or_html = await this._alipaySdk.exec(
-            'alipay.trade.page.pay',
-            {},
-            { formData: formData }
-        )
-        return url_or_html
+    /**
+     * 查询订单状态
+     * @param outTradeNo 商户订单号
+     * @returns 订单状态
+     */
+    async trade_query(outTradeNo: string,execType:EAlipayExecType=EAlipayExecType.exec): Promise<string|null|AlipaySdkCommonResult> {
+        return await this.exec('alipay.trade.query',{
+            bizContent:
+            {
+                out_trade_no: outTradeNo
+            }
+        },execType)
     }
 }
 

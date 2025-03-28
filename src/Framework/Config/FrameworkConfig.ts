@@ -1,4 +1,5 @@
-﻿import { gLog } from "../Logic/Log";
+﻿import { AlipaySdkConfig } from "alipay-sdk";
+import { gLog } from "../Logic/Log";
 import { Config } from "./Config";
 import { DbConfig } from "./DbConfig";
 export enum ESessionType
@@ -47,13 +48,6 @@ export class WebServerConfig
     static:{route:string,path:string}[]=null
     rootview=""
 }
-class AliSmsConfig
-{
-    signName=""
-    accessKeyId=""
-    secretAccessKey=""
-    templateCode=""
-}
 class QiNiuConfig
 {
     host      =""
@@ -84,34 +78,6 @@ class WechatConfig
     app_id=""
     app_key=""
     redirect_uri=""
-}
-class AlipayConfig
-{
-    open=false
-    dev=false
-    app_id=""
-    app_key=""
-    gateway=""
-    //RSA1 RSA2
-    signType=""
-    /** 指定private key类型, 默认： PKCS1, PKCS8: PRIVATE KEY, PKCS1: RSA PRIVATE KEY */
-    keyType=""
-    alipay_root_cert_sn=""
-    alipay_cert_sn=""
-    app_cert_sn=""
-    notify_url=""
-
-    app_id_dev=""
-    app_key_dev=""
-    gateway_dev=""
-    //RSA1 RSA2
-    signType_dev=""
-    /** 指定private key类型, 默认： PKCS1, PKCS8: PRIVATE KEY, PKCS1: RSA PRIVATE KEY */
-    keyType_dev=""
-    alipay_root_cert_sn_dev=""
-    alipay_cert_sn_dev=""
-    app_cert_sn_dev=""
-    notify_url_dev:""
 }
 export class FrameworkConfig extends Config
 {
@@ -187,12 +153,10 @@ export class FrameworkConfig extends Config
         }
     }
     db=new DbConfig()
-    aliSms:AliSmsConfig=null
     qiniu:QiNiuConfig=null
     email:EmailConfig=null
     qq:QQConfig=null
     wechat:WechatConfig=null
-    alipay:AlipayConfig=null
     apple:
     {
         keyIds:{}

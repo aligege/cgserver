@@ -5,6 +5,7 @@
         "sourceMap": false,
         "allowJs":false,
         "outDir": "./dist/lib",
+        "esModuleInterop": true,
         "experimentalDecorators": true,
         "declaration": true,
         "declarationDir": "./dist/types",

@@ -1,4 +1,4 @@
-import * as EventEmitter from "events";
+import EventEmitter from "events";
 export class EventTool
 {
     protected _event_emitter=new EventEmitter()

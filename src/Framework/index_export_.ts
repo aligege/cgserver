@@ -1,3 +1,7 @@
+export { EAlipayExecType,AlipayAppPayParams } from './ThirdParty/AlipayTool';
+export { AlipaySdk, AlipaySdkCommonResult, AlipaySdkConfig } from 'alipay-sdk';
+export { AliSmsConfig } from './ThirdParty/Alisms';
+
 export { CgRankTool,CgRankCommandItem,CgRankRankItem,CgRankRankData } from './ThirdParty/CgRankTool';
 
 export { MongoServiceManager } from './Database/Mongo/MongoServiceManager';
@@ -51,7 +55,6 @@ export { IServerWebSocket } from './Server/WebSocketServer/IServerWebSocket';
 export { IClientWebSocket } from './Server/WebSocketServer/IClientWebSocket';
 export { IWebSocketServer } from './Server/WebSocketServer/IWebSocketServer';
 export { IWebSocket,BaseMsg } from './Server/WebSocketServer/IWebSocket';
-export { AlipayResult,AlipayCallBack } from './ThirdParty/AlipayTool';
 export { IWebServer } from './Server/WebServer/IWebServer';
 export { BaseController } from './Server/WebServer/Controller/BaseController';
 export { MysqlBaseUserController } from './Server/WebServer/Controller/MysqlBaseUserController';

@@ -1,6 +1,6 @@
 {
   "name": "cgserver",
-  "version": "12.0.9",
+  "version": "12.1.1",
   "author": "trojan",
   "type": "commonjs",
   "description": "free for all.Websocket or Http",
@@ -47,14 +47,14 @@
     "@types/urlencode": "^1.1.4",
     "@types/websocket": "^1.0.10",
     "alipay_sdk2": "^1.1.6",
-    "alipay-sdk": "^3.6.1",
+    "alipay-sdk": "^4.13.0",
     "azgaar-fmg-parser": "^1.2.2",
     "colors": "^1.4.0",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "crypto-js": "^4.2.0",
     "ec-key": "0.0.4",
-    "express": "^4.21.1",
+    "express": "^4.21.2",
     "fast-xml-parser": "^4.4.1",
     "formidable": "^3.5.1",
     "fs": "^0.0.2",
@@ -76,9 +76,13 @@
     "reflect-metadata": "^0.2.2",
     "request": "^2.88.2",
     "socket.io": "^4.7.4",
+    "typescript": "^5.8.2",
     "underscore": "^1.13.6",
     "urlencode": "^2.0.0",
     "uuidv4": "^6.2.13",
     "websocket": "^1.0.35"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.2"
   }
 }
