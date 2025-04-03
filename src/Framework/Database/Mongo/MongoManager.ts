@@ -143,14 +143,36 @@ export class MongoExt
         this._inited = true
         gLog.info("mongo config="+JSON.stringify(this._mongocfg))
         this._mongoClient = new mongo.MongoClient("mongodb://"+this._mongocfg.host+":"+this._mongocfg.port,this._mongocfg.options)
-        await core.safeCall(this._mongoClient.connect,this._mongoClient)
+        
+        this._mongoClient.on("connectionCreated",this.onConnectionCreated.bind(this))
+        this._mongoClient.on("connectionReady",this.onConnectionReady.bind(this))
+        this._mongoClient.on("connectionClosed",this.onConnectionClosed.bind(this))
+        
+        this._mongoClient.connect()
+        
+        return true
+    }
+    onConnectionCreated(event:mongo.ConnectionCreatedEvent)
+    {
+        gLog.info({key:"mongo onConnectionCreated",event})
+    }
+    onConnectionReady(event:mongo.ConnectionReadyEvent)
+    {
+        gLog.info({key:"mongo onConnectionReady",event})
         this.onConnect()
+        
         this._mongoDb = this._mongoClient.db(this._mongocfg.database)
         for(let i=0;i<this._init_cbs.length;++i)
         {
             this._init_cbs[i]()
         }
-        return true
+        this._init_cbs=[]
+    }
+    onConnectionClosed(event:mongo.ConnectionClosedEvent)
+    {
+        gLog.info({key:"mongo onConnectionClosed",event})
+        this._inited = false
+        this.init(this._mongocfg)
     }
     close(force=false)
     {
