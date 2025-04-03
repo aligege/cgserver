@@ -135,10 +135,6 @@ export class MongoExt
         {
             return false
         }
-        if(this._mongoDb)
-        {
-            return true
-        }
         this._mongocfg=cfg
         this._inited = true
         gLog.info("mongo config="+JSON.stringify(this._mongocfg))
@@ -172,6 +168,7 @@ export class MongoExt
     {
         gLog.info({key:"mongo onConnectionClosed",event})
         this._inited = false
+        this._mongoDb = null
         this.init(this._mongocfg)
     }
     close(force=false)
