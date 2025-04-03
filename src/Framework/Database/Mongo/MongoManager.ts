@@ -139,13 +139,13 @@ export class MongoExt
         this._inited = true
         gLog.info("mongo config="+JSON.stringify(this._mongocfg))
         this._mongoClient = new mongo.MongoClient("mongodb://"+this._mongocfg.host+":"+this._mongocfg.port,this._mongocfg.options)
-        
+        this._mongoClient.on("open",this.onOpen.bind(this))
+        this._mongoClient.on("close",this.onClose.bind(this))
         this._mongoClient.on("connectionCreated",this.onConnectionCreated.bind(this))
         this._mongoClient.on("connectionReady",this.onConnectionReady.bind(this))
         this._mongoClient.on("connectionClosed",this.onConnectionClosed.bind(this))
         
         this._mongoClient.connect()
-        
         return true
     }
     onConnectionCreated(event:mongo.ConnectionCreatedEvent)
@@ -155,21 +155,10 @@ export class MongoExt
     onConnectionReady(event:mongo.ConnectionReadyEvent)
     {
         gLog.info({key:"mongo onConnectionReady",event})
-        this.onConnect()
-        
-        this._mongoDb = this._mongoClient.db(this._mongocfg.database)
-        for(let i=0;i<this._init_cbs.length;++i)
-        {
-            this._init_cbs[i]()
-        }
-        this._init_cbs=[]
     }
     onConnectionClosed(event:mongo.ConnectionClosedEvent)
     {
         gLog.info({key:"mongo onConnectionClosed",event})
-        this._inited = false
-        this._mongoDb = null
-        this.init(this._mongocfg)
     }
     close(force=false)
     {
@@ -179,10 +168,24 @@ export class MongoExt
     {
         this._init_cbs.push(cb)
     }
-    onConnect()
+    onOpen()
     {
         this._mongo_init_succ = true
-        gLog.info("mongo has connected!")
+        gLog.info("mongo has opened!")
+        this._mongoDb = this._mongoClient.db(this._mongocfg.database)
+        for(let i=0;i<this._init_cbs.length;++i)
+        {
+            this._init_cbs[i]()
+        }
+        this._init_cbs=[]
+    }
+    onClose()
+    {
+        this._mongo_init_succ = false
+        gLog.info("mongo has closed!")
+        this._mongoDb = null
+        this._inited = false
+        this.init(this._mongocfg)
     }
     /**
      * 获取自增长id
