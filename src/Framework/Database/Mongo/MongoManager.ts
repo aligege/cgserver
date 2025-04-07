@@ -145,7 +145,7 @@ export class MongoExt
         this._mongoClient.on("connectionReady",this.onConnectionReady.bind(this))
         this._mongoClient.on("connectionClosed",this.onConnectionClosed.bind(this))
         
-        this._mongoClient.connect()
+        await this._mongoClient.connect()
         return true
     }
     onConnectionCreated(event:mongo.ConnectionCreatedEvent)
