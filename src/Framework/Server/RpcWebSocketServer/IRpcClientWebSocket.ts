@@ -241,7 +241,10 @@ export class IRpcClientWebSocket extends IClientWebSocket implements IRpc
         if(req_msg.to_id)
         {
             let ws = this.getWsByGroupId(req_msg.to_group,req_msg.to_id)
-            wses.push(ws)
+            if(ws)
+            {
+                wses.push(ws)
+            }
         }
         else
         {
