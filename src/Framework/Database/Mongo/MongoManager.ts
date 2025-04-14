@@ -9,6 +9,8 @@ export class MongoConfig
     port=27017
     options:mongo.MongoClientOptions=null
     database='mongodb'
+    //决定是否显示mongo的执行时间等日志
+    debug=false
 }
 export class MongoBaseModel
 {
@@ -150,15 +152,15 @@ export class MongoExt
     }
     onConnectionCreated(event:mongo.ConnectionCreatedEvent)
     {
-        gLog.info({key:"mongo onConnectionCreated",event})
+        this._mongocfg.debug&&gLog.info({key:"mongo onConnectionCreated",event})
     }
     onConnectionReady(event:mongo.ConnectionReadyEvent)
     {
-        gLog.info({key:"mongo onConnectionReady",event})
+        this._mongocfg.debug&&gLog.info({key:"mongo onConnectionReady",event})
     }
     onConnectionClosed(event:mongo.ConnectionClosedEvent)
     {
-        gLog.info({key:"mongo onConnectionClosed",event})
+        this._mongocfg.debug&&gLog.info({key:"mongo onConnectionClosed",event})
     }
     close(force=false)
     {
@@ -194,8 +196,12 @@ export class MongoExt
      */
     async getAutoIds(key:string):Promise<number>
     {
+        let now = Date.now()
+        let dt = 0
         if(!this._mongoDb)
         {
+            dt = Date.now()-now
+            this._mongocfg.debug&&gLog.info({key:"getAutoIds",dt,arguments})
             return -1
         }
         let collection = "auto_ids"
@@ -207,16 +213,22 @@ export class MongoExt
             {
                 return rs.id+1
             }
+            dt = Date.now()-now
+            this._mongocfg.debug&&gLog.info({key:"getAutoIds",dt,arguments})
             return 1
         }
         catch(e)
         {
             gLog.error(e.stack)
         }
+        dt = Date.now()-now
+        this._mongocfg.debug&&gLog.info({key:"getAutoIds",dt,arguments})
         return -2
     }
     protected _convertWhere(where?:{[key:string]:any})
     {
+        let now = Date.now()
+        let dt = 0
         if(!where||!where._id)
         {
             return
@@ -245,6 +257,8 @@ export class MongoExt
      */
     async findOne(collection:string,where:{[key:string]:any}={},property:{[key:string]:any}={})
     {
+        let now = Date.now()
+        let dt = 0
         if(!where)
         {
             where={}
@@ -254,6 +268,8 @@ export class MongoExt
         if(!this._mongoDb)
         {
             rs.errcode=EErrorCode.No_Mongo
+            dt = Date.now()-now
+            this._mongocfg.debug&&gLog.info({key:"findOne",dt,arguments})
             return rs
         }
         let one = null
@@ -268,10 +284,14 @@ export class MongoExt
             rs.errcode=EErrorCode.Mongo_Error
         }
         rs.one=one
+        dt = Date.now()-now
+        this._mongocfg.debug&&gLog.info({key:"findOne",dt,arguments})
         return rs
     }
     async distinct(collection:string,key:string|number,where:{[key:string]:any}={})
     {
+        let now = Date.now()
+        let dt = 0
         if(!where)
         {
             where={}
@@ -281,6 +301,8 @@ export class MongoExt
         if(!this._mongoDb)
         {
             rs.errcode=EErrorCode.No_Mongo
+            dt = Date.now()-now
+            this._mongocfg.debug&&gLog.info({key:"distinct",dt,arguments})
             return rs
         }
         let lst = null
@@ -295,10 +317,14 @@ export class MongoExt
             rs.errcode=EErrorCode.Mongo_Error
         }
         rs.lst=lst
+        dt = Date.now()-now
+        this._mongocfg.debug&&gLog.info({key:"distinct",dt,arguments})
         return rs
     }
     async findMany(collection:string,where:{[key:string]:any}={},property:{[key:string]:any}={},sort?:{[key:string]:any},skip=0,limit=0)
     {
+        let now = Date.now()
+        let dt = 0
         if(!where)
         {
             where={}
@@ -308,6 +334,8 @@ export class MongoExt
         if(!this._mongoDb)
         {
             rs.errcode=EErrorCode.No_Mongo
+            dt = Date.now()-now
+            this._mongocfg.debug&&gLog.info({key:"findMany",dt,arguments})
             return rs
         }
         let list=[]
@@ -335,15 +363,25 @@ export class MongoExt
             rs.errcode=EErrorCode.Mongo_Error
         }
         rs.list=list
+        dt = Date.now()-now
+        this._mongocfg.debug&&gLog.info({key:"findMany",dt,arguments})
         return rs
     }
     async countDocuments(collection:string,where?:{[key:string]:any},options?: mongo.CountDocumentsOptions)
     {
+        let now = Date.now()
+        let dt = 0
+        if(!where)
+        {
+            where={}
+        }
         this._convertWhere(where)
         let rs = {errcode:<{id:number,des:string}>null,count:-1}
         if(!this._mongoDb)
         {
             rs.errcode=EErrorCode.No_Mongo
+            dt = Date.now()-now
+            this._mongocfg.debug&&gLog.info({key:"countDocuments",dt,arguments})
             return rs
         }
         let count=-1
@@ -358,10 +396,18 @@ export class MongoExt
             rs.errcode=EErrorCode.Mongo_Error
         }
         rs.count=count
+        dt = Date.now()-now
+        this._mongocfg.debug&&gLog.info({key:"countDocuments",dt,arguments})
         return rs
     }
     async deleteOne(collection:string,where:{[key:string]:any})
     {
+        let now = Date.now()
+        let dt = 0
+        if(!where)
+        {
+            where={}
+        }
         this._convertWhere(where)
         let rs = {errcode:<{id:number,des:string}>null,count:-1}
         if(!this._mongoDb)
@@ -384,15 +430,25 @@ export class MongoExt
         {
             rs.count=del_rs.deletedCount
         }
+        dt = Date.now()-now
+        this._mongocfg.debug&&gLog.info({key:"deleteOne",dt,arguments})
         return rs
     }
     async deleteMany(collection:string,where:{[key:string]:any})
     {
+        let now = Date.now()
+        let dt = 0
+        if(!where)
+        {
+            where={}
+        }
         this._convertWhere(where)
         let rs = {errcode:<{id:number,des:string}>null,count:-1}
         if(!this._mongoDb)
         {
             rs.errcode=EErrorCode.No_Mongo
+            dt = Date.now()-now
+            this._mongocfg.debug&&gLog.info({key:"deleteMany",dt,arguments})
             return rs
         }
         let del_rs:mongo.DeleteResult=null
@@ -410,6 +466,8 @@ export class MongoExt
         {
             rs.count=del_rs.deletedCount
         }
+        dt = Date.now()-now
+        this._mongocfg.debug&&gLog.info({key:"deleteMany",dt,arguments})
         return rs
     }
     /**
@@ -419,10 +477,14 @@ export class MongoExt
      */
     async insertOne(collection:string,data:any)
     {
+        let now = Date.now()
+        let dt = 0
         let rs = {errcode:<{id:number,des:string}>null,rs:<mongo.InsertOneResult<any>>null}
         if(!this._mongoDb)
         {
             rs.errcode=EErrorCode.No_Mongo
+            dt = Date.now()-now
+            this._mongocfg.debug&&gLog.info({key:"insertOne",dt,arguments})
             return rs
         }
         let in_rs:mongo.InsertOneResult<any>=null
@@ -438,14 +500,20 @@ export class MongoExt
             rs.errcode=EErrorCode.Mongo_Error
         }
         rs.rs=in_rs
+        dt = Date.now()-now
+        this._mongocfg.debug&&gLog.info({key:"insertOne",dt,arguments})
         return rs
     }
     async insertManay(collection:string,data:any[])
     {
+        let now = Date.now()
+        let dt = 0
         let rs = {errcode:<{id:number,des:string}>null,rs:<mongo.InsertManyResult<any>>null}
         if(!this._mongoDb)
         {
             rs.errcode=EErrorCode.No_Mongo
+            dt = Date.now()-now
+            this._mongocfg.debug&&gLog.info({key:"insertManay",dt,arguments})
             return rs
         }
         let in_rs:mongo.InsertManyResult<any>=null
@@ -460,10 +528,14 @@ export class MongoExt
             rs.errcode=EErrorCode.Mongo_Error
         }
         rs.rs=in_rs
+        dt = Date.now()-now
+        this._mongocfg.debug&&gLog.info({key:"insertManay",dt,arguments})
         return rs
     }
     async updateOne(collection:string,where:{[key:string]:any},model:any,options?:mongo.UpdateOptions)
     {
+        let now = Date.now()
+        let dt = 0
         let _id = model["_id"]
         delete model["_id"]
         if(!where&&_id)
@@ -479,6 +551,8 @@ export class MongoExt
                 model["_id"]=_id
             }
             rs.errcode=EErrorCode.No_Mongo
+            dt = Date.now()-now
+            this._mongocfg.debug&&gLog.info({key:"updateOne",dt,arguments})
             return rs
         }
         let up_rs:mongo.UpdateResult=null
@@ -515,15 +589,21 @@ export class MongoExt
             
             model["_id"]=up_rs?.upsertedId||_id
         }
+        dt = Date.now()-now
+        this._mongocfg.debug&&gLog.info({key:"updateOne",dt,arguments})
         return rs
     }
     async updateMany(collection:string,where:{[key:string]:any},model:any,options?:mongo.UpdateOptions)
     {
+        let now = Date.now()
+        let dt = 0
         this._convertWhere(where)
         let rs = {errcode:<{id:number,des:string}>null,rs:<mongo.Document | mongo.UpdateResult>null}
         if(!this._mongoDb)
         {
             rs.errcode=EErrorCode.No_Mongo
+            dt = Date.now()-now
+            this._mongocfg.debug&&gLog.info({key:"updateMany",dt,arguments})
             return rs
         }
         let up_rs:mongo.Document | mongo.UpdateResult=null
@@ -548,14 +628,20 @@ export class MongoExt
             rs.errcode=EErrorCode.Mongo_Error
         }
         rs.rs=up_rs
+        dt = Date.now()-now
+        this._mongocfg.debug&&gLog.info({key:"updateMany",dt,arguments})
         return rs
     }
     async createIndex(collection:string,index:any,options?:mongo.CreateIndexesOptions)
     {
+        let now = Date.now()
+        let dt = 0
         let rs = {errcode:<{id:number,des:string}>null,rs:<string>null}
         if(!this._mongoDb)
         {
             rs.errcode=EErrorCode.No_Mongo
+            dt = Date.now()-now
+            this._mongocfg.debug&&gLog.info({key:"createIndex",dt,arguments})
             return rs
         }
         let i_rs:string=null
@@ -570,15 +656,21 @@ export class MongoExt
             rs.errcode=EErrorCode.Mongo_Error
         }
         rs.rs=i_rs
+        dt = Date.now()-now
+        this._mongocfg.debug&&gLog.info({key:"createIndex",dt,arguments})
         return rs
     }
     async simpleAggregate(collection:string,where?:{[key:string]:any},property?:{[key:string]:any},size?:number,random_size?:number)
     {
+        let now = Date.now()
+        let dt = 0
         this._convertWhere(where)
         let rs = {errcode:<{id:number,des:string}>null,list:<any[]>null}
         if(!this._mongoDb)
         {
             rs.errcode=EErrorCode.No_Mongo
+            dt = Date.now()-now
+            this._mongocfg.debug&&gLog.info({key:"simpleAggregate",dt,arguments})
             return rs
         }
         let list=[]
@@ -613,6 +705,8 @@ export class MongoExt
             rs.errcode=EErrorCode.Mongo_Error
         }
         rs.list=list
+        dt = Date.now()-now
+        this._mongocfg.debug&&gLog.info({key:"simpleAggregate",dt,arguments})
         return rs
     }
     aggregate(collection:string,pipeline?: Document[], options?: mongo.AggregateOptions)
@@ -632,8 +726,12 @@ export class MongoExt
      */
     async quickTransaction(cb:Function,options?: mongo.TransactionOptions):Promise<false|any>
     {
+        let now = Date.now()
+        let dt = 0
         if(!this._mongoDb)
         {
+            dt = Date.now()-now
+            this._mongocfg.debug&&gLog.info({key:"quickTransaction",dt,arguments})
             return false
         }
         let session = this._mongoClient.startSession()
@@ -643,6 +741,8 @@ export class MongoExt
             let rs = await cb(session)
             await session.commitTransaction()
             session.endSession()
+            dt = Date.now()-now
+            this._mongocfg.debug&&gLog.info({key:"quickTransaction",dt,arguments})
             return rs
         }
         catch(e)
@@ -654,16 +754,24 @@ export class MongoExt
         {
             await session.endSession()
         }
+        dt = Date.now()-now
+        this._mongocfg.debug&&gLog.info({key:"quickTransaction",dt,arguments})
         return false
     }
     async bulkWrite(collection:string,operations: mongo.AnyBulkWriteOperation<mongo.BSON.Document>[],options?: mongo.BulkWriteOptions)
     {
+        let now = Date.now()
+        let dt = 0
         if(!this._mongoDb)
         {
+            dt = Date.now()-now
+            this._mongocfg.debug&&gLog.info({key:"bulkWrite",dt,arguments})
             return
         }
         let bulk = this._mongoDb.collection(collection)
         let bwr=bulk.bulkWrite(operations,options)
+        dt = Date.now()-now
+        this._mongocfg.debug&&gLog.info({key:"bulkWrite",dt,arguments})
         return bwr
     }
 }
