@@ -774,6 +774,22 @@ export class MongoExt
         this._mongocfg.debug&&gLog.info({key:"bulkWrite",dt,arguments})
         return bwr
     }
+    async findOneAndUpdate(collection:string,filter:any,update:any,options?:mongo.FindOneAndUpdateOptions):Promise<any>
+    {
+        let now = Date.now()
+        let dt = 0
+        if(!this._mongoDb)
+        {
+            dt = Date.now()-now
+            this._mongocfg.debug&&gLog.info({key:"findOneAndUpdate",dt,arguments})
+            return
+        }
+        let col = this._mongoDb.collection(collection)
+        let rs = await col.findOneAndUpdate(filter,update,options)
+        dt = Date.now()-now
+        this._mongocfg.debug&&gLog.info({key:"findOneAndUpdate",dt,arguments})
+        return rs
+    }
 }
 
 export let gMongoMgr = new MongoManager()

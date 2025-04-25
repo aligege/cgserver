@@ -1,5 +1,8 @@
 # 版本更新日志
 
+## v12.2.6
+- mongo 新增 findOneAndUpdate 接口到处
+
 ## v12.2.5
 - Core 统一hash接口
 

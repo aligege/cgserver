@@ -68,6 +68,11 @@ export class MongoBaseService<T extends MongoBaseModel>
         let rs = await this.mongoDb.findOne(this._table,where,property)
         return rs.one as T
     }
+    async findOneAndUpdate(where:{[key:string]:any}=null,update:any,options?:mongo.FindOneAndUpdateOptions)
+    {
+        let rs = await this.mongoDb.findOneAndUpdate(this._table,where,update,options)
+        return rs as T
+    }
     async countDocuments(where:{[key:string]:any}=null,options?: mongo.CountDocumentsOptions)
     {
         let rs = await this.mongoDb.countDocuments(this._table,where)
