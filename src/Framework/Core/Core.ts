@@ -271,14 +271,14 @@ export class core
     
     static char2buf(str)
     {
-    　　let out = new ArrayBuffer(str.length*2)
-    　　let u16a= new Uint16Array(out)
-    　　let strs = str.split("")
-    　　for(let i =0 ; i<strs.length;i++)
+        let out = new ArrayBuffer(str.length*2)
+        let u16a= new Uint16Array(out)
+        let strs = str.split("")
+        for(let i =0 ; i<strs.length;i++)
         {
             u16a[i]=strs[i].charCodeAt()
-    　　}
-    　　return out
+        }
+        return out
     }
 
     static array2arraybuffer(array) 
@@ -435,34 +435,19 @@ export class core
         newStr+=last
         return newStr
     }
-    static md5(str: string,inputEncoding:crypto.Encoding=null,encoding: crypto.BinaryToTextEncoding="hex") {
-        let _md5 = crypto.createHash('md5')
+    static hash(algorithm:string,str: string,inputEncoding:crypto.Encoding=null,encoding: crypto.BinaryToTextEncoding="hex") {
+        let _hash = crypto.createHash(algorithm)
         let hash:crypto.Hash=null
         if(inputEncoding)
         {
-            hash=_md5.update(str,inputEncoding)
+            hash=_hash.update(str,inputEncoding)
         }
         else
         {
-            hash=_md5.update(str)
+            hash=_hash.update(str)
         }
-        let md5_str = hash.digest(encoding)
-        return md5_str
-    }
-
-    static sha1(str: string,inputEncoding:crypto.Encoding=null,encoding: crypto.BinaryToTextEncoding="hex") {
-        let _sha1 = crypto.createHash('sha1')
-        let hash:crypto.Hash=null
-        if(inputEncoding)
-        {
-            hash=_sha1.update(str,inputEncoding)
-        }
-        else
-        {
-            hash=_sha1.update(str)
-        }
-        let sha1_str = hash.digest(encoding)
-        return sha1_str
+        let hash_str = hash.digest(encoding)
+        return hash_str
     }
 
     static getLocalIP= function () 
