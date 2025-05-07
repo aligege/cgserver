@@ -1,5 +1,8 @@
 # 版本更新日志
 
+## v12.2.7
+- redis 轻微更新，无实际影响
+
 ## v12.2.6
 - mongo 新增 findOneAndUpdate 接口到处
 

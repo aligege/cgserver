@@ -5,7 +5,7 @@ import { RedisConfig } from "../Database/Redis/RedisManager"
 
 export class DbConfig
 {
-    redis=new RedisConfig()
+    redis:RedisConfig=null
     mongos:MongoConfig[]=[]
     mongo:MongoConfig=null
     mysql=new MysqlConfig()

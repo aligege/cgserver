@@ -45,7 +45,7 @@ export { DbConfig } from './Config/DbConfig';
 export { MSSqlConfig } from './Database/MSSql/MSSqlManager';
 export { MongoConfig } from './Database/Mongo/MongoManager';
 export { MysqlConfig } from './Database/Mysql/MysqlManager';
-export { RedisConfig,RedisManager } from './Database/Redis/RedisManager';
+export { RedisManager } from './Database/Redis/RedisManager';
 
 export { EProtoType } from './Server/ProtoFilter/IProtoFilter';
 export { GoogleProtoFilter } from './Server/ProtoFilter/GoogleProtoFilter';
