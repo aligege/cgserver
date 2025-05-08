@@ -45,19 +45,24 @@ export class IServerWebSocket extends IWebSocket
     {
         return this._extraRequestOptions
     }
-
+    protected _wss:boolean=false
+    get wss()
+    {
+        return this._wss
+    }
     protected _need_close:boolean=false
     constructor(protoType=EProtoType.Json,protoPath="")
     {
         super(protoType,protoPath)
     }
-    connect(domain:string,
+    connect(wss:boolean,domain:string,
         port:number,
         requestedProtocols: string | string[]=null,
         origin: string=null,
         headers: http.OutgoingHttpHeaders=null,
         extraRequestOptions: http.RequestOptions=null)
     {
+        this._wss = wss
         this._host = domain || this._host
         this._port = port || this._port
         this._requestedProtocols = requestedProtocols || this._requestedProtocols
@@ -68,7 +73,7 @@ export class IServerWebSocket extends IWebSocket
     }
     protected _connect()
     {
-        let url = "ws://" + this._host + ":" + this._port + "/"
+        let url = (this._wss ? "wss://" : "ws://") + this._host + ":" + this._port + "/"
         gLog.info("Trying to connect to server : " + url)
         let _ws = new ws.client()
         _ws.on("connect",this.onConnect.bind(this))

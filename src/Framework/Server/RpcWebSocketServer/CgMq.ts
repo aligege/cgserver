@@ -102,6 +102,7 @@ export class RpcConfig
     timeout=0
     host=""
     port=-1
+    wss=false
 }
 export class CgMq
 {
@@ -159,7 +160,7 @@ export class CgMq
         }
         return new Promise<boolean>(async (resolve,reject)=>
         {
-            this._ws.connect(cfg.host,cfg.port)
+            this._ws.connect(cfg.wss,cfg.host,cfg.port)
             let pretime = Date.now()
             while(true)
             {
