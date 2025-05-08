@@ -1,7 +1,9 @@
-﻿import { AlipaySdkConfig } from "alipay-sdk";
+﻿import { ServerOptions } from "https";
 import { gLog } from "../Logic/Log";
 import { Config } from "./Config";
 import { DbConfig } from "./DbConfig";
+import * as log4js from "log4js";
+
 export enum ESessionType
 {
     Cache,
@@ -32,11 +34,7 @@ export class WebServerConfig
         onlyModule:"Web",
         defaults: { module:"Web",controller : "Index", action : "Index"}
     }
-    ssl:
-    {
-        key:string,
-        crt:string
-    }=null
+    httpsOption:ServerOptions<any, any>=null
     //默认不跨域
     cors:
     {
@@ -81,7 +79,7 @@ class WechatConfig
 }
 export class FrameworkConfig extends Config
 {
-    log=
+    log:log4js.Configuration=
     {
         appenders:  
         {

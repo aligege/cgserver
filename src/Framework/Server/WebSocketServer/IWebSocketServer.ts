@@ -2,17 +2,24 @@
 import * as fs from "fs";
 import * as http from "http";
 import * as https from "https";
-import { IServerConfig } from '../../Config/IServerConfig';
 import { BaseMsg } from './IWebSocket';
-import { Config } from '../../Config/Config';
 import { gCgServer } from '../../cgserver';
 import { gLog } from '../../Logic/Log';
 import { gEventTool } from '../../Logic/EventTool';
 import { IClientWebSocket } from './IClientWebSocket';
+import { Config } from '../../Config/Config';
+
+export class WebSocketServerConfig
+{
+    port:number=0
+    accepted_protocol:string|null=null
+    name:string=""
+    ssl_options?:https.ServerOptions<typeof http.IncomingMessage, typeof http.ServerResponse>=null
+}
 
 export class IWebSocketServer
 {
-    protected _cfg:IServerConfig=null
+    protected _cfg:WebSocketServerConfig=null
     //方便提示
     get cfg()
     {
@@ -26,7 +33,7 @@ export class IWebSocketServer
     }
     get name()
     {
-        return this._cfg.serverName
+        return this._cfg.name
     }
     //监听websocket
     private _listening_websocket:ws.server= null
@@ -44,10 +51,6 @@ export class IWebSocketServer
     {
         return this._cfg.port
     }
-    /**
-     * websocket can accepted protocol
-     */
-    protected _accepted_protocol=null
     //服务器管理相关
     /*
         item=servername:class
@@ -61,7 +64,7 @@ export class IWebSocketServer
         }
         this._name_vs_class[name] = cls
     }
-    constructor(cfg:IServerConfig)
+    constructor(cfg:WebSocketServerConfig)
     {
         this._cfg=cfg
     }
@@ -73,10 +76,6 @@ export class IWebSocketServer
     async run()
     {
         gCgServer.addWebSocketServer(this)
-        if(this._cfg.db)
-        {
-            await gCgServer.initDb(this._cfg.db)
-        }
         this.initWebSocket()
     }
     pause()
@@ -116,18 +115,14 @@ export class IWebSocketServer
         }
         return true
     }
-    initWebSocket(wss?)
+    initWebSocket()
     {
         let server = null
-        if(wss)
+        if(this._cfg.ssl_options)
         {
-            let options =
-            {
-                key:fs.readFileSync(Config.rootDataDir+"ssl/ssl2.key"),
-                cert: fs.readFileSync(Config.rootDataDir+"ssl/ssl2.crt"),
-                //passphrase:'1234'//如果秘钥文件有密码的话，用这个属性设置密码
-            }
-            server = https.createServer(options,(request, response)=>
+            this._cfg.ssl_options.key = fs.readFileSync(Config.rootDataDir+this._cfg.ssl_options.key)
+            this._cfg.ssl_options.cert = fs.readFileSync(Config.rootDataDir+this._cfg.ssl_options.cert)
+            server = https.createServer(this._cfg.ssl_options,(request, response)=>
             {
                 gLog.info((new Date()) + 'wss Received request for ' + request.url)
                 response.writeHead(200)
@@ -166,7 +161,15 @@ export class IWebSocketServer
     {
         this._is_runging=true
         gEventTool.emit("socket_server_init_done")
-        let info = (new Date()) + "  Server "+ this.name +" is listening on port "+this._cfg.port
+        let info=""
+        if(this._cfg.ssl_options)
+        {
+            info = (new Date()) + "  wss://"+ this.name +":"+this._cfg.port
+        }
+        else
+        {    
+            info = (new Date()) + "  ws://"+ this.name +":"+this._cfg.port
+        }
         gLog.info(info)
     }
     onRequest(req:ws.request)
@@ -191,7 +194,7 @@ export class IWebSocketServer
         }
         try
         {
-            let conn = req.accept(this._accepted_protocol, req.origin)
+            let conn = req.accept(this._cfg.accepted_protocol, req.origin)
             if(!conn)
             {
                 gLog.error(' protocol reject')

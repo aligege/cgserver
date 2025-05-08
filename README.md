@@ -1,5 +1,10 @@
 # 版本更新日志
 
+## v12.3.0
+- 中型版本更新
+- webserver websocketserver socketserver均取消默认数据库初始化，打算还是剥离
+- websocketserver支持更强大的ssl配置
+
 ## v12.2.7
 - redis 轻微更新，无实际影响
 

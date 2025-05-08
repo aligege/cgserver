@@ -5,7 +5,6 @@ import { gCgServer } from '../../cgserver';
 import { gEventTool } from '../../Logic/EventTool';
 import { gLog } from '../../Logic/Log';
 import { DbConfig } from '../../index_export_';
-import { gServerCfg } from '../../Config/IServerConfig';
 
 //实现对controller的手动注册
 export class IWebServer
@@ -22,14 +21,6 @@ export class IWebServer
         {
             gLog.error("webserver 配置不存在，启动服务器失败")
             return false
-        }
-        if(!dbcfg&&gServerCfg)
-        {
-            dbcfg=gServerCfg.db
-        }
-        if(dbcfg)
-        {
-            await gCgServer.initDb(dbcfg)
         }
         //初始化web引擎
         this._engine = new Engine(cfg,new RazorJs())

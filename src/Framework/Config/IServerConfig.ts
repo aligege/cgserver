@@ -3,7 +3,6 @@ import { FrameworkConfig } from './FrameworkConfig';
 
 export class IServerConfig extends FrameworkConfig
 {
-    port=-1
     protected _server_name=""
     get serverName()
     {

@@ -53,7 +53,7 @@ export { IProtoFilter } from './Server/ProtoFilter/IProtoFilter';
 export { JsonProtoFilter } from './Server/ProtoFilter/JsonProtoFilter';
 export { IServerWebSocket } from './Server/WebSocketServer/IServerWebSocket';
 export { IClientWebSocket } from './Server/WebSocketServer/IClientWebSocket';
-export { IWebSocketServer } from './Server/WebSocketServer/IWebSocketServer';
+export { IWebSocketServer,WebSocketServerConfig } from './Server/WebSocketServer/IWebSocketServer';
 export { IWebSocket,BaseMsg } from './Server/WebSocketServer/IWebSocket';
 export { IWebServer } from './Server/WebServer/IWebServer';
 export { BaseController } from './Server/WebServer/Controller/BaseController';
@@ -78,7 +78,7 @@ export { EAccountState } from './Service/ini';
 export { IClientSocket } from './Server/SocketServer/IClientSocket';
 export { IServerSocket } from './Server/SocketServer/IServerSocket';
 export { ISocket } from './Server/SocketServer/ISocket';
-export { ISocketServer } from './Server/SocketServer/ISocketServer';
+export { ISocketServer,SocketServerConfig } from './Server/SocketServer/ISocketServer';
 export { PacketParser } from './Server/SocketServer/PacketParser';
 
 

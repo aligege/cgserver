@@ -47,13 +47,12 @@ export class Engine
             gLog.error(this._cfg)
             return
         }
-        if(this._cfg.ssl)
+        if(this._cfg.httpsOption)
         {
-            const httpsOption = {
-                key : fs.readFileSync(Config.rootDataDir+this._cfg.ssl.key),
-                cert: fs.readFileSync(Config.rootDataDir+this._cfg.ssl.crt)
-            }
-            https.createServer(httpsOption, this._app).listen(port,()=>{
+
+            this._cfg.httpsOption.key = fs.readFileSync(Config.rootDataDir+this._cfg.httpsOption.key)
+            this._cfg.httpsOption.cert = fs.readFileSync(Config.rootDataDir+this._cfg.httpsOption.cert)
+            https.createServer(this._cfg.httpsOption, this._app).listen(port,()=>{
                 this._is_running=true
                 gLog.info("Server("+this._cfg.web_name+") running at https://127.0.0.1:" + port + "/")
             });

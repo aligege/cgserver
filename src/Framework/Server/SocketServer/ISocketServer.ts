@@ -1,13 +1,17 @@
-﻿import { IServerConfig } from '../../Config/IServerConfig';
-import { BaseMsg } from './ISocket';
+﻿import { BaseMsg } from './ISocket';
 import { gCgServer } from '../../cgserver';
 import { gLog } from '../../Logic/Log';
 import { gEventTool } from '../../Logic/EventTool';
 import * as net from 'net';
 import { IClientSocket } from './IClientSocket';
+export class SocketServerConfig
+{
+    port:number=0
+    name:string=""
+}
 export class ISocketServer
 {
-    protected _cfg:IServerConfig=null
+    protected _cfg:SocketServerConfig=null
     //方便提示
     get cfg()
     {
@@ -21,7 +25,7 @@ export class ISocketServer
     }
     get name()
     {
-        return this._cfg.serverName
+        return this._cfg.name
     }
     //监听websocket
     private _server:net.Server= null
@@ -48,7 +52,7 @@ export class ISocketServer
     {
         this._cls=cls
     }
-    constructor(cfg:IServerConfig)
+    constructor(cfg:SocketServerConfig)
     {
         this._cfg=cfg
     }
@@ -60,10 +64,6 @@ export class ISocketServer
     async run()
     {
         gCgServer.addSocketServer(this)
-        if(this._cfg.db)
-        {
-            await gCgServer.initDb(this._cfg.db)
-        }
         this.initSocket()
     }
     pause()
@@ -113,7 +113,7 @@ export class ISocketServer
     {
         this._is_runging=true
         gEventTool.emit("socket_server_init_done")
-        let info = (new Date()) + "  Server "+ this.name +" is listening on port "+this._cfg.port
+        let info = (new Date()) + "  SocketServer "+ this.name +" is listening on port "+this._cfg.port
         gLog.info(info)
     }
     onConnection(socket:net.Socket)
