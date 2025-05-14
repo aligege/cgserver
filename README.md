@@ -1,5 +1,8 @@
 # 版本更新日志
 
+## v12.3.2
+- get 请求的参数修正
+
 ## v12.3.1
 - bugfix
 - serverwebsocket支持wss

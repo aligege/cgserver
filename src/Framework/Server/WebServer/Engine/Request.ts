@@ -201,10 +201,7 @@ export class Request
         let quote_index = path.indexOf("?")
         if (quote_index >= 0)
         {
-            let url = new URL(path)
-            url.searchParams.forEach((value, name, searchParams) => {
-                this._params[name]=value
-            })
+            this._params=this._req.query||{}
             path = path.substring(0, quote_index)
         }
         let params = path.split("/")
