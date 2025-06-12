@@ -72,7 +72,7 @@
     "protobufjs": "^7.2.6",
     "qiniu": "^7.11.0",
     "readline2": "^1.0.1",
-    "redis": "^4.7.0",
+    "redis": "^5.0.1",
     "reflect-metadata": "^0.2.2",
     "request": "^2.88.2",
     "socket.io": "^4.7.4",
