@@ -1,11 +1,10 @@
 ﻿import * as redis from 'redis';
 import { gLog } from '../../Logic/Log';
 
-type RedisClientType = redis.RedisClientType<redis.RedisDefaultModules&redis.RedisModules,redis.RedisFunctions,redis.RedisScripts>
 export type RedisConfig = {open:boolean}&redis.RedisClientOptions
 export class RedisManager
 {
-    protected _redis:RedisClientType = null
+    protected _redis:redis.RedisClientType = null
     get redis()
     {
         return this._redis
@@ -25,7 +24,7 @@ export class RedisManager
             }
             this._redisCfg=redisCfg
             gLog.info("begin connect redis="+JSON.stringify(redisCfg))
-            this._redis = redis.createClient(redisCfg)
+            this._redis = redis.createClient(redisCfg) as redis.RedisClientType
             this._redis.on("connect", ()=>
             {
                 this.onConnect()

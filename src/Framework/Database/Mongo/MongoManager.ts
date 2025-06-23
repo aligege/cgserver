@@ -776,6 +776,7 @@ export class MongoExt
     }
     async findOneAndUpdate(collection:string,filter:any,update:any,options?:mongo.FindOneAndUpdateOptions):Promise<any>
     {
+        this._convertWhere(filter)
         let now = Date.now()
         let dt = 0
         if(!this._mongoDb)

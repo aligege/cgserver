@@ -135,14 +135,14 @@ export class AlipayTool
      * @param notifyData 回调数据
      * @returns 验证结果
      */
-    async verifyNotify(notifyData: AlipayCallbackInfo): Promise<boolean> {
+    async verifyNotify(notifyData: AlipayCallbackInfo,raw?:boolean): Promise<boolean> {
         try {
             if (!this._alipaySdk) {
                 return false;
             }
 
             // 验证签名
-            const signValid = await this._alipaySdk.checkNotifySign(notifyData);
+            const signValid = await this._alipaySdk.checkNotifySign(notifyData,raw);
             if (!signValid) {
                 gLog.error({tip:'支付宝回调签名验证失败'});
                 return false;

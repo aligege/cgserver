@@ -91,7 +91,7 @@ export class MongoBaseUserController<T extends MongoUserModel> extends BaseContr
         }
         if(this._engine.cfg.session_type==ESessionType.Redis)
         {
-            let user_id = parseInt((await gRedisMgr.redis.get(this._session_id))||"-1")
+            let user_id = +(await gRedisMgr.redis.get(this._session_id)).toString()
             if(user_id>0)
             {
                 user = <T>(await this._userser.getById(user_id))
