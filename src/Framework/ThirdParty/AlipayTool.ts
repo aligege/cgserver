@@ -44,7 +44,38 @@ export interface AlipayAppPayParams {
     ext_user_info?: AlipayExtUserInfo; // 用户信息
     query_options?: string[]; // 查询选项
 }
-
+export interface FundBillListItem{
+    amount:string //金额
+    fundChannel:string //资金渠道
+}
+export interface AlipayCallbackInfo{
+    gmt_create:string
+    charset:string
+    seller_email:string
+    subject:string
+    sign:string
+    buyer_id:string
+    invoice_amount:string
+    notify_id:string
+    fund_bill_list:string
+    notify_type:string
+    //TRADE_SUCCESS
+    trade_status:string
+    receipt_amount:string
+    buyer_pay_amount:string
+    app_id:string
+    sign_type:string
+    seller_id:string
+    gmt_payment:string
+    notify_time:string
+    version:string
+    out_trade_no:string
+    total_amount:string
+    trade_no:string
+    auth_app_id:string
+    buyer_logon_id:string
+    point_amount:string
+}
 export enum EAlipayExecType
 {
     exec,
@@ -104,7 +135,7 @@ export class AlipayTool
      * @param notifyData 回调数据
      * @returns 验证结果
      */
-    async verifyNotify(notifyData: any): Promise<boolean> {
+    async verifyNotify(notifyData: AlipayCallbackInfo): Promise<boolean> {
         try {
             if (!this._alipaySdk) {
                 return false;
