@@ -24,7 +24,7 @@ export function SyncCallServer(target: any, propertyName: string, descriptor: Ty
                 item = await gMongoCacheSer.getData(key)
             }
             //10秒后过期，避免卡死
-            let mcm = await gMongoCacheSer.addData(key,true,Date.now()+10*1000)
+            let mcm = await gMongoCacheSer.addData(key,true,new Date(Date.now()+10*1000))
             if(!mcm)
             {
                 await func()
@@ -68,7 +68,7 @@ export let SyncCallServer2=function(params_index?:number)
                     item = await gMongoCacheSer.getData(key)
                 }
                 //10秒后过期，避免卡死
-                let mcm = await gMongoCacheSer.addData(key,true,Date.now()+10*1000)
+                let mcm = await gMongoCacheSer.addData(key,true,new Date(Date.now()+10*1000))
                 if(!mcm)
                 {
                     await func()

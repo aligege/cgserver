@@ -57,7 +57,6 @@ export { IWebSocketServer,WebSocketServerConfig } from './Server/WebSocketServer
 export { IWebSocket,BaseMsg } from './Server/WebSocketServer/IWebSocket';
 export { IWebServer } from './Server/WebServer/IWebServer';
 export { BaseController } from './Server/WebServer/Controller/BaseController';
-export { MysqlBaseUserController } from './Server/WebServer/Controller/MysqlBaseUserController';
 export { MongoBaseUserController } from './Server/WebServer/Controller/MongoBaseUserController';
 export { MysqlAccountModel } from './Service/MysqlAccountService';
 export { MongoAccountModel } from './Service/MongoAccountService';

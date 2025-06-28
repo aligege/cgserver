@@ -172,11 +172,7 @@ export class MongoBaseUserController<T extends MongoUserModel> extends BaseContr
         }
         else if(this._engine.cfg.session_type==ESessionType.Mongo)
         {
-            let cm = new MongoCacheModel()
-            cm.key=this._session_id
-            cm.data=user.id
-            cm.expireAt=Date.now()+time*1000
-            gMongoCacheSer.updateOne({key:cm.key},cm,{upsert:true})
+            gMongoCacheSer.addData(this._session_id,user.id,new Date(Date.now()+time*1000))
         }
         this._self_user = user
     }
