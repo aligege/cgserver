@@ -5,7 +5,7 @@ class CacheItem
     key:string = ""
     value:any=null
     milliseconds:number=0
-    expire_time=-1
+    expire_time:Date=new Date()
 }
 export class CacheTool
 {
@@ -31,28 +31,28 @@ export class CacheTool
                 delete this._items[key]
                 continue
             }
-            if(time>item.expire_time)
+            if(time>item.expire_time.getTime())
             {
                 this.remove(key)
             }
         }
     }
-    get(key,refresh?:boolean)
+    get(key:string,refresh?:boolean)
     {
         let item:CacheItem = this._items[key]
         if(!item)
         {
             return
         }
-        let time = new Date().getTime()
-        if(time>item.expire_time)
+        let now = new Date().getTime()
+        if(now>item.expire_time.getTime())
         {
             this.remove(key)
             return
         }
         if(refresh)
         {
-            item.expire_time=time+item.milliseconds
+            item.expire_time=new Date(now+item.milliseconds)
         }
         return item.value
     }
@@ -62,7 +62,7 @@ export class CacheTool
      * @param value 
      * @param time 缓存的毫秒数
      */
-    add(key,value,milliseconds)
+    add(key:string,value:any,milliseconds:number)
     {
         let item:CacheItem = this._items[key]
         if(!item)
@@ -73,9 +73,9 @@ export class CacheTool
         }
         item.value = value
         item.milliseconds = milliseconds
-        item.expire_time = new Date().getTime()+milliseconds
+        item.expire_time = new Date(Date.now()+milliseconds)
     }
-    remove(key)
+    remove(key:string)
     {
         this._items[key] = null
         delete this._items[key]
