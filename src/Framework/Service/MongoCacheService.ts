@@ -7,7 +7,7 @@ export class MongoCacheModel extends MongoBaseModel
 {
     key:string=""
     data=null
-    expireAt=Date.now()+365*24*60*60*1000
+    expireAt=new Date(Date.now()+365*24*60*60*1000)
 }
 /**
  * mongo版本的缓存服务
@@ -22,14 +22,18 @@ export class MongoCacheService extends MongoBaseService<MongoCacheModel>
         {
             return null
         }
+        if(cm.expireAt.getTime()<Date.now())
+        {
+            return null
+        }
         return cm.data
     }
-    async addData(key:string,data:any,expireAt=Date.now()+365*24*60*60*1000)
+    async addData(key:string,data:any,expire_at_milli=Date.now()+365*24*60*60*1000)
     {
         let mcm = new MongoCacheModel()
         mcm.key=key
         mcm.data=data
-        mcm.expireAt=expireAt
+        mcm.expireAt=new Date(expire_at_milli)
         let rs = await this.updateOne({key:mcm.key},mcm,{upsert:true})
         if(rs.rs.upsertedCount<=0)
         {
