@@ -15,20 +15,6 @@ export class MongoCacheModel extends MongoBaseModel
  */
 export class MongoCacheService extends MongoBaseService<MongoCacheModel>
 {
-    constructor(table:string,type: { new(): MongoCacheModel},dbname="")
-    {
-        super(table,type,dbname)
-        gCgServer.addListener("start",()=>
-        {
-            if(!this.mongoDb)
-            {
-                //客户端未开启mongo
-                return
-            }
-            this.createIndex({key:1})
-            this.createIndex( { expireAt: 1 }, { expireAfterSeconds: 0 } )
-        })
-    }
     async getData(key:string)
     {
         let cm:MongoCacheModel = await this.findOne({key:key})
