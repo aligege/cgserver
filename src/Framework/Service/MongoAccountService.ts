@@ -1,13 +1,13 @@
-﻿import mongoose from 'mongoose';
+﻿import mongoose, { Types } from 'mongoose';
 import { EErrorCode, Errcode } from '../Config/_error_';
-import { MongoBaseService } from '../Database/Mongo/MongoBaseService';
+import { IMongoBaseModel, MongoBaseService } from '../Database/Mongo/MongoBaseService';
 import { gCacheTool } from '../Logic/CacheTool';
 import { gQQTool } from '../ThirdParty/QQTool';
 import { gWechatTool } from '../ThirdParty/WechatTool';
 import { EAccountFrom, EAccountState } from './ini';
 import { IMongoUserModel, MongoUserService } from './MongoUserService';
 
-export interface IMongoAccountModel extends mongoose.Document
+export interface IMongoAccountModel extends IMongoBaseModel
 {
     phone:string
     email:string
@@ -176,7 +176,7 @@ export class MongoAccountService<T extends IMongoAccountModel> extends MongoBase
         if(force_user)
         {
             let userser = this.userService
-            let user = await userser.findOne({account_id:account.id})
+            let user = await userser.findOne({account_id:account._id.toString()})
             if(!user)
             {
                 switch(from)
@@ -228,10 +228,10 @@ export class MongoAccountService<T extends IMongoAccountModel> extends MongoBase
                                 }
                             }
                         }
-                        let user = await userser.add(account.id,extra_info.nickname,extra_info.sex,extra_info.logo)
+                        let user = await userser.add(account._id.toString(),extra_info.nickname,extra_info.sex,extra_info.logo)
                         if(!user)
                         {
-                            this.deleteOne({id:account.id})
+                            this.deleteOne({id:account._id.toString()})
                             rs.errcode=EErrorCode.User_Create_Failed
                             return rs
                         }
@@ -243,15 +243,15 @@ export class MongoAccountService<T extends IMongoAccountModel> extends MongoBase
                         let user:IMongoUserModel = null
                         if(extra_info)
                         {
-                            user = await userser.add(account.id,extra_info.nickname,extra_info.sex,extra_info.logo)
+                            user = await userser.add(account._id.toString(),extra_info.nickname,extra_info.sex,extra_info.logo)
                         }
                         else
                         {
-                            user = await userser.add(account.id)
+                            user = await userser.add(account._id.toString())
                         }
                         if(!user)
                         {
-                            this.deleteOne({id:account.id})
+                            this.deleteOne({_id:account._id})
                             rs.errcode=EErrorCode.User_Create_Failed
                             return rs
                         }
@@ -268,7 +268,7 @@ export class MongoAccountService<T extends IMongoAccountModel> extends MongoBase
         }
         account.login_time=new Date()
         account.login_ip=ip
-        await account.save()
+        this.updateOne({_id:account._id},{$set:{login_time:account.login_time,login_ip:account.login_ip}})
         rs.account = account
         return rs
     }

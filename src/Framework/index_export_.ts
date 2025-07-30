@@ -25,9 +25,9 @@ export { Table } from './Database/Decorator/Table';
 export { Type } from './Database/Decorator/Type';
 export { EPropertyType } from './Database/Decorator/Property';
 ///数据库相关
-export { MongoBaseService } from './Database/Mongo/MongoBaseService';
+export { IMongoBaseModel,MongoBaseService } from './Database/Mongo/MongoBaseService';
 export { BaseModel as MysqlBaseModel } from './Database/Mysql/MysqlBaseService';
-export { IMongoBaseModel,MongoManager,MongoExt } from './Database/Mongo/MongoManager';
+export { MongoManager,MongoExt } from './Database/Mongo/MongoManager';
 export { MysqlBaseService } from './Database/Mysql/MysqlBaseService';
 export { SqlReturn,SqlReturns } from './Database/Mysql/MysqlManager';
 

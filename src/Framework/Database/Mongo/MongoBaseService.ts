@@ -2,8 +2,12 @@ import mongoose, { Document, FilterQuery, UpdateQuery, Types, mongo, MongooseQue
 import { EErrorCode, Errcode } from '../../Config/_error_';
 import { gLog } from '../../Logic/Log';
 import { gMongoMgr } from './MongoManager';
-
-export class MongoBaseService<T extends Document>
+export interface IMongoBaseModel
+{
+    _id: any; // 使用ObjectId作为主键
+    id: any;
+}
+export class MongoBaseService<T extends IMongoBaseModel>
 {
     protected _model: mongoose.Model<T>;
     protected _schema: mongoose.Schema<T>;
@@ -43,8 +47,9 @@ export class MongoBaseService<T extends Document>
         {
             throw new Error("Model is not defined");
         }
-        let one = await this.model.findOne(filter, projection, options).lean()
-        return one as T | null;
+        let one = await this.model.findOne(filter, projection, options).lean() as T | null;
+        this._convertId(one);
+        return one;
     }
 
     async find(filter?: FilterQuery<T>, projection?: mongoose.ProjectionType<T>, options?: MongooseQueryOptions): Promise<T[]>
@@ -55,6 +60,9 @@ export class MongoBaseService<T extends Document>
             throw new Error("Model is not defined");
         }
         let list = await this.model.find(filter, projection, options).lean() as T[];
+        list.forEach(one => {
+            this._convertId(one);
+        });
         return list;
     }
 
@@ -64,7 +72,9 @@ export class MongoBaseService<T extends Document>
         {
             throw new Error("Model is not defined");
         }
-        return await this.model.findById(id, projection, options) as T | null;
+        let one = await this.model.findById(id, projection, options).lean() as T | null;
+        this._convertId(one);
+        return one;
     }
 
     async create(doc: Partial<T>): Promise<T>
@@ -200,8 +210,9 @@ export class MongoBaseService<T extends Document>
         {
             throw new Error("Model is not defined");
         }
-        let rs = await this.model.findOneAndUpdate(filter, update, options)
-        return rs
+        let one = await this.model.findOneAndUpdate(filter, update, options).lean() as T | null;
+        this._convertId(one);
+        return one
     }
 
     async countDocuments(filter?: FilterQuery<T>): Promise<number>
@@ -230,6 +241,22 @@ export class MongoBaseService<T extends Document>
             delete filter.id;
         }
         return filter;
+    }
+    protected _convertId(one:T|null)
+    {
+        if(!one)
+        {
+            return one;
+        }
+        if(typeof one._id === 'object' && one._id instanceof Types.ObjectId)
+        {
+            one.id = one._id.toString();
+        }
+        else
+        {
+            one.id = one._id;
+        }
+        return one;
     }
 
     async getAutoIds(): Promise<number>

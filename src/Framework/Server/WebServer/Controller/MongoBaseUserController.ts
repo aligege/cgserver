@@ -17,7 +17,7 @@ export class MongoBaseUserController<T extends IMongoUserModel> extends BaseCont
     }
     get isSelf()
     {
-        return this._self_user && (this._self_user.id == this._user.id)
+        return this._self_user && (this._self_user._id == this._user._id)
     }
     get isLogin()
     {
@@ -32,7 +32,7 @@ export class MongoBaseUserController<T extends IMongoUserModel> extends BaseCont
         let userSer = this.userService
         this._engine.cfg.session_type=this._engine.cfg.session_type||ESessionType.Cache
         this._session_id = this._request.getCookie(this._user_session_id)||this._request.params.session_id||this._request.postData.session_id
-        let userId = ""
+        let userId = 0
         if (this._session_id)
         {
             let user = await this._getUserBySession(this._session_id)
@@ -123,7 +123,7 @@ export class MongoBaseUserController<T extends IMongoUserModel> extends BaseCont
         }
         if(!this._session_id)
         {
-            this._session_id = Math.random().toString(36).substring(2)+user.id
+            this._session_id = Math.random().toString(36).substring(2)+user._id
         }
         let time = 0
         if(this._request.postData.remember=="on")
@@ -156,7 +156,7 @@ export class MongoBaseUserController<T extends IMongoUserModel> extends BaseCont
         }
         else if(this._engine.cfg.session_type==ESessionType.Mongo)
         {
-            gMongoCacheSer.addData(this._session_id,user.id,new Date(Date.now()+time*1000))
+            gMongoCacheSer.addData(this._session_id,user._id,new Date(Date.now()+time*1000))
         }
         this._self_user = user
     }
@@ -170,11 +170,11 @@ export class MongoBaseUserController<T extends IMongoUserModel> extends BaseCont
     async update_user(user_id:string)
     {
         let user = <T>(await this.userService.findById(user_id))
-        if(this._user&&this._user.id==user.id)
+        if(this._user&&this._user._id==user._id)
         {
             this._user = user
         }
-        if(this._self_user&&this._self_user.id==user.id)
+        if(this._self_user&&this._self_user._id==user._id)
         {
             this._login(user)
         }

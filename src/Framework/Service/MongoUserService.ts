@@ -1,9 +1,9 @@
 ﻿import * as _ from "underscore";
-import { MongoBaseService } from "../Database/Mongo/MongoBaseService";
+import { IMongoBaseModel, MongoBaseService } from "../Database/Mongo/MongoBaseService";
 import mongoose from "mongoose";
 import { EUserState } from "./ini";
 
-export interface IMongoUserModel extends mongoose.Document
+export interface IMongoUserModel extends IMongoBaseModel
 {
     account_id:string
     state:EUserState

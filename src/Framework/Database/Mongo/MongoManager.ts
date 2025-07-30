@@ -12,10 +12,6 @@ export class MongoConfig
     //决定是否显示mongo的执行时间等日志
     debug=false
 }
-export interface IMongoBaseModel extends mongoose.Document
-{
-
-}
 export class MrResult
 {
     /**

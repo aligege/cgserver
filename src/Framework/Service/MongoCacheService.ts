@@ -1,8 +1,8 @@
 import mongoose from "mongoose"
-import { MongoBaseService } from "../Database/Mongo/MongoBaseService"
+import { IMongoBaseModel, MongoBaseService } from "../Database/Mongo/MongoBaseService"
 
 //暂时就用这个了，反正没啥用户
-export interface IMongoCacheModel extends mongoose.Document
+export interface IMongoCacheModel extends IMongoBaseModel
 {
     key:string
     data:any
