@@ -63,27 +63,47 @@ export class Log
         }
         return message
     }
-    error(message?: any)
+    error(message: any,obj?: any)
     {
+        if(obj)
+        {
+            message = {key: message, value: obj}
+        }
         message=this._convertMsg(message)
         this._error_logger?.error(message)
     }
-    info(message:any)
+    info(message: any,obj?: any)
     {
+        if(obj)
+        {
+            message = {key: message, value: obj}
+        }
         message=this._convertMsg(message)
         this._logger?.info(message)
     }
-    warn(message?: any)
+    warn(message: any,obj?: any)
     {
+        if(obj)
+        {
+            message = {key: message, value: obj}
+        }
         message=this._convertMsg(message)
         this._error_logger?.warn(message)
     }
-    record(message?: any)
+    record(message: any,obj?: any)
     {
+        if(obj)
+        {
+            message = {key: message, value: obj}
+        }
         this.info(message)
     }
-    clientLog(message?: any)
+    clientLog(message: any,obj?: any)
     {
+        if(obj)
+        {
+            message = {key: message, value: obj}
+        }
         message=this._convertMsg(message)
         this._client_logger?.info(message)
     }

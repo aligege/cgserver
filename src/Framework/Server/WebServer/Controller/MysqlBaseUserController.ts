@@ -1,8 +1,6 @@
 import { BaseController } from './BaseController';
 import { MysqlUserModel, GUserSer } from '../../../Service/MysqlUserService';
 import { ESessionType } from '../../../Config/FrameworkConfig';
-import { MongoCacheModel, gMongoCacheSer } from '../../../Service/MongoCacheService';
-import { ERoleGroup } from '../../../Service/ini';
 import { gCacheTool } from '../../../Logic/CacheTool';
 import { gRedisMgr } from '../../../Database/Redis/RedisManager';
 export class MysqlBaseUserController<T extends MysqlUserModel> extends BaseController
@@ -22,22 +20,6 @@ export class MysqlBaseUserController<T extends MysqlUserModel> extends BaseContr
     get isLogin()
     {
         return this._self_user&&true
-    }
-    get isCreator()
-    {
-        return this._self_user&&(this._self_user.role_group==ERoleGroup.Creator)
-    }
-    get isAdmin()
-    {
-        return this._self_user&&(this._self_user.role_group==ERoleGroup.Admin||this._self_user.role_group==ERoleGroup.Creator)
-    }
-    get isProxy()
-    {
-        return this._self_user&&(this._self_user.role_group==ERoleGroup.Proxy)
-    }
-    get isCommon()
-    {
-        return this._self_user&&(this._self_user.role_group==ERoleGroup.Common)
     }
     async init()
     {
@@ -94,14 +76,6 @@ export class MysqlBaseUserController<T extends MysqlUserModel> extends BaseContr
                 user = <T>(await GUserSer.getById(user_id))
             }
         }
-        else if(this._engine.cfg.session_type==ESessionType.Mongo)
-        {
-            let user_id = (await gMongoCacheSer.getData(this._session_id))||-1
-            if(user_id>0)
-            {
-                user = <T>(await GUserSer.getById(user_id))
-            }
-        }
         if(user)
         {
             this._login(user)
@@ -119,10 +93,6 @@ export class MysqlBaseUserController<T extends MysqlUserModel> extends BaseContr
             else if(this._engine.cfg.session_type==ESessionType.Redis)
             {
                 gRedisMgr.redis.del(this._session_id)
-            }
-            else if(this._engine.cfg.session_type==ESessionType.Mongo)
-            {
-                gMongoCacheSer.deleteOne({key:this._session_id})
             }
             this._session_id = null
         }
@@ -166,10 +136,6 @@ export class MysqlBaseUserController<T extends MysqlUserModel> extends BaseContr
             {
                 gRedisMgr.redis.expire(this._session_id,time)
             })
-        }
-        else if(this._engine.cfg.session_type==ESessionType.Mongo)
-        {
-            gMongoCacheSer.addData(this._session_id,user.id,new Date(Date.now()+time*1000))
         }
         this._self_user = user
     }

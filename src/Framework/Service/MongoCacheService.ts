@@ -1,23 +1,33 @@
+import mongoose from "mongoose"
 import { MongoBaseService } from "../Database/Mongo/MongoBaseService"
-import { MongoBaseModel } from "../Database/Mongo/MongoManager"
-import { gCgServer } from "../cgserver"
 
 //暂时就用这个了，反正没啥用户
-export class MongoCacheModel extends MongoBaseModel
+export interface IMongoCacheModel extends mongoose.Document
 {
-    key:string=""
-    data=null
-    expireAt=new Date(Date.now()+365*24*60*60*1000)
+    key:string
+    data:any
+    expireAt:Date
 }
+
+let mongoCacheSchema=new mongoose.Schema({
+    key:{type:String,required:true},
+    data:{type:Object,required:true},
+    expireAt:{type:Date,default:new Date(Date.now()+365*24*60*60*1000),require:true}
+})
+
 /**
  * mongo版本的缓存服务
  * 可以用来缓存kv数据
  */
-export class MongoCacheService extends MongoBaseService<MongoCacheModel>
+export class MongoCacheService extends MongoBaseService<IMongoCacheModel>
 {
+    constructor()
+    {
+        super("cache",mongoCacheSchema)
+    }
     async getData(key:string)
     {
-        let cm:MongoCacheModel = await this.findOne({key:key})
+        let cm:IMongoCacheModel = await this.findOne({key:key})
         if(!cm)
         {
             return null
@@ -28,19 +38,16 @@ export class MongoCacheService extends MongoBaseService<MongoCacheModel>
         }
         return cm.data
     }
-    async addData(key:string,data:any,expireAt=new Date(Date.now()+365*24*60*60*1000))
+    async addData(key:string,data:any,expireAt?:Date)
     {
-        let mcm = new MongoCacheModel()
-        mcm.key=key
-        mcm.data=data
-        mcm.expireAt=expireAt
-        let rs = await this.updateOne({key:mcm.key},mcm,{upsert:true})
-        if(rs.rs.upsertedCount<=0)
+        let m:Partial<IMongoCacheModel> = {key:key,data:data}
+        if(expireAt)
         {
-            return null
+            m.expireAt=expireAt
         }
-        return mcm
+        let rs = await this.insert(m)
+        return rs.model
     }
 }
 
-export let gMongoCacheSer=new MongoCacheService("cache",MongoCacheModel)
+export let gMongoCacheSer=new MongoCacheService()

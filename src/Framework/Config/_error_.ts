@@ -1,32 +1,42 @@
 export let EErrorCode:FrameworkErrorCode =null
+export class Errcode
+{
+    id:number
+    des:string
+    constructor(id:number,des:string)
+    {
+        this.id=id
+        this.des=des
+    }
+}
 /**
  * 1-100
  */
 export class FrameworkErrorCode
 {
-    Wrong_Params= { id: 1, des: "参数错误" }
-    Verify_failed= { id: 2, des: "验证失败" }
-    Account_Create_Failed = {id:3,des:"账号创建失败"}
-    User_Create_Failed = {id:4,des:"角色创建失败"}
-    Server_Error = {id:5,des:"服务器内部错误"}
-    No_Account = {id:6,des:"账户不存在"}
-    Mysql_Error = {id:7,des:"数据库异常"}
-    No_Mysql = {id:8,des:"未开通Mysql数据库"}
-    No_Mssql = {id:8,des:"未开通Mssql数据库"}
-    No_User = {id:9,des:"用户不存在"}
-    Account_Phone_Exist = {id:10,des:"电话已存在"}
-    Account_Email_Exist = {id:11,des:"邮箱已存在"}
-    Account_Name_Exist = {id:12,des:"账户名已存在"}
-    Account_Type_Error = {id:13,des:"账户类型错误"}
-    Email_Send_Failed = {id:14,des:"邮件发送失败"}
-    Login_Failed = {id:15,des:"登陆验证失败"}
-    Password_Too_Short = {id:16,des:"密码太短"}
-    Wrong_Phone = {id:17,des:"电话号码不正确"}
-    PhoneCode_Too_Quick = {id:18,des:"验证码获取过快，请稍后再试"}
-    PhoneCode_GetFailed = {id:19,des:"验证码获取失败"}
-    Wrong_Phone_Code = {id:20,des:"验证码不正确"}
-    No_Mongo = {id:21,des:"未开通Mongo数据库"}
-    Mongo_Error = {id:22,des:"Mongo数据库异常"}
+    Wrong_Params= new Errcode(1, "参数错误")
+    Verify_failed= new Errcode(2, "验证失败")
+    Account_Create_Failed = new Errcode(3, "账号创建失败")
+    User_Create_Failed = new Errcode(4, "角色创建失败")
+    Server_Error = new Errcode(5, "服务器内部错误")
+    No_Account = new Errcode(6, "账户不存在")
+    Mysql_Error = new Errcode(7, "数据库异常")
+    No_Mysql = new Errcode(8, "未开通Mysql数据库")
+    No_Mssql = new Errcode(8, "未开通Mssql数据库")
+    No_User = new Errcode(9, "用户不存在")
+    Account_Phone_Exist = new Errcode(10, "电话已存在")
+    Account_Email_Exist = new Errcode(11, "邮箱已存在")
+    Account_Name_Exist = new Errcode(12, "账户名已存在")
+    Account_Type_Error = new Errcode(13, "账户类型错误")
+    Email_Send_Failed = new Errcode(14, "邮件发送失败")
+    Login_Failed = new Errcode(15, "登陆验证失败")
+    Password_Too_Short = new Errcode(16, "密码太短")
+    Wrong_Phone = new Errcode(17, "电话号码不正确")
+    PhoneCode_Too_Quick = new Errcode(18, "验证码获取过快，请稍后再试")
+    PhoneCode_GetFailed = new Errcode(19, "验证码获取失败")
+    Wrong_Phone_Code = new Errcode(20, "验证码不正确")
+    No_Mongo = new Errcode(21, "未开通Mongo数据库")
+    Mongo_Error = new Errcode(22, "Mongo数据库异常")
     constructor(){}
 }
 EErrorCode=new FrameworkErrorCode()

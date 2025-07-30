@@ -1,177 +1,228 @@
-import { MongoBaseModel, gMongoMgr } from "./MongoManager";
-import * as mongo from 'mongodb';
-import { gMongoServiceMgr } from "./MongoServiceManager";
+import mongoose, { Document, FilterQuery, UpdateQuery, Types, mongo, MongooseQueryOptions } from 'mongoose';
+import { EErrorCode, Errcode } from '../../Config/_error_';
+import { gLog } from '../../Logic/Log';
+import { gMongoMgr } from './MongoManager';
 
-
-export class MongoBaseService<T extends MongoBaseModel>
+export class MongoBaseService<T extends Document>
 {
-    protected _table:string=""
-    get table()
+    protected _model: mongoose.Model<T>;
+    protected _schema: mongoose.Schema<T>;
+    protected _collection_name: string;
+    get model()
     {
-        return this._table
-    }
-    protected _inited=false
-    get isInited()
-    {
-        return this._inited
-    }
-    get mongoDb()
-    {
-        return gMongoMgr.getMongo(this._dbname)
-    }
-    protected _dbname=""
-    get dbname()
-    {
-        if(!this._dbname)
+        if(this._model)
         {
-            this._dbname=gMongoMgr.defdbname
+            return this._model
         }
-        return this._dbname
-    }
-    set dbname(db:string)
-    {
-        this._dbname=db
-    }
-    protected _t_type:{ new(): T}=null
-    constructor(table:string,type: { new(): T},dbname="")
-    {
-        this._t_type=type
-        this._table=table
-        this._dbname=dbname
-        gMongoServiceMgr.addService(this)
+        if(mongoose.connection.readyState !== 1)
+        {
+            gLog.error("MongoDB connection is not ready, please check the connection settings. Current state: " + mongoose.connection.readyState);
+            throw new Error("MongoDB connection is not ready");
+        }
+        let db = mongoose.connection.db
+        if(!db||db.databaseName=="test")
+        {
+            gLog.error("MongoDB connection is not valid, please check the connection settings.");
+            throw new Error("MongoDB connection is not valid");
+        }
+        this._model = mongoose.model<T>(this._collection_name, this._schema)
+        return this._model;
     }
 
-    async getNextId(key:string="")
+    constructor(collection_name: string, schema: mongoose.Schema<T>)
     {
-        if(!key)
+        this._collection_name = collection_name;
+        schema.set('collection', collection_name);
+        this._schema = schema;
+    }
+
+    async findOne(filter?: FilterQuery<T>, projection?: any, options?: any): Promise<T | null>
+    {
+        if (!this.model)
         {
-            key = this._table
+            throw new Error("Model is not defined");
         }
-        let id = await this.mongoDb.getAutoIds(this._table)
+        return await this.model.findOne(filter, projection, options) as T | null;
+    }
+
+    async find(filter?: FilterQuery<T>, projection?: mongoose.ProjectionType<T>, options?: MongooseQueryOptions): Promise<T[]>
+    {
+        if (!this.model)
+        {
+            throw new Error("Model is not defined");
+        }
+        return await this.model.find(filter, projection, options) as T[];
+    }
+
+    async findMany(filter?: FilterQuery<T>, projection?: any, options?: any, skip?: number, limit?: number): Promise<T[]>
+    {
+        if (!this.model)
+        {
+            throw new Error("Model is not defined");
+        }
+        let query = this.model.find(filter, projection, options);
+        if (skip !== undefined)
+        {
+            query = query.skip(skip);
+        }
+        if (limit !== undefined)
+        {
+            query = query.limit(limit);
+        }
+        return await query.exec() as T[];
+    }
+
+    async findById(id: string | Types.ObjectId, projection?: any, options?: any): Promise<T | null>
+    {
+        if (!this.model)
+        {
+            throw new Error("Model is not defined");
+        }
+        return await this.model.findById(id, projection, options) as T | null;
+    }
+
+    async create(doc: Partial<T>): Promise<T>
+    {
+        if (!this.model)
+        {
+            throw new Error("Model is not defined");
+        }
+        const newDoc = new this.model(doc);
+        return await newDoc.save() as T;
+    }
+
+    async insert(doc: Partial<T>): Promise<{ errcode: Errcode, model?: T }>
+    {
+        try
+        {
+            if (!this.model)
+            {
+                throw new Error("Model is not defined");
+            }
+            const newDoc = await this.model.insertOne(doc);
+            return { errcode: null, model: newDoc };
+        } catch (error)
+        {
+            gLog.error(arguments)
+            gLog.error("MongoDB insert error:", error.stack);
+            return { errcode: EErrorCode.Mongo_Error, model: null };
+        }
+    }
+
+    async updateOne(
+        filter: FilterQuery<T>,
+        update: UpdateQuery<T>,
+        options?: any
+    ): Promise<{ errcode?: Errcode,rs?:mongoose.UpdateResult }>
+    {
+        try
+        {
+            if (!this.model)
+            {
+                throw new Error("Model is not defined");
+            }
+            let rs = await this.model.updateOne(filter, update, options);
+            return { errcode: null,rs:rs };
+        } catch (error)
+        {
+            return { errcode: EErrorCode.Mongo_Error,rs:null };
+        }
+    }
+
+    async updateMany(
+        filter: FilterQuery<T>,
+        update: UpdateQuery<T>,
+        options?: any
+    ): Promise<{ errcode: null } | { errcode: any }>
+    {
+        try
+        {
+            if (!this.model)
+            {
+                throw new Error("Model is not defined");
+            }
+            await this.model.updateMany(filter, update, options);
+            return { errcode: null };
+        } catch (error)
+        {
+            return { errcode: error };
+        }
+    }
+
+    async deleteOne(filter: FilterQuery<T>): Promise<{ errcode: Errcode, rs?: mongoose.DeleteResult }>
+    {
+        try
+        {
+            if (!this.model)
+            {
+                throw new Error("Model is not defined");
+            }
+            let rs = await this.model.deleteOne(filter);
+            return { errcode: null, rs: rs };
+        } catch (error)
+        {
+            return { errcode: EErrorCode.Mongo_Error, rs: null };
+        }
+    }
+
+    async deleteMany(filter: FilterQuery<T>): Promise<{ errcode: null } | { errcode: any }>
+    {
+        try
+        {
+            if (!this.model)
+            {
+                throw new Error("Model is not defined");
+            }
+            await this.model.deleteMany(filter);
+            return { errcode: null };
+        } catch (error)
+        {
+            return { errcode: error };
+        }
+    }
+
+    async exists(filter: FilterQuery<T>): Promise<boolean>
+    {
+        if (!this.model)
+        {
+            throw new Error("Model is not defined");
+        }
+        const doc = await this.model.findOne(filter, { _id: 1 });
+        return !!doc;
+    }
+
+    // 用于聚合查询
+    aggregate(pipeline?: any[])
+    {
+        if (!this.model)
+        {
+            throw new Error("Model is not defined");
+        }
+        return this.model.aggregate(pipeline);
+    }
+
+    // findOneAndUpdate method for MongoDB operations
+    async findOneAndUpdate(filter: FilterQuery<T>, update: UpdateQuery<T>, options?: any): Promise<T | null>
+    {
+        if (!this.model)
+        {
+            throw new Error("Model is not defined");
+        }
+        return await this.model.findOneAndUpdate(filter, update, options) as unknown as T | null;
+    }
+
+    async countDocuments(filter?: FilterQuery<T>): Promise<number>
+    {
+        if (!this.model)
+        {
+            throw new Error("Model is not defined");
+        }
+        return await this.model.countDocuments(filter);
+    }
+
+    async getAutoIds(): Promise<number>
+    {
+        let id = await gMongoMgr.getMongo().getAutoIds(this.model.collection.name)
         return id
-    }
-    toObjectId(id:string)
-    {
-        return this.mongoDb.toObjectId(id)
-    }
-    /**
-     * 没有id(非_id)的表不能使用该函数
-     * @param id 
-     */
-    async getById(id:any)
-    {
-        let rs=await this.mongoDb.findOne(this._table,{id:id})
-        return rs.one as T
-    }
-    async findOne(where:{[key:string]:any}=null,property:{[key:string]:any}=null)
-    {
-        let rs = await this.mongoDb.findOne(this._table,where,property)
-        return rs.one as T
-    }
-    async findOneAndUpdate(where:{[key:string]:any}=null,update:any,options?:mongo.FindOneAndUpdateOptions)
-    {
-        let rs = await this.mongoDb.findOneAndUpdate(this._table,where,update,options)
-        return rs as T
-    }
-    async countDocuments(where:{[key:string]:any}=null,options?: mongo.CountDocumentsOptions)
-    {
-        let rs = await this.mongoDb.countDocuments(this._table,where)
-        return rs.count
-    }
-    async findMany(where:{[key:string]:any}=null,property=null,sort=null,skip=0,limit=0)
-    {
-        let rs = await this.mongoDb.findMany(this._table,where,property,sort,skip,limit)
-        return rs.list as T[]
-    }
-    async getRandoms(num:number,where:{[key:string]:any},property:{[key:string]:any}=null)
-    {
-        let rs = await this.mongoDb.simpleAggregate(this._table,where,property,null,num)
-        return rs.list as T[]
-    }
-    async updateOne(where:{[key:string]:any},model:any,options?:mongo.UpdateOptions)
-    {
-        let rs = await this.mongoDb.updateOne(this._table,where,model,options)
-        return rs
-    }
-    async updateMany(where:{[key:string]:any},model:any=null,options?:mongo.UpdateOptions)
-    {
-        let rs = await this.mongoDb.updateMany(this._table,where,model,options)
-        return rs
-    }
-    async insert(model:T)
-    {
-        let rs = await this.mongoDb.insertOne(this._table,model)
-        return rs
-    }
-    async deleteOne(where:any)
-    {
-        let rs = await this.mongoDb.deleteOne(this._table,where)
-        return rs
-    }
-    async deleteMany(where:any)
-    {
-        let rs = await this.mongoDb.deleteMany(this._table,where)
-        return rs
-    }
-    async createIndex(index:any,options?:mongo.CreateIndexesOptions)
-    {
-        let rs = await this.mongoDb.createIndex(this._table,index,options)
-        return rs
-    }
-    aggregate(pipeline?: Document[], options?: mongo.AggregateOptions)
-    {
-        let ret = this.mongoDb.aggregate(this._table,pipeline,options)
-        return ret
-    }
-    /**
-     * 仅仅支持一级
-     * @param array 数据名称 比如 items
-     * @param where 数组内赛选条件 比如 "items.id":1
-     * @param pre_match 数组上一级赛选条件 比如 "user_id":1
-     */
-    async getsInArray<T>(array:string,where?:{[key:string]:any},pre_match?:any)
-    {
-        let agg = this.aggregate()
-        if(pre_match)
-        {
-            agg=agg.match(pre_match)
-        }
-        agg=agg.unwind("$"+array)
-        if(where)
-        {
-            agg=agg.match(where)
-        }
-        let all = await agg.toArray()
-        let items:T[] = []
-        for(let i=0;i<all.length;++i)
-        {
-            items.push(all[i][array])
-        }
-        return items
-    }
-    /**
-     * 仅仅支持一级
-     * @param array 数据名称 比如 items
-     * @param where 数组内赛选条件 比如 "items.id":1
-     * @param pre_match 数组上一级赛选条件 比如 "user_id":1
-     */
-    async getInArray<T>(array:string,where?:{[key:string]:any},pre_match?:any)
-    {
-        let items = await this.getsInArray<T>(array,where,pre_match)
-        if(items.length<=0)
-        {
-            return null
-        }
-        return items[0]
-    }
-    async distinct(key:string|number,where:{[key:string]:any}={})
-    {
-        let rs = await this.mongoDb.distinct(this._table,key,where)
-        return rs
-    }
-    async bulkWrite(operations: mongo.AnyBulkWriteOperation<mongo.BSON.Document>[],options?: mongo.BulkWriteOptions)
-    {
-        let bwr = await this.mongoDb.bulkWrite(this._table,operations,options)
-        return bwr
     }
 }

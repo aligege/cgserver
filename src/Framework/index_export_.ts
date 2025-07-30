@@ -4,8 +4,6 @@ export { AliSmsConfig } from './ThirdParty/Alisms';
 
 export { CgRankTool,CgRankCommandItem,CgRankRankItem,CgRankRankData } from './ThirdParty/CgRankTool';
 
-export { MongoServiceManager } from './Database/Mongo/MongoServiceManager';
-
 export { AiObject } from "./AI/AiObject";
 export { AStar } from "./AI/Astar";
 export { BehaviorAI } from "./AI/BehaviorAI";
@@ -29,18 +27,18 @@ export { EPropertyType } from './Database/Decorator/Property';
 ///数据库相关
 export { MongoBaseService } from './Database/Mongo/MongoBaseService';
 export { BaseModel as MysqlBaseModel } from './Database/Mysql/MysqlBaseService';
-export { MongoBaseModel,MongoManager,MongoExt } from './Database/Mongo/MongoManager';
+export { IMongoBaseModel,MongoManager,MongoExt } from './Database/Mongo/MongoManager';
 export { MysqlBaseService } from './Database/Mysql/MysqlBaseService';
 export { SqlReturn,SqlReturns } from './Database/Mysql/MysqlManager';
 
-export { ERoleGroup,EUserState,EAccountFrom } from './Service/ini';
+export { EUserState,EAccountFrom } from './Service/ini';
 export { MysqlAccountService} from './Service/MysqlAccountService';
-export { MongoAccountService} from './Service/MongoAccountService';
+export { IMongoAccountModel,MongoAccountService} from './Service/MongoAccountService';
 export { MysqlUserService } from './Service/MysqlUserService';
 export { MongoUserService } from './Service/MongoUserService';
 export { MysqlUserModel } from './Service/MysqlUserService';
-export { MongoUserModel } from './Service/MongoUserService';
-export { MongoCacheModel,MongoCacheService } from './Service/MongoCacheService';
+export { IMongoUserModel } from './Service/MongoUserService';
+export { IMongoCacheModel,MongoCacheService } from './Service/MongoCacheService';
 export { DbConfig } from './Config/DbConfig';
 export { MSSqlConfig } from './Database/MSSql/MSSqlManager';
 export { MongoConfig } from './Database/Mongo/MongoManager';
@@ -59,13 +57,7 @@ export { IWebServer } from './Server/WebServer/IWebServer';
 export { BaseController } from './Server/WebServer/Controller/BaseController';
 export { MongoBaseUserController } from './Server/WebServer/Controller/MongoBaseUserController';
 export { MysqlAccountModel } from './Service/MysqlAccountService';
-export { MongoAccountModel } from './Service/MongoAccountService';
-export { AdminValidate } from './Decorator/AdminValidate';
-export { AuthorityValidate } from './Decorator/AuthorityValidate';
-export { CreatorValidate } from './Decorator/CreatorValidate';
-export { JsonAdminValidate } from './Decorator/JsonAdminValidate';
 export { JsonAuthorityValidate } from './Decorator/JsonAuthorityValidate';
-export { JsonCreatorValidate } from './Decorator/JsonCreatorValidate';
 export { Engine } from './Server/WebServer/Engine/Engine';
 export { RazorJs } from './Server/WebServer/Engine/RazorJs';
 export { Request } from './Server/WebServer/Engine/Request';

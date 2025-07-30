@@ -3,7 +3,6 @@ import { gByteTool } from "./Core/ByteTool"
 import { gDbCache } from "./Database/Decorator/DBCache"
 import { gMSSqlMgr } from "./Database/MSSql/MSSqlManager"
 import { gMongoMgr } from "./Database/Mongo/MongoManager"
-import { gMongoServiceMgr } from "./Database/Mongo/MongoServiceManager"
 import { gMysqlMgr } from "./Database/Mysql/MysqlManager"
 import { gCacheTool } from "./Logic/CacheTool"
 import { gEventTool } from "./Logic/EventTool"
@@ -28,7 +27,6 @@ import { gCgRankTool } from './ThirdParty/CgRankTool';
  * cg引擎的，全局对象
  */
 export class global {
-    static gMongoServiceMgr = gMongoServiceMgr
     static gCgServer = gCgServer
     static gDbCache = gDbCache
     static gTriggerMgr = gTriggerMgr

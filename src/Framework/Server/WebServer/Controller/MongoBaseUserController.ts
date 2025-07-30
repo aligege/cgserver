@@ -1,18 +1,16 @@
 import { BaseController } from './BaseController';
 import { ESessionType } from '../../../Config/FrameworkConfig';
-import { MongoCacheModel, gMongoCacheSer, } from '../../../Service/MongoCacheService';
-import { ERoleGroup } from '../../../Service/ini';
-import { MongoUserModel, MongoUserService } from '../../../Service/MongoUserService';
+import { gMongoCacheSer, } from '../../../Service/MongoCacheService';
 import { gCacheTool } from '../../../Logic/CacheTool';
 import { gRedisMgr } from '../../../Database/Redis/RedisManager';
-import { gMongoServiceMgr } from '../../../Database/Mongo/MongoServiceManager';
-export class MongoBaseUserController<T extends MongoUserModel> extends BaseController
+import { IMongoUserModel, MongoUserService } from '../../../Service/MongoUserService';
+
+export class MongoBaseUserController<T extends IMongoUserModel> extends BaseController
 {
     protected _user_session_id="user_session_id"
     protected _self_user:T=null
     protected _user:T=null//网页内容的所属，比如，查看别人的博客，那这个信息就是作者的
     protected _session_id:string=null
-    protected _userser:MongoUserService<MongoUserModel>=null
     get selfUser()
     {
         return <T>this._self_user
@@ -25,28 +23,16 @@ export class MongoBaseUserController<T extends MongoUserModel> extends BaseContr
     {
         return this._self_user&&true
     }
-    get isCreator()
+    get userService():MongoUserService<T>
     {
-        return this._self_user&&(this._self_user.role_group==ERoleGroup.Creator)
-    }
-    get isAdmin()
-    {
-        return this._self_user&&(this._self_user.role_group==ERoleGroup.Admin||this._self_user.role_group==ERoleGroup.Creator)
-    }
-    get isProxy()
-    {
-        return this._self_user&&(this._self_user.role_group==ERoleGroup.Proxy)
-    }
-    get isCommon()
-    {
-        return this._self_user&&(this._self_user.role_group==ERoleGroup.Common)
+        throw new Error("请重写userService方法");
     }
     async init()
     {
-        this._userser=gMongoServiceMgr.getService<MongoUserService<any>>("user")
+        let userSer = this.userService
         this._engine.cfg.session_type=this._engine.cfg.session_type||ESessionType.Cache
         this._session_id = this._request.getCookie(this._user_session_id)||this._request.params.session_id||this._request.postData.session_id
-        let userId = -1
+        let userId = ""
         if (this._session_id)
         {
             let user = await this._getUserBySession(this._session_id)
@@ -63,9 +49,9 @@ export class MongoBaseUserController<T extends MongoUserModel> extends BaseContr
             }
         }
         let params = this._request.params
-        if (params.userId && params.userId!=userId+"")
+        if (params.userId && params.userId!=userId)
         {
-            this._user = <T>(await this._userser.getById(params.userId))
+            this._user = <T>(await this.userService.findById(params.userId))
         }
         else
         {
@@ -80,8 +66,6 @@ export class MongoBaseUserController<T extends MongoUserModel> extends BaseContr
         {
             return user
         }
-        //每次强制从cache中先找，提高效率
-        //if(this._engine.cfg.session_type==ESessionType.Cache)
         {
             user= gCacheTool.get(this._session_id)
         }
@@ -91,10 +75,10 @@ export class MongoBaseUserController<T extends MongoUserModel> extends BaseContr
         }
         if(this._engine.cfg.session_type==ESessionType.Redis)
         {
-            let user_id = +(await gRedisMgr.redis.get(this._session_id)).toString()
-            if(user_id>0)
+            let user_id = (await gRedisMgr.redis.get(this._session_id)).toString()
+            if(user_id)
             {
-                user = <T>(await this._userser.getById(user_id))
+                user = <T>(await this.userService.findById(user_id))
             }
         }
         else if(this._engine.cfg.session_type==ESessionType.Mongo)
@@ -102,7 +86,7 @@ export class MongoBaseUserController<T extends MongoUserModel> extends BaseContr
             let user_id = (await gMongoCacheSer.getData(this._session_id))||-1
             if(user_id>0)
             {
-                user = <T>(await this._userser.getById(user_id))
+                user = <T>(await this.userService.findById(user_id))
             }
         }
         if(user)
@@ -183,9 +167,9 @@ export class MongoBaseUserController<T extends MongoUserModel> extends BaseContr
     {
 
     }
-    async update_user(user_id:number)
+    async update_user(user_id:string)
     {
-        let user = <T>(await this._userser.getById(user_id))
+        let user = <T>(await this.userService.findById(user_id))
         if(this._user&&this._user.id==user.id)
         {
             this._user = user

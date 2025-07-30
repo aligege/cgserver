@@ -1,6 +1,4 @@
-import { ERoleGroup } from "../Service/ini"
-
-export let JsonAuthorityValidate=function(rg?:ERoleGroup)
+export let JsonAuthorityValidate=function()
 {
     return function(target: any, propertyName: string, descriptor: TypedPropertyDescriptor<Function>) 
     {
@@ -11,11 +9,6 @@ export let JsonAuthorityValidate=function(rg?:ERoleGroup)
             if(!self.isLogin)
             {
                 self.showJson({errcode:{id:1,des:"未登陆"},err:"未登陆"})
-            }
-            if(rg&&self.selfUser.role_group!=rg)
-            {
-                self.showJson({errcode:{id:2,des:"权限不足"},err:"权限不足"})
-                return
             }
             return method.apply(this, arguments)
         }

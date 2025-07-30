@@ -4,7 +4,7 @@ import { PrimaryKey } from "../Database/Decorator/PrimaryKey";
 import { NotNull } from "../Database/Decorator/NotNull";
 import { EPropertyType } from "../Database/Decorator/Property";
 import { Type } from "../Database/Decorator/Type";
-import { ERoleGroup, EUserState } from "./ini";
+import { EUserState } from "./ini";
 
 export class MysqlUserModel extends BaseModel
 {
@@ -90,9 +90,8 @@ export class MysqlUserService<T extends MysqlUserModel> extends MysqlBaseService
         super(type)
         GUserSer = this
     }
-    protected async _createNewUser(account_id:number,nickname:string,sex:number,logo:string,group?:ERoleGroup)
+    protected async _createNewUser(account_id:number,nickname:string,sex:number,logo:string)
     {
-        group = group || ERoleGroup.Common
         let um = new this._t_type()
         um.account_id = account_id
         um.nickname = nickname
@@ -104,7 +103,6 @@ export class MysqlUserService<T extends MysqlUserModel> extends MysqlBaseService
         um.logo = logo||""
         um.account_id = account_id
         um.state = EUserState.Waitting
-        um.role_group = group
         um.role = 0
         //随机userid
         let id = 0
@@ -129,24 +127,15 @@ export class MysqlUserService<T extends MysqlUserModel> extends MysqlBaseService
         }
         return
     }
-    async add(account_id:number,nickname:string,sex:number,logo:string,group?:ERoleGroup)
+    async add(account_id:number,nickname:string,sex:number,logo:string)
     {
-        let um:any = await this._createNewUser(account_id,nickname,sex,logo,group)
+        let um:any = await this._createNewUser(account_id,nickname,sex,logo)
         let sr = await this.insert(um)
         if(sr.error||sr.queryResult.length<=0)
         {
             return null
         }
         return um
-    }
-    async updateRoleGroup(user_id:number,role_group:ERoleGroup)
-    {
-        let sr = await this.updateProperty("role_group=?","id=?",[role_group,user_id])
-        if(sr.error&&sr.execResult.affectedRows<=0)
-        {
-            return "更新失败"
-        }
-        return
     }
     async getByAccountId(account_id:number)
     {

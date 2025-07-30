@@ -1,96 +1,73 @@
 ﻿import * as _ from "underscore";
 import { MongoBaseService } from "../Database/Mongo/MongoBaseService";
-import { MongoBaseModel } from "../Database/Mongo/MongoManager";
-import { ERoleGroup } from "./ini";
-import { SyncCall } from "../Decorator/SyncCall";
+import mongoose from "mongoose";
+import { EUserState } from "./ini";
 
-export class MongoUserModel extends MongoBaseModel
+export interface IMongoUserModel extends mongoose.Document
 {
-    id:number=-1
-    account_id:number=-1
-    nickname:string=""
-    sex:number=-1
-    logo:string=""
-    state:number=0
-    role_group:number=4
-    role:number=0
-    phone:string=""
-    wechat:string=""
-    qq:string=""
-    email:string=""
-    about:string=""
-    pre_user_id:number=-1
-    exp:number = 0
-    level:number = 1//等级
-    vip_exp:number = 0
-    vip_level:number = 0//等级
-    is_robot:number = 0
-    create_time:number = 0
+    account_id:string
+    state:EUserState
+    is_robot:boolean
+    create_time:Date
+    login_time:Date
+    create_ip:string
+    login_ip:string
+    nickname:string
+    logo:string
+    sex:number
 }
 //暂时不实例化，方便重写
-export class MongoUserService<T extends MongoUserModel> extends MongoBaseService<T>
+export class MongoUserService<T extends IMongoUserModel> extends MongoBaseService<T>
 {
-    @SyncCall
-    protected async _createNewUser(account_id:number,nickname:string,sex:number,logo:string,group?:ERoleGroup)
+    constructor(extuserdef: mongoose.SchemaDefinition<T>)
     {
-        group = group || ERoleGroup.Common
-        let um = new this._t_type()
-        um.account_id = account_id
-        um.nickname = nickname
-        if(!um.nickname||um.nickname.length==0)
+        const userSchema = new mongoose.Schema({...{
+            _id: { type: Number },
+            account_id: { type: String, index: { unique: true } },
+            state: { type: Number,default: EUserState.Normal },
+            is_robot: { type: Boolean, default: false },
+            create_time: { type: Date, default: Date.now },
+            login_time: { type: Date, default: Date.now },
+            create_ip: { type: String, default: "" },
+            login_ip: { type: String, default: "" },
+            nickname: { type: String, default: "noname" },
+            logo: { type: String, default: "" },
+            sex: { type: Number, default: 0 }
+        },...extuserdef},{id:false});
+        userSchema.virtual('id').get(function() {
+            return this._id
+        });
+        super('user', userSchema);
+    }
+    async add(account_id:string,nickname?:string,sex?:number,logo?:string)
+    {
+        let m:Partial<T> = {}
+        m.account_id=account_id
+        if(nickname)
         {
-            um.nickname = "noname"
+            m.nickname=nickname
         }
-        um.sex = sex||0
-        um.logo = logo||""
-        um.account_id = account_id
-        um.state = 0
-        um.role_group = group
-        um.role = 0
-        um.create_time = Date.now()
+        if(sex!==undefined)
+        {
+            m.sex=sex
+        }
+        if(logo)
+        {
+            m.logo=logo
+        }
         //随机userid
         let id = 0
         do
         {
-            id=_.random(1000000,9999999)
+            id=_.random(10000000,99999999)
             let p = await this.findOne({id:id},{id:1})
             if(!p)
             {
                 break
             }
         }while(true)
-        um.id = id
-        return um
-    }
-    async add(account_id:number,nickname:string,sex:number,logo:string,group?:ERoleGroup)
-    {
-        let um = await this._createNewUser(account_id,nickname,sex,logo,group)
-        let rs = await this.insert(um)
-        if(rs.errcode||!rs.rs.insertedId)
-        {
-            return null
-        }
-        um._id=rs.rs.insertedId
-        return um
-    }
-    async getByAccountId(account_id:number)
-    {
-        let pm:T = await this.findOne({account_id:account_id})
-        return pm
-    }
-    async updateBaseInfoByAccount(account_id:number,nickname:string,sex:number,logo:string)
-    {
-        let model=
-        {
-            nickname:nickname,
-            sex:sex,
-            logo:logo
-        }
-        let sr = await this.updateOne({account_id:account_id},model)
-        if(sr.errcode)
-        {
-            return "更新失败"
-        }
-        return
+        m._id=id
+        let rs = await this.insert(m)
+        return rs.model;
     }
 }
