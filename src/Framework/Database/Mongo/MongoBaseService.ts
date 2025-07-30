@@ -38,41 +38,27 @@ export class MongoBaseService<T extends Document>
 
     async findOne(filter?: FilterQuery<T>, projection?: any, options?: any): Promise<T | null>
     {
+        filter = this._convertFilter(filter);
         if (!this.model)
         {
             throw new Error("Model is not defined");
         }
-        return await this.model.findOne(filter, projection, options) as T | null;
+        let one = await this.model.findOne(filter, projection, options).lean()
+        return one as T | null;
     }
 
     async find(filter?: FilterQuery<T>, projection?: mongoose.ProjectionType<T>, options?: MongooseQueryOptions): Promise<T[]>
     {
+        filter = this._convertFilter(filter);
         if (!this.model)
         {
             throw new Error("Model is not defined");
         }
-        return await this.model.find(filter, projection, options) as T[];
+        let list = await this.model.find(filter, projection, options).lean() as T[];
+        return list;
     }
 
-    async findMany(filter?: FilterQuery<T>, projection?: any, options?: any, skip?: number, limit?: number): Promise<T[]>
-    {
-        if (!this.model)
-        {
-            throw new Error("Model is not defined");
-        }
-        let query = this.model.find(filter, projection, options);
-        if (skip !== undefined)
-        {
-            query = query.skip(skip);
-        }
-        if (limit !== undefined)
-        {
-            query = query.limit(limit);
-        }
-        return await query.exec() as T[];
-    }
-
-    async findById(id: string | Types.ObjectId, projection?: any, options?: any): Promise<T | null>
+    async findById(id: string | Types.ObjectId, projection?: mongoose.ProjectionType<T>, options?: MongooseQueryOptions): Promise<T | null>
     {
         if (!this.model)
         {
@@ -117,6 +103,7 @@ export class MongoBaseService<T extends Document>
     {
         try
         {
+            filter = this._convertFilter(filter);
             if (!this.model)
             {
                 throw new Error("Model is not defined");
@@ -137,6 +124,7 @@ export class MongoBaseService<T extends Document>
     {
         try
         {
+            filter = this._convertFilter(filter);
             if (!this.model)
             {
                 throw new Error("Model is not defined");
@@ -153,6 +141,7 @@ export class MongoBaseService<T extends Document>
     {
         try
         {
+            filter = this._convertFilter(filter);
             if (!this.model)
             {
                 throw new Error("Model is not defined");
@@ -169,6 +158,7 @@ export class MongoBaseService<T extends Document>
     {
         try
         {
+            filter = this._convertFilter(filter);
             if (!this.model)
             {
                 throw new Error("Model is not defined");
@@ -183,6 +173,7 @@ export class MongoBaseService<T extends Document>
 
     async exists(filter: FilterQuery<T>): Promise<boolean>
     {
+        filter = this._convertFilter(filter);
         if (!this.model)
         {
             throw new Error("Model is not defined");
@@ -202,22 +193,43 @@ export class MongoBaseService<T extends Document>
     }
 
     // findOneAndUpdate method for MongoDB operations
-    async findOneAndUpdate(filter: FilterQuery<T>, update: UpdateQuery<T>, options?: any): Promise<T | null>
+    async findOneAndUpdate(filter: FilterQuery<T>, update: UpdateQuery<T>, options?: MongooseQueryOptions)
     {
+        filter = this._convertFilter(filter);
         if (!this.model)
         {
             throw new Error("Model is not defined");
         }
-        return await this.model.findOneAndUpdate(filter, update, options) as unknown as T | null;
+        let rs = await this.model.findOneAndUpdate(filter, update, options)
+        return rs
     }
 
     async countDocuments(filter?: FilterQuery<T>): Promise<number>
     {
+        filter = this._convertFilter(filter);
         if (!this.model)
         {
             throw new Error("Model is not defined");
         }
         return await this.model.countDocuments(filter);
+    }
+    protected _convertFilter(filter: FilterQuery<T>): FilterQuery<T>
+    {
+        if (!filter)
+        {
+            return {};
+        }
+        if(filter.id && typeof filter.id === 'string')
+        {
+            filter._id = new Types.ObjectId(filter.id);
+            delete filter.id;
+        }
+        else if(filter.id)
+        {
+            filter._id = filter.id;
+            delete filter.id;
+        }
+        return filter;
     }
 
     async getAutoIds(): Promise<number>
