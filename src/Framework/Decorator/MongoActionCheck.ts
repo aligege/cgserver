@@ -11,9 +11,10 @@ export let MongoActionCheck=function(ret=null)
             try
             {
                 let start_time = Date.now()
-                method.apply(this, arguments)
+                ret = method.apply(this, arguments)
                 let dt = Date.now() - start_time
                 self.debug && gLog.info({ key: method.name, dt, arguments })
+                return ret
             }
             catch (error)
             {
