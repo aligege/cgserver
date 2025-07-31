@@ -1,11 +1,12 @@
 ﻿import mongoose, { Types } from 'mongoose';
 import { EErrorCode, Errcode } from '../Config/_error_';
-import { IMongoBaseModel, MongoBaseService } from '../Database/Mongo/MongoBaseService';
+import { MongoBaseService } from '../Database/Mongo/MongoBaseService';
 import { gCacheTool } from '../Logic/CacheTool';
 import { gQQTool } from '../ThirdParty/QQTool';
 import { gWechatTool } from '../ThirdParty/WechatTool';
 import { EAccountFrom, EAccountState } from './ini';
 import { IMongoUserModel, MongoUserService } from './MongoUserService';
+import { IMongoBaseModel } from '../Database/Mongo/MongoManager';
 
 export interface IMongoAccountModel extends IMongoBaseModel
 {
@@ -93,8 +94,8 @@ export class MongoAccountService<T extends IMongoAccountModel> extends MongoBase
         account.create_ip=ip
         account.login_ip=ip
         account.from=from
-        let sr = await this.insert(account)
-        return sr.model
+        let model = await this.insert(account)
+        return model
     }
     /**
      * 通过第三方信息获取账号

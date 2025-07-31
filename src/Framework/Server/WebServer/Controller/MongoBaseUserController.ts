@@ -17,7 +17,7 @@ export class MongoBaseUserController<T extends IMongoUserModel> extends BaseCont
     }
     get isSelf()
     {
-        return this._self_user && (this._self_user._id == this._user._id)
+        return this._self_user && (this._self_user.id == this._user.id)
     }
     get isLogin()
     {

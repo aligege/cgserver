@@ -1,7 +1,8 @@
 ﻿import * as _ from "underscore";
-import { IMongoBaseModel, MongoBaseService } from "../Database/Mongo/MongoBaseService";
+import { MongoBaseService } from "../Database/Mongo/MongoBaseService";
 import mongoose from "mongoose";
 import { EUserState } from "./ini";
+import { IMongoBaseModel } from "../Database/Mongo/MongoManager";
 
 export interface IMongoUserModel extends IMongoBaseModel
 {
@@ -67,7 +68,7 @@ export class MongoUserService<T extends IMongoUserModel> extends MongoBaseServic
             }
         }while(true)
         m._id=id
-        let rs = await this.insert(m)
-        return rs.model;
+        let model = await this.insert(m)
+        return model;
     }
 }

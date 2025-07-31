@@ -1,5 +1,6 @@
 import mongoose from "mongoose"
-import { IMongoBaseModel, MongoBaseService } from "../Database/Mongo/MongoBaseService"
+import { MongoBaseService } from "../Database/Mongo/MongoBaseService"
+import { IMongoBaseModel } from "../Database/Mongo/MongoManager"
 
 //暂时就用这个了，反正没啥用户
 export interface IMongoCacheModel extends IMongoBaseModel
@@ -45,8 +46,8 @@ export class MongoCacheService extends MongoBaseService<IMongoCacheModel>
         {
             m.expireAt=expireAt
         }
-        let rs = await this.insert(m)
-        return rs.model
+        let model = await this.insert(m)
+        return model
     }
 }
 

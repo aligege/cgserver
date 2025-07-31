@@ -1,12 +1,7 @@
 import mongoose, { Document, FilterQuery, UpdateQuery, Types, mongo, MongooseQueryOptions } from 'mongoose';
 import { EErrorCode, Errcode } from '../../Config/_error_';
 import { gLog } from '../../Logic/Log';
-import { gMongoMgr } from './MongoManager';
-export interface IMongoBaseModel
-{
-    _id: any; // 使用ObjectId作为主键
-    id: any;
-}
+import { gMongoMgr, IMongoBaseModel } from './MongoManager';
 export class MongoBaseService<T extends IMongoBaseModel>
 {
     protected _model: mongoose.Model<T>;
@@ -38,225 +33,95 @@ export class MongoBaseService<T extends IMongoBaseModel>
         this._collection_name = collection_name;
         schema.set('collection', collection_name);
         this._schema = schema;
+        this._schema.set('minimize', false);
     }
 
     async findOne(filter?: FilterQuery<T>, projection?: any, options?: any): Promise<T | null>
     {
-        filter = this._convertFilter(filter);
-        if (!this.model)
-        {
-            throw new Error("Model is not defined");
-        }
-        let one = await this.model.findOne(filter, projection, options).lean() as T | null;
-        this._convertId(one);
-        return one;
+        let ret = await gMongoMgr.getMongo().findOne<T>(this.model, filter, projection, options);
+        return ret;
     }
 
     async find(filter?: FilterQuery<T>, projection?: mongoose.ProjectionType<T>, options?: MongooseQueryOptions): Promise<T[]>
     {
-        filter = this._convertFilter(filter);
-        if (!this.model)
-        {
-            throw new Error("Model is not defined");
-        }
-        let list = await this.model.find(filter, projection, options).lean() as T[];
-        list.forEach(one => {
-            this._convertId(one);
-        });
-        return list;
+        let ret = await gMongoMgr.getMongo().find<T>(this.model, filter, projection, options);
+        return ret;
     }
 
-    async findById(id: string | Types.ObjectId, projection?: mongoose.ProjectionType<T>, options?: MongooseQueryOptions): Promise<T | null>
+    async findById(id: string | Types.ObjectId, projection?: mongoose.ProjectionType<T>, options?: MongooseQueryOptions)
     {
-        if (!this.model)
-        {
-            throw new Error("Model is not defined");
-        }
-        let one = await this.model.findById(id, projection, options).lean() as T | null;
-        this._convertId(one);
-        return one;
+        let ret = await gMongoMgr.getMongo().findById<T>(this.model, id, projection, options);
+        return ret;
     }
 
     async create(doc: Partial<T>): Promise<T>
     {
-        if (!this.model)
-        {
-            throw new Error("Model is not defined");
-        }
-        const newDoc = new this.model(doc);
-        return await newDoc.save() as T;
+        let ret = await gMongoMgr.getMongo().create<T>(this.model, doc);
+        return ret;
     }
 
-    async insert(doc: Partial<T>): Promise<{ errcode: Errcode, model?: T }>
+    async insert(doc: Partial<T>)
     {
-        try
-        {
-            if (!this.model)
-            {
-                throw new Error("Model is not defined");
-            }
-            const newDoc = await this.model.insertOne(doc);
-            return { errcode: null, model: newDoc };
-        } catch (error)
-        {
-            gLog.error(arguments)
-            gLog.error("MongoDB insert error:", error.stack);
-            return { errcode: EErrorCode.Mongo_Error, model: null };
-        }
+        let ret = await gMongoMgr.getMongo().insert<T>(this.model, doc);
+        return ret;
     }
 
     async updateOne(
         filter: FilterQuery<T>,
         update: UpdateQuery<T>,
         options?: any
-    ): Promise<{ errcode?: Errcode,rs?:mongoose.UpdateResult }>
+    )
     {
-        try
-        {
-            filter = this._convertFilter(filter);
-            if (!this.model)
-            {
-                throw new Error("Model is not defined");
-            }
-            let rs = await this.model.updateOne(filter, update, options);
-            return { errcode: null,rs:rs };
-        } catch (error)
-        {
-            return { errcode: EErrorCode.Mongo_Error,rs:null };
-        }
+        let ret = await gMongoMgr.getMongo().updateOne<T>(this.model, filter, update, options);
+        return ret
     }
 
     async updateMany(
         filter: FilterQuery<T>,
         update: UpdateQuery<T>,
         options?: any
-    ): Promise<{ errcode: null } | { errcode: any }>
+    )
     {
-        try
-        {
-            filter = this._convertFilter(filter);
-            if (!this.model)
-            {
-                throw new Error("Model is not defined");
-            }
-            await this.model.updateMany(filter, update, options);
-            return { errcode: null };
-        } catch (error)
-        {
-            return { errcode: error };
-        }
+        let ret = await gMongoMgr.getMongo().updateMany<T>(this.model, filter, update, options);
+        return ret;
     }
 
-    async deleteOne(filter: FilterQuery<T>): Promise<{ errcode: Errcode, rs?: mongoose.DeleteResult }>
+    async deleteOne(filter: FilterQuery<T>)
     {
-        try
-        {
-            filter = this._convertFilter(filter);
-            if (!this.model)
-            {
-                throw new Error("Model is not defined");
-            }
-            let rs = await this.model.deleteOne(filter);
-            return { errcode: null, rs: rs };
-        } catch (error)
-        {
-            return { errcode: EErrorCode.Mongo_Error, rs: null };
-        }
+        let ret = await gMongoMgr.getMongo().deleteOne<T>(this.model, filter);
+        return ret
     }
 
-    async deleteMany(filter: FilterQuery<T>): Promise<{ errcode: null } | { errcode: any }>
+    async deleteMany(filter: FilterQuery<T>)
     {
-        try
-        {
-            filter = this._convertFilter(filter);
-            if (!this.model)
-            {
-                throw new Error("Model is not defined");
-            }
-            await this.model.deleteMany(filter);
-            return { errcode: null };
-        } catch (error)
-        {
-            return { errcode: error };
-        }
+        let ret = await gMongoMgr.getMongo().deleteMany<T>(this.model, filter);
+        return ret;
     }
 
     async exists(filter: FilterQuery<T>): Promise<boolean>
     {
-        filter = this._convertFilter(filter);
-        if (!this.model)
-        {
-            throw new Error("Model is not defined");
-        }
-        const doc = await this.model.findOne(filter, { _id: 1 });
-        return !!doc;
+        let ret = await gMongoMgr.getMongo().exists<T>(this.model, filter);
+        return ret;
     }
 
     // 用于聚合查询
     aggregate(pipeline?: any[])
     {
-        if (!this.model)
-        {
-            throw new Error("Model is not defined");
-        }
-        return this.model.aggregate(pipeline);
+        let ret = gMongoMgr.getMongo().aggregate<T>(this.model, pipeline);
+        return ret;
     }
 
     // findOneAndUpdate method for MongoDB operations
     async findOneAndUpdate(filter: FilterQuery<T>, update: UpdateQuery<T>, options?: MongooseQueryOptions)
     {
-        filter = this._convertFilter(filter);
-        if (!this.model)
-        {
-            throw new Error("Model is not defined");
-        }
-        let one = await this.model.findOneAndUpdate(filter, update, options).lean() as T | null;
-        this._convertId(one);
-        return one
+        let ret = await gMongoMgr.getMongo().findOneAndUpdate<T>(this.model, filter, update, options);
+        return ret
     }
 
     async countDocuments(filter?: FilterQuery<T>): Promise<number>
     {
-        filter = this._convertFilter(filter);
-        if (!this.model)
-        {
-            throw new Error("Model is not defined");
-        }
-        return await this.model.countDocuments(filter);
-    }
-    protected _convertFilter(filter: FilterQuery<T>): FilterQuery<T>
-    {
-        if (!filter)
-        {
-            return {};
-        }
-        if(filter.id && typeof filter.id === 'string')
-        {
-            filter._id = new Types.ObjectId(filter.id);
-            delete filter.id;
-        }
-        else if(filter.id)
-        {
-            filter._id = filter.id;
-            delete filter.id;
-        }
-        return filter;
-    }
-    protected _convertId(one:T|null)
-    {
-        if(!one)
-        {
-            return one;
-        }
-        if(typeof one._id === 'object' && one._id instanceof Types.ObjectId)
-        {
-            one.id = one._id.toString();
-        }
-        else
-        {
-            one.id = one._id;
-        }
-        return one;
+        let ret = await gMongoMgr.getMongo().countDocuments<T>(this.model, filter);
+        return ret;
     }
 
     async getAutoIds(): Promise<number>
