@@ -97,11 +97,15 @@ export class MongoManager
         }
         mongo.close(force)
     }
-    getMongo(dbname = "")
+    getMongo(dbname = ""):MongoExt|null
     {
         if (!dbname)
         {
             dbname = this._defdbname
+        }
+        if(!dbname)
+        {
+            return null
         }
         return this._dbs[dbname]
     }
@@ -125,10 +129,16 @@ export class MongoExt
     {
         return this._mongocfg.debug
     }
+    protected _connection: mongoose.Connection = null
+    get connection()
+    {
+        return this._connection;
+    }
     constructor()
     {
 
     }
+    @MongoActionCheck(false)
     async init(cfg: MongoConfig)
     {
         if (!cfg || !cfg.open)
@@ -142,14 +152,14 @@ export class MongoExt
         this._mongocfg = cfg
         this._inited = true
         gLog.info("mongo config=" + JSON.stringify(this._mongocfg))
-        mongoose.connection.on("open", this.onOpen.bind(this));
-        mongoose.connection.on("close", this.onClose.bind(this));
         this._mongocfg.options.dbName = this._mongocfg.database
-        let mg = await mongoose.connect("mongodb://" + this._mongocfg.host + ":" + this._mongocfg.port, this._mongocfg.options)
-        mongoose.connection.useDb(this._mongocfg.database)
-        mongoose.connection.getClient().on("connectionCreated", this.onConnect.bind(this))
-        mongoose.connection.getClient().on("connectionClosed", this.onDisconnect.bind(this))
-        console.log("mongo connect success! db=" + this._mongocfg.database)
+        this._connection = await mongoose.createConnection("mongodb://" + this._mongocfg.host + ":" + this._mongocfg.port, this._mongocfg.options)
+        this._connection.on("open", this.onOpen.bind(this));
+        this._connection.on("close", this.onClose.bind(this));
+        this._connection.useDb(this._mongocfg.database)
+        this._connection.on("connectionCreated", this.onConnect.bind(this))
+        this._connection.on("connectionClosed", this.onDisconnect.bind(this))
+        console.log("mongo connect success! db=" + this._connection.db.databaseName)
         return true
     }
     onConnect()

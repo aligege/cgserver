@@ -1,6 +1,6 @@
 {
   "name": "cgserver",
-  "version": "13.1.7",
+  "version": "13.2.0",
   "author": "trojan",
   "type": "commonjs",
   "description": "free for all.Websocket or Http",
