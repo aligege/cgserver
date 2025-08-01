@@ -39,7 +39,7 @@ export class MongoBaseService<T extends IMongoBaseModel>
             gLog.error("MongoDB connection is not valid, please check the connection settings.");
             throw new Error("MongoDB connection is not valid");
         }
-        this._model = mongoose.model<T>(this._collection_name, this._schema)
+        this._model = this.mongo.connection.model<T>(this._collection_name, this._schema)
         return this._model;
     }
 

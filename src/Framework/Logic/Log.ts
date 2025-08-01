@@ -52,6 +52,10 @@ export class Log
     {
         if(this._isObject(message))
         {
+            if(message.value&&message.value.stack)
+            {
+                message.value = message.value.stack
+            }
             if(message.stack)
             {
                 message=message.stack

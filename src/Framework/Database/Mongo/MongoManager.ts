@@ -1,4 +1,4 @@
-import { Types, UpdateQuery } from 'mongoose';
+import { ConnectionStates, Types, UpdateQuery } from 'mongoose';
 import { EErrorCode } from '../../Config/_error_';
 import { core } from '../../Core/Core';
 import { gLog } from '../../Logic/Log';
@@ -129,6 +129,10 @@ export class MongoExt
     {
         return this._mongocfg.debug
     }
+    get dbName()
+    {
+        return this._connection?.name||"unknown"
+    }
     protected _connection: mongoose.Connection = null
     get connection()
     {
@@ -159,11 +163,20 @@ export class MongoExt
         this._mongocfg.options.dbName = this._mongocfg.database
         this._connection = mongoose.createConnection("mongodb://" + this._mongocfg.host + ":" + this._mongocfg.port, this._mongocfg.options)
         this._connection = this._connection.useDb(this._mongocfg.database)
-        this._connection.on("open", this.onOpen.bind(this));
+        this._connection.once("open", this.onOpen.bind(this));
         this._connection.on("close", this.onClose.bind(this));
         this._connection.on("connectionCreated", this.onConnect.bind(this))
         this._connection.on("connectionClosed", this.onDisconnect.bind(this))
         await this._connection.asPromise()
+        while(this._connection.readyState!=ConnectionStates.connected)
+        {
+            if(this._connection.readyState!=ConnectionStates.connecting)
+            {
+                gLog.error("MongoDB connection is not ready, please check the connection settings. Current state: " + this._connection.readyState);
+                return false
+            }
+            await core.sleep(100)
+        }
         console.log("mongo connect success! db=" + this._connection.name)
         return true
     }
@@ -177,7 +190,11 @@ export class MongoExt
     }
     close(force = false)
     {
-        mongoose.connection.close(force)
+        if(!this._connection)
+        {
+            return;
+        }
+        this._connection.close(force)
     }
     registerInitCb(cb: Function)
     {
