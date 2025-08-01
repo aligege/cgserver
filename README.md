@@ -1,4 +1,6 @@
 # 版本更新日志
+## v13.2.2
+- Fix MongoDB connection initialization logic
 ## v13.2.1
 - Fix MongoManager to use correct connection for stats
 ## v13.2.0

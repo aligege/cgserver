@@ -153,13 +153,14 @@ export class MongoExt
         this._inited = true
         gLog.info("mongo config=" + JSON.stringify(this._mongocfg))
         this._mongocfg.options.dbName = this._mongocfg.database
-        this._connection = await mongoose.createConnection("mongodb://" + this._mongocfg.host + ":" + this._mongocfg.port, this._mongocfg.options)
+        this._connection = mongoose.createConnection("mongodb://" + this._mongocfg.host + ":" + this._mongocfg.port, this._mongocfg.options)
+        this._connection = this._connection.useDb(this._mongocfg.database)
         this._connection.on("open", this.onOpen.bind(this));
         this._connection.on("close", this.onClose.bind(this));
-        this._connection.useDb(this._mongocfg.database)
         this._connection.on("connectionCreated", this.onConnect.bind(this))
         this._connection.on("connectionClosed", this.onDisconnect.bind(this))
-        console.log("mongo connect success! db=" + this._connection.db.databaseName)
+        await this._connection.asPromise()
+        console.log("mongo connect success! db=" + this._connection.name)
         return true
     }
     onConnect()
