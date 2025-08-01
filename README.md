@@ -1,4 +1,6 @@
 # 版本更新日志
+## v13.2.1
+- Fix MongoManager to use correct connection for stats
 ## v13.2.0
 - Refactor MongoDB service to support multiple databases
 ## v13+

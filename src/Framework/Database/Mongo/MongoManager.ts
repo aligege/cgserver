@@ -197,7 +197,7 @@ export class MongoExt
     }
     async getConnectionStats()
     {
-        const stats = await mongoose.connection.db.admin().serverStatus();
+        const stats = await this._connection.db.admin().serverStatus();
         let current = stats.connections.current;
         let available = stats.connections.available;
         return { current, available };
