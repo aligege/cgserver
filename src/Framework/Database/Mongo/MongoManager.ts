@@ -134,6 +134,10 @@ export class MongoExt
     {
         return this._connection;
     }
+    get connected()
+    {
+        return this._connection && this._connection.readyState === 1;
+    }
     constructor()
     {
 

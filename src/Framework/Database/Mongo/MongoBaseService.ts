@@ -23,12 +23,17 @@ export class MongoBaseService<T extends IMongoBaseModel>
         {
             return this._model
         }
-        if(mongoose.connection.readyState !== 1)
+        if(!this.mongo)
+        {
+            gLog.error("MongoDB connection is not established, please check the connection settings.");
+            throw new Error("MongoDB connection is not established");
+        }
+        if(!this.mongo.connected)
         {
             gLog.error("MongoDB connection is not ready, please check the connection settings. Current state: " + mongoose.connection.readyState);
             throw new Error("MongoDB connection is not ready");
         }
-        let db = mongoose.connection.db
+        let db = this.mongo.connection.db;
         if(!db||db.databaseName=="test")
         {
             gLog.error("MongoDB connection is not valid, please check the connection settings.");
