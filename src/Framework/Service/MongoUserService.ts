@@ -23,7 +23,7 @@ export class MongoUserService<T extends IMongoUserModel> extends MongoBaseServic
     constructor(extuserdef: mongoose.SchemaDefinition<T>)
     {
         const userSchema = new mongoose.Schema({...{
-            _id: { type: Number },
+            _id: { type: Number, index: { unique: true } },
             account_id: { type: String, index: { unique: true } },
             state: { type: Number,default: EUserState.Normal },
             is_robot: { type: Boolean, default: false },

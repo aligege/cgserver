@@ -1,8 +1,9 @@
-import mongoose, { Document, FilterQuery, UpdateQuery, Types, mongo, MongooseQueryOptions } from 'mongoose';
-import { EErrorCode, Errcode } from '../../Config/_error_';
+import mongoose, { FilterQuery, UpdateQuery, Types, MongooseQueryOptions, Schema } from 'mongoose';
 import { gLog } from '../../Logic/Log';
 import { gMongoMgr, IMongoBaseModel, MongoExt } from './MongoManager';
-import { GMongoAutoIdsService } from './MongoAutoIdService';
+import { SyncCall2  } from '../../Decorator/SyncCall';
+import _ from 'underscore';
+
 export class MongoBaseService<T extends IMongoBaseModel>
 {
     protected _model: mongoose.Model<T>;
@@ -143,7 +144,41 @@ export class MongoBaseService<T extends IMongoBaseModel>
 
     async getAutoIds(): Promise<number>
     {
-        let id = await GMongoAutoIdsService.getIncressId(this._collection_name)
+        let id = await GMongoAutoIdsSer.getIncressId(this._collection_name)
         return id
     }
 }
+
+export interface IAutoIdModel extends IMongoBaseModel
+{
+    autoid:number
+}
+
+const autoIdSchema = new Schema<IAutoIdModel>({
+    _id:{ type: String, index: { unique: true } },
+    autoid:{ type: Number, required: true, default: 0 }
+},{id:false});
+
+autoIdSchema.virtual('id').get(function() {
+    return this._id
+});
+
+class MongoAutoIdsService extends MongoBaseService<IAutoIdModel>
+{
+    constructor()
+    {
+        super('auto_ids', autoIdSchema);
+    }
+    @SyncCall2(0)
+    async getIncressId(key:string)
+    {
+        let md = await this.findOneAndUpdate({ _id: key }, { $inc: { autoid: 1 } }, { upsert: true })
+        if (md && md.autoid)
+        {
+            return md.autoid + 1
+        }
+        return -_.random(2,999999999)
+    }
+}
+
+export let GMongoAutoIdsSer = new MongoAutoIdsService()

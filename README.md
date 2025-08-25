@@ -1,4 +1,6 @@
 # 版本更新日志
+## v13.2.10
+- Refactor auto-increment ID logic for MongoDB
 ## v13.2.3
 - Improve MongoDB connection validation and error handling
 ## v13.2.2
