@@ -228,24 +228,6 @@ export class MongoExt
     {
         gLog.error(err)
     }
-    /**
-     * 获取自增长id
-     * @param key 
-     * @returns 小于等于0为异常
-     */
-    @MongoActionCheck(-1)
-    async getAutoIds(key: string): Promise<number>
-    {
-        let collection = "auto_ids"
-        let col = mongoose.connection.collection(collection);
-        let where = { _id: key }
-        let rs = await core.safeCall(col.findOneAndUpdate, col, where, { $inc: { id: 1 } }, { upsert: true })
-        if (rs && rs.id)
-        {
-            return rs.id + 1
-        }
-        return 1
-    }
     @MongoActionCheck(null)
     async findOne<T>(model: mongoose.Model<T>, filter?: FilterQuery<T>, projection?: any, options?: any): Promise<T | null>
     {

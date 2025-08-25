@@ -2,6 +2,7 @@ import mongoose, { Document, FilterQuery, UpdateQuery, Types, mongo, MongooseQue
 import { EErrorCode, Errcode } from '../../Config/_error_';
 import { gLog } from '../../Logic/Log';
 import { gMongoMgr, IMongoBaseModel, MongoExt } from './MongoManager';
+import { GMongoAutoIdsService } from './MongoAutoIdService';
 export class MongoBaseService<T extends IMongoBaseModel>
 {
     protected _model: mongoose.Model<T>;
@@ -142,7 +143,7 @@ export class MongoBaseService<T extends IMongoBaseModel>
 
     async getAutoIds(): Promise<number>
     {
-        let id = await this.mongo.getAutoIds(this.model.collection.name)
+        let id = await GMongoAutoIdsService.getIncressId(this._collection_name)
         return id
     }
 }
