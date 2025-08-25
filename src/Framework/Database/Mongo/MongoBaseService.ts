@@ -155,7 +155,7 @@ export interface IAutoIdModel extends IMongoBaseModel
 }
 
 const autoIdSchema = new Schema<IAutoIdModel>({
-    _id:{ type: String, index: { unique: true } },
+    _id:{ type: String },
     autoid:{ type: Number, required: true, default: 0 }
 },{id:false});
 
