@@ -162,12 +162,12 @@ export class AlipayTool
     }
     async exec(method:string,params:any,execType:EAlipayExecType=EAlipayExecType.exec):Promise<string|null|AlipaySdkCommonResult>
     {
+        let result = null
         try
         {
             if (!this._alipaySdk) {
-                return null
+                return result
             }
-            let result = null
             switch(execType)
             {
                 case EAlipayExecType.exec:
@@ -177,13 +177,13 @@ export class AlipayTool
                     )
                     break;
                 case EAlipayExecType.sdkExec:
-                    result = await this._alipaySdk.sdkExec(
+                    result = this._alipaySdk.sdkExec(
                         method,
                         params
                     )
                     break;
                 case EAlipayExecType.pageExec:
-                    result = await this._alipaySdk.pageExec(
+                    result = this._alipaySdk.pageExec(
                         method,
                         params
                     )
@@ -193,8 +193,8 @@ export class AlipayTool
         }
         catch (error) 
         {
-            gLog.error({tip:'执行支付宝请求失败:',method,params, error:error});
-            return null;
+            gLog.error({tip:'执行支付宝请求失败:',arguments, error,result});
+            return result;
         }
     }
 

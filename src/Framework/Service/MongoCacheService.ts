@@ -46,7 +46,7 @@ export class MongoCacheService extends MongoBaseService<IMongoCacheModel>
         {
             m.expireAt=expireAt
         }
-        let model = await this.insert(m)
+        let model = await this.updateOne({key:key},m,{upsert:true})
         return model
     }
 }

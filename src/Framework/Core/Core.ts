@@ -529,7 +529,7 @@ export class core
         }
         if(totalProbability>1)
         {
-            random = _.random(totalProbability)
+            random = _.random(totalProbability-1)
         }
         else
         {
