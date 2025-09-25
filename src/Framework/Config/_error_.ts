@@ -14,7 +14,6 @@ export class Errcode
  */
 export class FrameworkErrorCode
 {
-    Wrong_Params= new Errcode(1, "参数错误")
     Verify_failed= new Errcode(2, "验证失败")
     Account_Create_Failed = new Errcode(3, "账号创建失败")
     User_Create_Failed = new Errcode(4, "角色创建失败")
@@ -37,6 +36,7 @@ export class FrameworkErrorCode
     Wrong_Phone_Code = new Errcode(20, "验证码不正确")
     No_Mongo = new Errcode(21, "未开通Mongo数据库")
     Mongo_Error = new Errcode(22, "Mongo数据库异常")
+    Wrong_Params= new Errcode(23, "参数错误")
     constructor(){}
 }
 EErrorCode=new FrameworkErrorCode()
