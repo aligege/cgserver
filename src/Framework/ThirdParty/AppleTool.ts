@@ -145,8 +145,8 @@ export class NotificationBody
 class RequestBody
 {
     "receipt-data"=""
-    password="5203c7781e254aac8942290a0a2467ac"
-    "exclude-old-transactions"=true
+    password=""
+    "exclude-old-transactions"=false
 }
 
 export class AppleTool
@@ -171,17 +171,14 @@ export class AppleTool
         gLog.info(msg)
         gLog.info(nb)
     }
-    async onVerify(receipt:string,environment:string)
+    async onVerify(receipt:string,password=undefined,exclude_old_transactions=false)
     {
-        gLog.info("begin onVerify============================"+environment)
         let url = this._verifyUrl
-        // if(environment.toLowerCase()=="sandbox")
-        // {
-        //     url=this._sandboxVerifyUrl
-        // }
         gLog.info("url============================"+url)
         let reqb = new RequestBody()
         reqb['receipt-data']=receipt
+        reqb.password=password
+        reqb['exclude-old-transactions']=exclude_old_transactions
         //先验证生产环境
         var resb:ResponseBody = (await gHttpTool.post({url,form:JSON.stringify(reqb)})).body
         gLog.info("production end onVerify_Res============================status="+(resb?resb.status:"null"))
