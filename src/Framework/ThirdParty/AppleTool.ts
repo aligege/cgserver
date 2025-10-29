@@ -83,7 +83,7 @@ class Receipt
     expiration_date=""
     expiration_date_ms=""
     expiration_date_pst=""
-    in_app:InApp=null
+    in_app:InApp[]=null
     original_application_version=""
     original_purchase_date=""
     original_purchase_date_ms=""
