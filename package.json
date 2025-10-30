@@ -1,6 +1,6 @@
 {
   "name": "cgserver",
-  "version": "13.2.23",
+  "version": "13.3.0",
   "author": "trojan",
   "type": "commonjs",
   "description": "free for all.Websocket or Http",
@@ -36,6 +36,7 @@
     "@types/crypto-js": "^4.2.2",
     "@types/express": "^4.17.21",
     "@types/formidable": "^3.4.5",
+    "@types/heapdump": "^0.3.4",
     "@types/mime": "^3.0.4",
     "@types/minimist": "^1.2.5",
     "@types/mssql": "^9.1.5",
@@ -57,6 +58,7 @@
     "fast-xml-parser": "^4.4.1",
     "formidable": "^3.5.1",
     "fs": "^0.0.2",
+    "heapdump": "^0.3.15",
     "http": "0.0.0",
     "https": "^1.0.0",
     "jsonc": "^2.0.0",

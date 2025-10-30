@@ -11,6 +11,7 @@ import { gEventTool } from "./Logic/EventTool";
 import { gRedisMgr } from "./Database/Redis/RedisManager";
 import minimist from "minimist";
 import { ISocketServer } from "./Server/SocketServer/ISocketServer";
+import heapdump from "heapdump";
 
 export class CgServer
 {
@@ -258,6 +259,18 @@ export class CgServer
         for(let i=0;i<this._socket_servers.length;++i)
         {
             this._socket_servers[i].resume()
+        }
+    }
+    saveHeapSnapshot(file?:string)
+    {
+        try
+        {
+            file = file||('/heapsnapshot/' + Date.now() + '_'+this._custom_process_id+'.heapsnapshot')
+            heapdump.writeSnapshot(file);
+        }
+        catch(e)
+        {
+            gLog.error("saveHeapSnapshot error:",e)
         }
     }
 }
