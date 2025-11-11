@@ -116,7 +116,10 @@ export class AlipayTool
         }
         else
         {
-            gLog.error(result)
+            if(result)
+            {
+                gLog.error(result)
+            }
             gLog.error("alipay init failed!")
             ret = false
         }

@@ -50,6 +50,10 @@ export class Log
     }
     protected _convertMsg(message?:any)
     {
+        if(!message)
+        {
+            return ""
+        }
         if(this._isObject(message))
         {
             if(message.value&&message.value.stack)
