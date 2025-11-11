@@ -105,6 +105,9 @@ export class AlipayTool
               offset: 20,
               limit: 1,
             },
+        }).catch((error) => {
+            gLog.error({tip:'alipay init failed!',error});
+            return null
         });
         if(result&&result.responseHttpStatus==200)
         {
