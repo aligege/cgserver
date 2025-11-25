@@ -186,7 +186,7 @@ export class AppleTool
         if(resb&&resb.status==21007)
         {
             url=this._sandboxVerifyUrl
-            resb = (await gHttpTool.post({url,form:JSON.stringify(reqb)})).body
+            resb = (await gHttpTool.post({url,data:reqb})).body
             gLog.info("sandbox end onVerify_Res============================status="+(resb?resb.status:"null"))
         }
         gLog.info(resb)
