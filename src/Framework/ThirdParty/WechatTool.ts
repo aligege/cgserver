@@ -62,7 +62,7 @@ export class WechatTool
             return null
         }
         let url="https://api.weixin.qq.com/sns/oauth2/access_token?appid="+gServerCfg.wechat.app_id+"&secret="+gServerCfg.wechat.app_key+"&code="+auth_code+"&grant_type=authorization_code"
-        let rs = await gHttpTool.get(url)
+        let rs = await gHttpTool.get({url})
         /*
         { 
             "access_token":"ACCESS_TOKEN", 
@@ -87,7 +87,7 @@ export class WechatTool
     async getUserInfo(access_token:string,openid:string):Promise<WechatUserInfo>
     {
         let url = "https://api.weixin.qq.com/sns/userinfo?access_token="+access_token+"&openid="+openid
-        let rs = await gHttpTool.get(url)
+        let rs = await gHttpTool.get({url})
         if(rs.body)
         {
             return rs.body

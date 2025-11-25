@@ -90,7 +90,7 @@ export class QQTool
         let redirect_uri = URLEncode.encode(gServerCfg.qq.redirect_uri)
 
         let url="https://graph.qq.com/oauth2.0/token?code="+auth_code+"&grant_type="+grant_type+"&client_id="+client_id+"&client_secret="+client_secret+"&redirect_uri="+redirect_uri
-        let rs = await gHttpTool.get(url)
+        let rs = await gHttpTool.get({url})
         if(rs.body&&rs.body.access_token)
         {
             return rs.body.access_token
@@ -104,8 +104,8 @@ export class QQTool
     async getOpenId(access_token:string):Promise<string>
     {
         let url="https://graph.qq.com/oauth2.0/me?access_token="+access_token
-        let rs = await gHttpTool.get(url)
-        let body = rs.response?rs.response.body:null
+        let rs = await gHttpTool.get({url})
+        let body = rs.response?rs.response.data:null
         if(body)
         {
             body=body.replace("callback( ","")
@@ -113,7 +113,7 @@ export class QQTool
             try{body=JSON.parse(body)}catch(e){}
             if(!body.openid)
             {
-                gLog.error(rs.response.body)
+                gLog.error(rs.response.data)
             }
             return body.openid
         }
@@ -131,7 +131,7 @@ export class QQTool
             return null
         }
         let url = "https://graph.qq.com/user/get_user_info?access_token="+access_token+"&oauth_consumer_key="+gServerCfg.qq.app_id+"&openid="+openid
-        let rs = await gHttpTool.get(url)
+        let rs = await gHttpTool.get({url})
         if(rs.body)
         {
             return rs.body

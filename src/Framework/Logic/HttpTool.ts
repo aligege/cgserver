@@ -16,27 +16,18 @@ export class HttpTool
     }
 
 
-    get(options_url: AxiosRequestConfig | string): Promise<{ error: any, response: AxiosResponse | null, body: any, originbody: any }> {
+    get(config: AxiosRequestConfig&{form?:any}): Promise<{ error: any, response: AxiosResponse | null, body: any, originbody: any }> {
         const time = Date.now()
-        let config: AxiosRequestConfig
-        if (core.isString(options_url)) {
-            config = { url: options_url as string, method: 'GET' }
-        } else {
-            config = { ...(options_url as AxiosRequestConfig), method: 'GET' }
-        }
+        config.method = 'GET'
 
         // Support legacy qs/form style fields passed in config
         if ((config as any).qs && core.isObject((config as any).qs)) {
             const q = qs.stringify((config as any).qs)
             config.url = config.url + (config.url.indexOf('?') === -1 ? '?' + q : '&' + q)
         }
-        if ((config as any).form && core.isObject((config as any).form)) {
+        if (config.form && core.isObject(config.form)) {
             config.headers = { ...(config.headers||{}), 'Content-Type': 'application/x-www-form-urlencoded' }
-            config.data = qs.stringify((config as any).form)
-        } else if ((config as any).json) {
-            config.data = (config as any).json
-        } else if ((config as any).body) {
-            config.data = (config as any).body
+            config.data = qs.stringify(config.form)
         }
 
         if (this._debug) {
@@ -73,30 +64,21 @@ export class HttpTool
         })
     }
 
-    post(options_url: AxiosRequestConfig | string): Promise<{ error: any, response: AxiosResponse | null, body: any, originbody: any }> {
+    post(config: AxiosRequestConfig&{formData?:any,form?:any}): Promise<{ error: any, response: AxiosResponse | null, body: any, originbody: any }> {
         const time = Date.now()
-        let config: AxiosRequestConfig
-        if (core.isString(options_url)) {
-            config = { url: options_url as string, method: 'POST' }
-        } else {
-            config = { ...(options_url as AxiosRequestConfig), method: 'POST' }
-        }
+        config.method = 'POST'
 
         // Legacy fields mapping
         if ((config as any).qs && core.isObject((config as any).qs)) {
             const q = qs.stringify((config as any).qs)
             config.url = config.url + (config.url.indexOf('?') === -1 ? '?' + q : '&' + q)
         }
-        if ((config as any).formData && core.isObject((config as any).formData)) {
+        if (config.formData && core.isObject(config.formData)) {
             // If user wants multipart they should provide FormData or appropriate headers; keep raw assignment
-            config.data = (config as any).formData
-        } else if ((config as any).form && core.isObject((config as any).form)) {
+            config.data = config.formData
+        } else if (config.form && core.isObject(config.form)) {
             config.headers = { ...(config.headers||{}), 'Content-Type': 'application/x-www-form-urlencoded' }
-            config.data = qs.stringify((config as any).form)
-        } else if ((config as any).json) {
-            config.data = (config as any).json
-        } else if ((config as any).body) {
-            config.data = (config as any).body
+            config.data = qs.stringify(config.form)
         }
 
         if (this._debug) {

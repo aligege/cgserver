@@ -48,7 +48,7 @@ export class CgRankTool
             timeout:timeout,
             password:this._password
         }
-        await gHttpTool.post({url:this._url,json:msg})
+        await gHttpTool.post({url:this._url,data:msg})
         return
     }
     async getTimeout(key:string)
@@ -59,7 +59,7 @@ export class CgRankTool
             key:key,
             password:this._password
         }
-        let rs = await gHttpTool.post({url:this._url,json:msg})
+        let rs = await gHttpTool.post({url:this._url,data:msg})
         return rs.body as {timeout:number}
     }
     /**
@@ -75,7 +75,7 @@ export class CgRankTool
             key:key,
             password:this._password
         }
-        let rs = await gHttpTool.post({url:this._url,json:msg})
+        let rs = await gHttpTool.post({url:this._url,data:msg})
         return rs.body
     }
     async saveAllRank():Promise<{keys:string[]}>
@@ -85,7 +85,7 @@ export class CgRankTool
             cmd:"saveAllRank",
             password:this._password
         }
-        let rs = await gHttpTool.post({url:this._url,json:msg})
+        let rs = await gHttpTool.post({url:this._url,data:msg})
         return rs.body
     }
     async getRankItem(key:string,id:string)
@@ -97,7 +97,7 @@ export class CgRankTool
             id:id,
             password:this._password
         }
-        let rs = await gHttpTool.post({url:this._url,json:msg})
+        let rs = await gHttpTool.post({url:this._url,data:msg})
         return rs.body as {rank:CgRankRankItem}
     }
     async getRankItems(key:string,ids:string[])
@@ -109,7 +109,7 @@ export class CgRankTool
             ids:ids,
             password:this._password
         }
-        let rs = await gHttpTool.post({url:this._url,json:msg})
+        let rs = await gHttpTool.post({url:this._url,data:msg})
         return rs.body as {ranks:{[id:string]:CgRankRankItem}}
     }
     /**
@@ -128,7 +128,7 @@ export class CgRankTool
             count:count,
             password:this._password
         }
-        let rs = await gHttpTool.post({url:this._url,json:msg})
+        let rs = await gHttpTool.post({url:this._url,data:msg})
         return rs.body as {ranks:CgRankRankItem[]}
     }
     async getRankCount(key:string)
@@ -139,7 +139,7 @@ export class CgRankTool
             key:key,
             password:this._password
         }
-        let rs = await gHttpTool.post({url:this._url,json:msg})
+        let rs = await gHttpTool.post({url:this._url,data:msg})
         return rs.body as {count:number}
     }
     async getRevRankList(key:string,start:number,count:number)
@@ -152,7 +152,7 @@ export class CgRankTool
             count:count,
             password:this._password
         }
-        let rs = await gHttpTool.post({url:this._url,json:msg})
+        let rs = await gHttpTool.post({url:this._url,data:msg})
         return rs.body as {ranks:CgRankRankItem[]}
     }
     async addToRank(key:string,id:string,score:number,other:any,isreplace=false)
@@ -167,7 +167,7 @@ export class CgRankTool
             isreplace:isreplace,
             password:this._password
         }
-        let rs = await gHttpTool.post({url:this._url,json:msg})
+        let rs = await gHttpTool.post({url:this._url,data:msg})
         return rs.body as {rank:CgRankRankItem}
     }
     async addsToRank(key:string,datas:{[id:string]:CgRankCommandItem},isreplace=false)
@@ -180,7 +180,7 @@ export class CgRankTool
             isreplace:isreplace,
             password:this._password
         }
-        let rs = await gHttpTool.post({url:this._url,json:msg})
+        let rs = await gHttpTool.post({url:this._url,data:msg})
         return rs.body as {ranks:{[id:string]:CgRankRankItem}}
     }
     async removeFromRank(key:string,id:string)
@@ -192,7 +192,7 @@ export class CgRankTool
             id:id,
             password:this._password
         }
-        let rs = await gHttpTool.post({url:this._url,json:msg})
+        let rs = await gHttpTool.post({url:this._url,data:msg})
         return rs.body as {rank:CgRankRankItem}
     }
     async updateInRank(key:string,command:CgRankCommandItem)
@@ -204,7 +204,7 @@ export class CgRankTool
             command:command,
             password:this._password
         }
-        let rs = await gHttpTool.post({url:this._url,json:msg})
+        let rs = await gHttpTool.post({url:this._url,data:msg})
         return rs.body as {rank:CgRankRankItem}
     }
     async updatesInRank(key:string,commands:{[id:string]:CgRankCommandItem})
@@ -216,7 +216,7 @@ export class CgRankTool
             commands:commands,
             password:this._password
         }
-        let rs = await gHttpTool.post({url:this._url,json:msg})
+        let rs = await gHttpTool.post({url:this._url,data:msg})
         return rs.body as {ranks:{[id:string]:CgRankRankItem}}
     }
     async executeCommand(key:string,commands:{[id:string]:CgRankCommandItem})
@@ -228,7 +228,7 @@ export class CgRankTool
             commands:commands,
             password:this._password
         }
-        let rs = await gHttpTool.post({url:this._url,json:msg})
+        let rs = await gHttpTool.post({url:this._url,data:msg})
         return rs.body as {ranks:{[id:string]:CgRankRankItem}}
     }
     async anyCall(call:string,...args)
@@ -239,7 +239,7 @@ export class CgRankTool
             args:args,
             password:this._password
         }
-        let rs = await gHttpTool.post({url:this._url,json:msg})
+        let rs = await gHttpTool.post({url:this._url,data:msg})
         return rs.body as {result:any}
     }
 }
