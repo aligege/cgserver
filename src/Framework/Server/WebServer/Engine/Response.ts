@@ -88,7 +88,7 @@ export class Response
             let size = stats.size
             var f = fs.createReadStream(fullPath)
             this._res.writeHead(200, {
-                'Content-Type': mime.getType(fullPath)||'application/octet-stream',
+                'Content-Type': mime.default.getType(fullPath)||'application/octet-stream',
                 'Content-Disposition': 'attachment; filename=' + fileName,
                 'Content-Length': size
             });

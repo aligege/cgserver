@@ -1,9 +1,9 @@
-import mongoose, { FilterQuery, UpdateQuery, Types, MongooseQueryOptions, Schema } from 'mongoose';
+import mongoose from 'mongoose';
 import { gLog } from '../../Logic/Log';
 import { gMongoMgr, IMongoBaseModel, MongoExt } from './MongoManager';
 import { SyncCall2  } from '../../Decorator/SyncCall';
 import _ from 'underscore';
-
+export type PartialModel<T> = Partial<mongoose.ApplyBasicCreateCasting<T>>;
 export class MongoBaseService<T extends IMongoBaseModel>
 {
     protected _model: mongoose.Model<T>;
@@ -54,19 +54,19 @@ export class MongoBaseService<T extends IMongoBaseModel>
         this._dbname=dbname
     }
 
-    async findOne(filter?: FilterQuery<T>, projection?: any, options?: any): Promise<T | null>
+    async findOne(filter?: mongoose.QueryFilter<T>, projection?: any, options?: any): Promise<T | null>
     {
         let ret = await this.mongo.findOne<T>(this.model, filter, projection, options);
         return ret;
     }
 
-    async find(filter?: FilterQuery<T>, projection?: mongoose.ProjectionType<T>, options?: MongooseQueryOptions): Promise<T[]>
+    async find(filter?: mongoose.QueryFilter<T>, projection?: mongoose.ProjectionType<T>, options?: mongoose.QueryOptions): Promise<T[]>
     {
         let ret = await this.mongo.find<T>(this.model, filter, projection, options);
         return ret;
     }
 
-    async findById(id: string | Types.ObjectId, projection?: mongoose.ProjectionType<T>, options?: MongooseQueryOptions)
+    async findById(id: any, projection?: mongoose.ProjectionType<T>, options?: mongoose.QueryOptions)
     {
         let ret = await this.mongo.findById<T>(this.model, id, projection, options);
         return ret;
@@ -78,16 +78,16 @@ export class MongoBaseService<T extends IMongoBaseModel>
         return ret;
     }
 
-    async insert(doc: Partial<T>)
+    async insert(doc: Partial<T>, options?: mongoose.SaveOptions)
     {
-        let ret = await this.mongo.insert<T>(this.model, doc);
+        let ret = await this.mongo.insert<T>(this.model, doc, options);
         return ret;
     }
 
     async updateOne(
-        filter: FilterQuery<T>,
-        update: UpdateQuery<T>,
-        options?: any
+        filter: mongoose.QueryFilter<T>,
+        update: mongoose.UpdateQuery<T>,
+        options?: mongoose.mongo.UpdateOptions
     )
     {
         let ret = await this.mongo.updateOne<T>(this.model, filter, update, options);
@@ -95,28 +95,28 @@ export class MongoBaseService<T extends IMongoBaseModel>
     }
 
     async updateMany(
-        filter: FilterQuery<T>,
-        update: UpdateQuery<T>,
-        options?: any
+        filter: mongoose.QueryFilter<T>,
+        update: mongoose.UpdateQuery<T>|mongoose.UpdateWithAggregationPipeline,
+        options?: (mongoose.mongo.UpdateOptions & mongoose.MongooseUpdateQueryOptions<T>) | null
     )
     {
         let ret = await this.mongo.updateMany<T>(this.model, filter, update, options);
         return ret;
     }
 
-    async deleteOne(filter: FilterQuery<T>)
+    async deleteOne(filter: mongoose.QueryFilter<T>)
     {
         let ret = await this.mongo.deleteOne<T>(this.model, filter);
         return ret
     }
 
-    async deleteMany(filter: FilterQuery<T>)
+    async deleteMany(filter: mongoose.QueryFilter<T>)
     {
         let ret = await this.mongo.deleteMany<T>(this.model, filter);
         return ret;
     }
 
-    async exists(filter: FilterQuery<T>): Promise<boolean>
+    async exists(filter: mongoose.QueryFilter<T>): Promise<boolean>
     {
         let ret = await this.mongo.exists<T>(this.model, filter);
         return ret;
@@ -130,13 +130,13 @@ export class MongoBaseService<T extends IMongoBaseModel>
     }
 
     // findOneAndUpdate method for MongoDB operations
-    async findOneAndUpdate(filter: FilterQuery<T>, update: UpdateQuery<T>, options?: MongooseQueryOptions)
+    async findOneAndUpdate(filter: mongoose.QueryFilter<T>, update: mongoose.UpdateQuery<T>|mongoose.UpdateWithAggregationPipeline, options?: mongoose.QueryOptions<T>|null)
     {
         let ret = await this.mongo.findOneAndUpdate<T>(this.model, filter, update, options);
         return ret
     }
 
-    async countDocuments(filter?: FilterQuery<T>): Promise<number>
+    async countDocuments(filter?: mongoose.QueryFilter<T>): Promise<number>
     {
         let ret = await this.mongo.countDocuments<T>(this.model, filter);
         return ret;
@@ -154,7 +154,7 @@ export interface IAutoIdModel extends IMongoBaseModel
     autoid:number
 }
 
-const autoIdSchema = new Schema<IAutoIdModel>({
+const autoIdSchema = new mongoose.Schema<IAutoIdModel>({
     _id:{ type: String },
     autoid:{ type: Number, required: true, default: 0 }
 },{id:false});

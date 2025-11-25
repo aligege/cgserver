@@ -16,7 +16,6 @@ import { gSMSTool } from "./ThirdParty/Alisms"
 import { gAppleTool } from "./ThirdParty/AppleTool"
 import { gEmailTool } from "./ThirdParty/EmailTool"
 import { gQQTool } from "./ThirdParty/QQTool"
-import { gQiniuTool } from "./ThirdParty/QiniuTool"
 import { gWechatTool } from "./ThirdParty/WechatTool"
 import { gCtrMgr } from "./Server/WebServer/Engine/ControllerManager"
 import { gCgServer } from "./cgserver"
@@ -42,7 +41,6 @@ export class global {
     static gByteTool = gByteTool
     static gSmsTool = gSMSTool
     static gEmailTool = gEmailTool
-    static gQiniuTool = gQiniuTool
     static gQQTool = gQQTool
     static gWechatTool = gWechatTool
     static gWechatOATool = gWechatTool

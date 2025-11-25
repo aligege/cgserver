@@ -1,8 +1,6 @@
-import { ConnectionStates, Types, UpdateQuery } from 'mongoose';
-import { EErrorCode } from '../../Config/_error_';
 import { core } from '../../Core/Core';
 import { gLog } from '../../Logic/Log';
-import mongoose, { FilterQuery, MongooseQueryOptions } from 'mongoose';
+import mongoose from 'mongoose';
 import { MongoActionCheck } from '../../Decorator/MongoActionCheck';
 export interface IMongoBaseModel
 {
@@ -168,9 +166,9 @@ export class MongoExt
         this._connection.on("connectionCreated", this.onConnect.bind(this))
         this._connection.on("connectionClosed", this.onDisconnect.bind(this))
         await this._connection.asPromise()
-        while(this._connection.readyState!=ConnectionStates.connected)
+        while(this._connection.readyState!=mongoose.ConnectionStates.connected)
         {
-            if(this._connection.readyState!=ConnectionStates.connecting)
+            if(this._connection.readyState!=mongoose.ConnectionStates.connecting)
             {
                 gLog.error("MongoDB connection is not ready, please check the connection settings. Current state: " + this._connection.readyState);
                 return false
@@ -229,7 +227,7 @@ export class MongoExt
         gLog.error(err)
     }
     @MongoActionCheck(null)
-    async findOne<T>(model: mongoose.Model<T>, filter?: FilterQuery<T>, projection?: any, options?: any): Promise<T | null>
+    async findOne<T>(model: mongoose.Model<T>, filter?: mongoose.QueryFilter<T>, projection?: any, options?: any): Promise<T | null>
     {
         filter = this._convertFilter(filter);
         if (!model)
@@ -242,7 +240,7 @@ export class MongoExt
         return one;
     }
     @MongoActionCheck([])
-    async find<T>(model: mongoose.Model<T>, filter?: FilterQuery<T>, projection?: mongoose.ProjectionType<T>, options?: MongooseQueryOptions): Promise<T[]>
+    async find<T>(model: mongoose.Model<T>, filter?: mongoose.QueryFilter<T>, projection?: mongoose.ProjectionType<T>, options?: mongoose.QueryOptions): Promise<T[]>
     {
         filter = this._convertFilter(filter);
         if (!model)
@@ -258,7 +256,7 @@ export class MongoExt
         return list;
     }
     @MongoActionCheck(null)
-    async findById<T>(model: mongoose.Model<T>, id: any, projection?: mongoose.ProjectionType<T>, options?: MongooseQueryOptions): Promise<T | null>
+    async findById<T>(model: mongoose.Model<T>, id: any, projection?: mongoose.ProjectionType<T>, options?: mongoose.QueryOptions): Promise<T | null>
     {
         if (!model)
         {
@@ -282,22 +280,22 @@ export class MongoExt
         return one;
     }
     @MongoActionCheck(null)
-    async insert<T>(model: mongoose.Model<T>, doc: Partial<T>): Promise<T>
+    async insert<T>(model: mongoose.Model<T>, doc: Partial<T>, options?: mongoose.SaveOptions): Promise<T>
     {
         if (!model)
         {
             gLog.error("Model is not defined");
             return null;
         }
-        const newDoc = await model.insertOne(doc);
+        const newDoc = await model.insertOne(doc as any, options) as T;
         return newDoc
     }
     @MongoActionCheck(null)
     async updateOne<T>(
         model: mongoose.Model<T>,
-        filter: FilterQuery<T>,
-        update: UpdateQuery<T>,
-        options?: any
+        filter: mongoose.QueryFilter<T>,
+        update: mongoose.UpdateQuery<T>|mongoose.UpdateWithAggregationPipeline,
+        options?: (mongoose.mongo.UpdateOptions & mongoose.MongooseUpdateQueryOptions<T>) | null
     )
     {
         filter = this._convertFilter(filter);
@@ -312,9 +310,9 @@ export class MongoExt
     @MongoActionCheck(null)
     async updateMany<T>(
         model: mongoose.Model<T>,
-        filter: FilterQuery<T>,
-        update: UpdateQuery<T>,
-        options?: any
+        filter: mongoose.UpdateQuery<T> | mongoose.UpdateWithAggregationPipeline,
+        update: mongoose.UpdateQuery<T> | mongoose.UpdateWithAggregationPipeline,
+        options?: (mongoose.mongo.UpdateOptions & mongoose.MongooseUpdateQueryOptions<T>) | null
     )
     {
         filter = this._convertFilter(filter);
@@ -327,7 +325,7 @@ export class MongoExt
         return rs
     }
     @MongoActionCheck(-2)
-    async deleteOne<T>(model: mongoose.Model<T>, filter: FilterQuery<T>)
+    async deleteOne<T>(model: mongoose.Model<T>, filter: mongoose.QueryFilter<T>)
     {
         filter = this._convertFilter(filter);
         if (!model)
@@ -339,7 +337,7 @@ export class MongoExt
         return rs.deletedCount || 0;
     }
     @MongoActionCheck(-2)
-    async deleteMany<T>(model: mongoose.Model<T>, filter: FilterQuery<T>)
+    async deleteMany<T>(model: mongoose.Model<T>, filter: mongoose.QueryFilter<T>)
     {
         filter = this._convertFilter(filter);
         if (!model)
@@ -351,7 +349,7 @@ export class MongoExt
         return rs.deletedCount || 0;
     }
     @MongoActionCheck(false)
-    async exists<T>(model: mongoose.Model<T>, filter: FilterQuery<T>): Promise<boolean>
+    async exists<T>(model: mongoose.Model<T>, filter: mongoose.QueryFilter<T>): Promise<boolean>
     {
         filter = this._convertFilter(filter);
         if (!model)
@@ -376,7 +374,7 @@ export class MongoExt
     }
 
     @MongoActionCheck(null)
-    async findOneAndUpdate<T>(model: mongoose.Model<T>, filter: FilterQuery<T>, update: UpdateQuery<T>, options?: MongooseQueryOptions)
+    async findOneAndUpdate<T>(model: mongoose.Model<T>, filter: mongoose.QueryFilter<T>, update: mongoose.UpdateQuery<T>|mongoose.UpdateWithAggregationPipeline, options?: mongoose.QueryOptions<T>|null)
     {
         filter = this._convertFilter(filter);
         if (!model)
@@ -390,7 +388,7 @@ export class MongoExt
     }
 
     @MongoActionCheck(-2)
-    async countDocuments<T>(model: mongoose.Model<T>, filter?: FilterQuery<T>): Promise<number>
+    async countDocuments<T>(model: mongoose.Model<T>, filter?: mongoose.QueryFilter<T>): Promise<number>
     {
         filter = this._convertFilter(filter);
         if (!model)
@@ -409,7 +407,7 @@ export class MongoExt
         }
         if (filter.id && typeof filter.id === 'string')
         {
-            filter._id = new Types.ObjectId(filter.id);
+            filter._id = new mongoose.Types.ObjectId(filter.id);
             delete filter.id;
         }
         else if (filter.id)
@@ -425,7 +423,7 @@ export class MongoExt
         {
             return one;
         }
-        if (typeof one._id === 'object' && one._id instanceof Types.ObjectId)
+        if (typeof one._id === 'object' && one._id instanceof mongoose.Types.ObjectId)
         {
             one.id = one._id.toString();
         }

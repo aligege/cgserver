@@ -6,14 +6,6 @@ import { gHttpTool } from "../Logic/HttpTool";
 
 export class WechatOAMsg
 {
-    // <xml>
-    // <ToUserName><![CDATA[toUser]]></ToUserName>
-    // <FromUserName><![CDATA[fromUser]]></FromUserName>
-    // <CreateTime>1348831860</CreateTime>
-    // <MsgType><![CDATA[text]]></MsgType>
-    // <Content><![CDATA[this is a test]]></Content>
-    // <MsgId>1234567890123456</MsgId>
-    // </xml>
     toUserName=""
     fromUserName=""//其实是一个userid
     createTime=-1
