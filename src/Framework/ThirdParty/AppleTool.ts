@@ -180,7 +180,7 @@ export class AppleTool
         reqb.password=password
         reqb['exclude-old-transactions']=exclude_old_transactions
         //先验证生产环境
-        var resb:ResponseBody = (await gHttpTool.post({url,form:JSON.stringify(reqb)})).body
+        var resb:ResponseBody = (await gHttpTool.post({url,data:reqb})).body
         gLog.info("production end onVerify_Res============================status="+(resb?resb.status:"null"))
         //状态21007表示是沙盒环境
         if(resb&&resb.status==21007)
