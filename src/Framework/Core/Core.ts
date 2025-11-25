@@ -1,11 +1,11 @@
 ﻿let os = require('os');
-let request = require('request');
 import * as _ from "underscore";
 import * as crypto from "crypto";
 import * as CryptoJS from "crypto-js";
 import ECKey from "ec-key";
 import { v4 } from "uuid";
 import { gLog } from "../Logic/Log";
+import axios from "axios";
 
 /**
  * 一些通用的常用函数，
@@ -471,17 +471,12 @@ export class core
     {
         return new Promise<string>((resolve,reject)=>
         {
-            request('http://ip.chinaz.com/getip.aspx', function (error, response, body) {
-            if (!error && response.statusCode == 200) 
-                {
-                    body = eval('(' + body + ')');
-                    resolve(body.ip)
-                }
-                else
-                {
-                    console.error("can not get correct ip!")
-                    resolve(null)
-                }
+            axios.get('http://ip.chinaz.com/getip.aspx').then(response => {
+                let body = response.data;
+                resolve(body.ip)
+            }).catch(error => {
+                console.error("can not get correct ip!")
+                resolve(null)
             })
         })
     }
