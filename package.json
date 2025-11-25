@@ -1,6 +1,6 @@
 {
   "name": "cgserver",
-  "version": "14.0.0",
+  "version": "14.0.1",
   "author": "trojan",
   "type": "commonjs",
   "description": "free for all.Websocket or Http",
@@ -41,9 +41,9 @@
     "@types/mssql": "^9.1.8",
     "@types/node": "^24.10.1",
     "@types/nodemailer": "^7.0.4",
-    "@types/request": "^2.48.13",
     "@types/websocket": "^1.0.10",
     "alipay-sdk": "^4.14.0",
+    "axios": "^1.13.2",
     "azgaar-fmg-parser": "^1.2.2",
     "colors": "^1.4.0",
     "cookie-parser": "^1.4.7",
