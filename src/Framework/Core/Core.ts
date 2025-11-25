@@ -1,9 +1,8 @@
-﻿let os = require('os');
+﻿let os = require("os");
 import * as _ from "underscore";
 import * as crypto from "crypto";
 import * as CryptoJS from "crypto-js";
 import ECKey from "ec-key";
-import { v4 } from "uuid";
 import { gLog } from "../Logic/Log";
 import axios from "axios";
 
@@ -450,7 +449,7 @@ export class core
         return hash_str
     }
 
-    static getLocalIP= function () 
+    static getLocalIP() 
     {
         let iptable={}
         let ifaces=os.networkInterfaces()
@@ -458,7 +457,8 @@ export class core
         {
             ifaces[dev].forEach(function(details,alias)
             {
-                if ((details.family=='IPv4') && (details.internal == false)) 
+                let fa:string = details.family||""
+                if ((fa.toLowerCase()=='ipv4') && (details.internal == false)) 
                 {
                     iptable['localIP'] = details.address
                 }
@@ -467,7 +467,7 @@ export class core
         return iptable['localIP']
     }
 
-    static getIP = async function()
+    static async getIP()
     {
         return new Promise<string>((resolve,reject)=>
         {
@@ -816,9 +816,18 @@ export class core
         }).toString(CryptoJS.enc.Utf8)
         return dtext
     }
-    static getUuid()
+    static getUuid():string
     {
-        let id:string = v4()
+        // 16 字节 = 128 位随机数
+        const bytes = crypto.getRandomValues(new Uint8Array(16));
+
+        // 设置版本与变体位：第6字节的高4位为0100（版本4），第8字节的高2位为10（变体RFC4122）
+        bytes[6] = (bytes[6] & 0x0f) | 0x40; // version 4
+        bytes[8] = (bytes[8] & 0x3f) | 0x80; // variant RFC4122
+
+        // 转十六进制并按 8-4-4-4-12 输出
+        const hex = [...bytes].map(b => b.toString(16).padStart(2, '0')).join('');
+        const id = `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
         return id
     }
     static signatureBase64(private_key:string,rsa_name:string,payload:string)

@@ -1,11 +1,11 @@
 import ECKey from "ec-key";
-import { v4 as uuidv4 } from 'uuid';
 
 import * as fs from "fs";
 import { Config } from '../Config/Config';
 import { gLog } from "../Logic/Log";
 import { gHttpTool } from "../Logic/HttpTool";
 import { gServerCfg } from "../Config/IServerConfig";
+import { core } from "../index_export_";
 //developer.apple.com/documentation/appstorereceipts/responsebody
 class ReceiptInfo
 {
@@ -200,7 +200,7 @@ export class AppleTool
             keyIdentifier=k
             break
         }
-        var nonce = uuidv4()
+        var nonce = core.getUuid()
 	    var payload = appBundleID + '\u2063' +
         keyIdentifier + '\u2063' +
                   productIdentifier + '\u2063' +

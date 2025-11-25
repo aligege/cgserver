@@ -83,6 +83,10 @@ export { IRpcClientWebSocket} from './Server/RpcWebSocketServer/IRpcClientWebSoc
 export { SyncCall,SyncCall2 } from './Decorator/SyncCall';
 export { SyncCallServer,SyncCallServer2 } from './Decorator/SyncCallServer';
 
+import mongoose from 'mongoose';
+
+export { mongoose };
+
 export { global } from "./global";
 
 

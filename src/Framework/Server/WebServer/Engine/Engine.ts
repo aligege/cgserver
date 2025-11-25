@@ -113,7 +113,7 @@ export class Engine
                 credentials:this._cfg.cors.credentials||false
             }))
         }
-        this._app.all("/*",(req,res)=>
+        this._app.all("*",(req,res)=>
         {
             let time = Date.now()
             this._onall(req,res).then(()=>
