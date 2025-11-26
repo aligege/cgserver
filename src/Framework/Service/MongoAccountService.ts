@@ -312,13 +312,17 @@ export class MongoAccountService<T extends IMongoAccountModel> extends MongoBase
                 rs.errcode=EErrorCode.Login_Failed
             }
         }
-        else if(from==EAccountFrom.Name||from==EAccountFrom.Guest)
+        else if(from==EAccountFrom.Name)
         {
             rs.account = await this.findOne({name:key,password:pass})
-            if(!rs.account&&from==EAccountFrom.Name)
+            if(!rs.account)
             {
                 rs.errcode=EErrorCode.Login_Failed
             }
+        }
+        else if(from==EAccountFrom.Guest)
+        {
+            rs.account = await this.findOne({name:key})
         }
         return rs
     }
